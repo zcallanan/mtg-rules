@@ -15,6 +15,7 @@ interface Props {
 
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
+  const router = useRouter();
 
   // Search form validation prop
   const validateUrl = (url: string): number => {
@@ -22,12 +23,18 @@ const RuleSetPage = (props: Props): JSX.Element => {
     const year = url.match(/\/(\d{4})\//)[1];
 
     // If valid, take success actions
-    // TODO This doesn't work
-    // getStaticProps({params: { year, version }});
+
+    // DEBUG
+    // router.query.version = '2020190823';
+    // router.query.year = '2019';
+
+    router.query.version = version;
+    router.query.year = year;
+    router.push(router);
     return 1;
   };
 
-  const router = useRouter();
+
 
   // Get currentUrl for Form
   const currentYear = router.query.year;
@@ -70,18 +77,25 @@ const RuleSetPage = (props: Props): JSX.Element => {
   console.log(subrules)
 
   return (
-    <div className={styles.views}>
-      <div className={styles.tocSections} >
-        <TocSections sections={sections} chapters={chapters} />
-      </div>
-      <div>
-        <div>
-          <Form validateUrl={validateUrl} initialUrl={currentUrl}/>
+    <div>
+       <div>
+          <Form
+            validateUrl={validateUrl}
+            initialUrl={currentUrl}
+            formText='Original Ruleset Link:'
+            smallText='Enter and submit a different link to view the rules from another ruleset.'
+          />
         </div>
-        <div className={styles.chapterList}>
-          <ChapterList chapters={chapters} rules={rules} subrules={subrules} />
+        <div className={styles.views}>
+          <div className={styles.tocSections} >
+            <TocSections sections={sections} chapters={chapters} />
+          </div>
+          <div>
+            <div className={styles.chapterList}>
+              <ChapterList chapters={chapters} rules={rules} subrules={subrules} />
+            </div>
+          </div>
         </div>
-      </div>
     </div>
   )
 }

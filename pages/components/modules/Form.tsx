@@ -5,10 +5,12 @@ import styles from '../../../styles/Form.module.scss';
 interface Props {
   initialUrl: string;
   validateUrl: (url: string) => number;
+  formText: string;
+  smallText: string;
 }
 
 const Form = (props: Props): JSX.Element => {
-  const { initialUrl, validateUrl } = props;
+  const { initialUrl, validateUrl, formText, smallText } = props;
   // Create local state to validate a submission
   const [url, setUrl] = React.useState(initialUrl);
 
@@ -22,7 +24,7 @@ const Form = (props: Props): JSX.Element => {
       Call prop to validate
       Is it in url format?
       Ends with .txt?
-      Is it to the right pathname "https://media.wizards.com/2019/downloads/MagicCompRules%"
+      Is it to the right pathname "https://media.wizards.com/XX/downloads/MagicCompRules%/XX.txt"
       Does fetch get a text response?
       Then update router
     */
@@ -42,7 +44,7 @@ const Form = (props: Props): JSX.Element => {
     <div className="form-fields">
       <div className="form-group">
         <form onSubmit={handleSubmit}>
-          <label htmlFor="searchInput" className={styles.searchLabel}>Search Rules</label>
+          <label htmlFor="searchInput" className={styles.searchLabel}>{formText}</label>
           <input
             onChange={handleChange}
             value={url}
@@ -51,6 +53,9 @@ const Form = (props: Props): JSX.Element => {
             className="form-control"
             required
           />
+          <small id={styles.helpText} className="form-text text-muted">
+            {smallText}
+          </small>
           <button className="btn btn-primary" type="submit">Click</button>
         </form>
       </div>
