@@ -12,7 +12,8 @@ interface Props {
   nodes: NodesI;
 }
 
-const RuleSetPage = (nodes) => {
+const RuleSetPage = (props: Props): JSX.Element => {
+  const { nodes } = props;
 
   // Search form validation prop
   const validateUrl = (url: string): number => {
@@ -40,15 +41,15 @@ const RuleSetPage = (nodes) => {
 
   // Sort nodes
   const sections = sortBy(
-    nodes.nodes.filter((node) => node.type === 'section'),
+    nodes.filter((node) => node.type === 'section'),
     ['sectionNumber'],
   );
   const chapters = sortBy(
-    nodes.nodes.filter((node) => node.type === 'chapter'),
+    nodes.filter((node) => node.type === 'chapter'),
     ['sectionNumber', 'chapterNumber'],
   );
-  const rules = nodes.nodes.filter((node) => node.type === 'rule');
-  const subrules = nodes.nodes.filter((node) => node.type === 'subrule');
+  const rules = nodes.filter((node) => node.type === 'rule');
+  const subrules = nodes.filter((node) => node.type === 'subrule');
 
   //DEBUG values
   console.log(sections)
