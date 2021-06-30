@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-bootstrap';
 import { SectionI, ChapterI } from '../../../app/types.ts';
 import styles from '../../../styles/Form.module.scss';
 
@@ -11,28 +12,32 @@ interface Props {
 
 const Form = (props: Props): JSX.Element => {
   const { initialUrl, validateUrl, formText, smallText } = props;
+
   // Create local state to validate a submission
   const [url, setUrl] = React.useState(initialUrl);
 
-  // React.useEffect(() => {
-
-  // },[])
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    /*
-      Grab value to be validated from local state
-      Call prop to validate
-      Is it in url format?
-      Ends with .txt?
-      Is it to the right pathname "https://media.wizards.com/XX/downloads/MagicCompRules%/XX.txt"
-      Does fetch get a text response?
-      Then update router
-    */
-
     e.preventDefault();
+    // Select element to return a custom validation message
+    const input = document.getElementById(`${styles.ruleset}`);
+
+    // Reset to default or validation is wrong after going invalid > valid input
+    input.setCustomValidity('');
+
     // Validate url
     const result: number = validateUrl(url);
-    // If result is not 1, then its an input error
+    // Set custom validation messages
+    if (result === 0) {
+      input.setCustomValidity('Field empty! Please enter a valid link.');
+    } else if (result === 2) {
+      input.setCustomValidity('Invalid link! Please enter a valid link.');
+    } else if (result === 1) {
+      input.setCustomValidity('');
+    }
+    // Display custom validation message
+    if (!input.checkValidity()) {
+      input.reportValidity();
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -41,25 +46,21 @@ const Form = (props: Props): JSX.Element => {
   };
 
   return (
-    <div className="form-fields">
-      <div className="form-group">
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="searchInput" className={styles.searchLabel}>{formText}</label>
-          <input
-            onChange={handleChange}
-            value={url}
-            id={styles.searchInput}
-            type="text"
-            className="form-control"
-            required
-          />
-          <small id={styles.helpText} className="form-text text-muted">
-            {smallText}
-          </small>
-          <button className="btn btn-primary" type="submit">Click</button>
-        </form>
-      </div>
-    </div>
+    <form onSubmit={handleSubmit} noValidate>
+      <label htmlFor="ruleset" className={styles.searchLabel}>{formText}</label>
+      <input
+        onChange={handleChange}
+        value={url}
+        id={styles.ruleset}
+        type="text"
+        className="form-control"
+        required
+      />
+      <small id={styles.helpText} className="form-text text-muted">
+        {smallText}
+      </small>
+      <button className="btn btn-primary" type="submit">Click</button>
+    </form>
   )
 };
 
