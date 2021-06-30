@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import sortBy from 'lodash/sortBy';
 import { useRouter } from 'next/router';
+import Spinner from 'react-bootstrap/Spinner';
 import rulesParse from '../../../app/rules-parse.ts';
 import TocSections from '../../components/modules/TocSections.tsx';
 import ChapterList from '../../components/modules/ChapterList.tsx';
@@ -36,7 +37,18 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   // Fallback
   if (router.isFallback) {
-    return <div>Loading...</div> // TODO Replace this
+    return (
+      <div className={styles.spinnerDiv}>
+        <Spinner
+          animation='border'
+          role='status'
+          variant='dark'
+          className={styles.spinnerComponent}
+        >
+          <span className={styles.loadingText}>Loading...</span>
+        </Spinner>
+      </div>
+    )
   }
 
   // Sort nodes

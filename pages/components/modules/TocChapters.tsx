@@ -11,13 +11,18 @@ interface Props {
 
 const TocChapters = (props: Props): JSX.Element => {
   const router = useRouter()
-  const pathname = `/${router.pathname.split("/")[1]}/${router.query.version}/`;
+  const version: string = router.query.version;
+  const year: string = router.query.year;
+  const pathname = `/${router.pathname.split("/")[1]}/${year}/${version}/`;
   const { chapters, sectionNumber } = props;
   let key: string;
 
   const chapterArray: string[] = chapters.map((chapter) => {
+    // If the chapter belongs to the section
     if (chapter.sectionNumber === sectionNumber) {
       const key: string = `c${chapter.chapterNumber}`;
+
+      // Return chapter values as a link
       return (
         <li
           key={key}
