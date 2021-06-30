@@ -20,7 +20,7 @@ export interface RuleI {
   example: string[];
 }
 
-export interface SubRuleI {
+export interface SubruleI {
   type: string;
   text: string;
   sectionNumber: number;
@@ -29,3 +29,8 @@ export interface SubRuleI {
   subruleLetter: string;
   example: string[];
 }
+
+export interface NodesI {
+  nodes: (SectionI|ChapterI|RuleI|SubruleI)[];
+}
+
