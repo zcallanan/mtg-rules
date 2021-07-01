@@ -28,9 +28,13 @@ const Form = (props: Props): JSX.Element => {
     const result: number = validateUrl(url);
     // Set custom validation messages
     if (result === 0) {
-      input.setCustomValidity('Field empty! Please enter a valid link.');
+      input.setCustomValidity('Field empty! Please enter a valid ruleset link.');
     } else if (result === 2) {
-      input.setCustomValidity('Invalid link! Please enter a valid link.');
+      input.setCustomValidity('Invalid ruleset link! Please enter a valid link.');
+    } else if (result === 3) {
+      input.setCustomValidity('The rules found at this link are displayed below.');
+    } else if (result === 4) {
+      input.setCustomValidity('Alas, no ruleset was found at that link. Please try another.')
     } else if (result === 1) {
       input.setCustomValidity('');
     }

@@ -13,6 +13,12 @@ interface Props {
   nodes: NodesI;
 }
 
+const fetchText = async(url: string): Promise<string> => {
+  const res: string =  await fetch(url, { headers: {'check': 'validation'} });
+  console.log(res.status)
+  return res.status;
+};
+
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
   const router = useRouter();
@@ -33,6 +39,11 @@ const RuleSetPage = (props: Props): JSX.Element => {
     const version: number = (reVersion.test(url)) ? url.match(reVersion)[0] : 0;
     const reYear = /\d{4}/;
     const year: number = (reYear.test(url)) ? url.match(reYear)[0] : 0;
+
+    // That ruleset is already displayed
+    if (currentVersion === version && currentYear === year) {
+      return 3;
+    }
 
     // Remove host
     let noHost: string = url.replace(/http(s|):\/\//i, '');
@@ -57,22 +68,24 @@ const RuleSetPage = (props: Props): JSX.Element => {
     if (!path1 || !year || !path2 || !path3 || !version) {
       // Url invalid
       return 2;
-
     }
 
-    // Don't refresh if the submitted ruleset === current ruleset
-    if (currentVersion !== version && currentYear !== year) {
-      router.query.version = version;
-      router.query.year = year;
-      // Trigger ISR page update
-      router.push(router);
-      return 1;
-    } else {
-      console.log('same values')
+    // Finally, check if the properly formed link returns text
+    const result = fetchText(url);
+    if (!result) {
+      // No ruleset is found at that link
+      return 4;
     }
+
+    // Link validated, update router
     // DEBUG
     // router.query.version = '2020190823';
     // router.query.year = '2019';
+    // router.query.version = version;
+    // router.query.year = year;
+    // Trigger ISR page update
+    //router.push(router);
+    return 1;
   };
 
   // Fallback
@@ -116,7 +129,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
             validateUrl={validateUrl}
             initialUrl={currentUrl}
             formText='Original Ruleset Link:'
-            smallText='Enter and submit a different link to view the rules from another ruleset.'
+            smallText='Change and submit a link to view a different ruleset.'
           />
         </div>
         <div className={styles.views}>
@@ -138,7 +151,7 @@ export const getStaticProps: getStaticProps = async ({ params }) => {
   try {
     const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`
     const res: string = await fetch(url);
-    const rawRuleSetText = await res.text();
+    const rawRuleSetText: string = await res.text();
     // Parse rules text to an array of rule nodes
     const nodes = await rulesParse(rawRuleSetText);
 
