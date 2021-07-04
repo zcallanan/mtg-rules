@@ -1,17 +1,17 @@
-export interface SectionI {
+export interface Section {
   type: string;
   text: string;
   sectionNumber: number;
 }
 
-export interface ChapterI {
+export interface Chapter {
   type: string;
   text: string;
   sectionNumber: number;
   chapterNumber: number;
 }
 
-export interface RuleI {
+export interface Rule {
   type: string;
   text: string;
   sectionNumber: number;
@@ -20,7 +20,7 @@ export interface RuleI {
   example: string[];
 }
 
-export interface SubruleI {
+export interface Subrule {
   type: string;
   text: string;
   sectionNumber: number;
@@ -30,7 +30,6 @@ export interface SubruleI {
   example: string[];
 }
 
-export interface NodesI {
-  nodes: (SectionI|ChapterI|RuleI|SubruleI)[];
+export interface Nodes {
+  nodes: (Section | Chapter | Rule | Subrule)[];
 }
-

@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint . --ext .ts,.tsx"
   },
   "dependencies": {
     "bootstrap": "^5.0.2",
-    "lodash.sortby": "^4.7.0",
+    "lodash": "^4.17.21",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-bootstrap": "^1.6.1",
@@ -21,7 +21,16 @@
   },
   "devDependencies": {
     "@types/react": "^17.0.11",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
     "eslint": "7.29.0",
-    "eslint-config-next": "11.0.1"
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-next": "11.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.2"
   }
 }

@@ -1,23 +1,16 @@
-import { useState } from 'react';
-import sortBy from 'lodash/sortBy';
-import { useRouter } from 'next/router';
-import Spinner from 'react-bootstrap/Spinner';
-import rulesParse from '../../../app/rules-parse.ts';
-import TocSections from '../../components/modules/TocSections.tsx';
-import ChapterList from '../../components/modules/ChapterList.tsx';
-import Form from '../../components/modules/Form.tsx';
-import { NodesI } from '../../../app/types.ts';
-import styles from '../../../styles/[version].module.scss';
+import sortBy from "lodash/sortBy";
+import { useRouter } from "next/router";
+import Spinner from "react-bootstrap/Spinner";
+import rulesParse from "../../../app/rules-parse";
+import TocSections from "../../components/modules/TocSections";
+import ChapterList from "../../components/modules/ChapterList";
+import Form from "../../components/modules/Form";
+import { Nodes } from "../../../app/types";
+import styles from "../../../styles/[version].module.scss";
 
 interface Props {
-  nodes: NodesI;
+  nodes: Nodes;
 }
-
-const fetchText = async(url: string): Promise<string> => {
-  const res: string =  await fetch(url, { headers: {'check': 'validation'} });
-  console.log(res.status)
-  return res.status;
-};
 
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
@@ -36,9 +29,9 @@ const RuleSetPage = (props: Props): JSX.Element => {
     }
 
     const reVersion = /\d{10}/;
-    const version: number = (reVersion.test(url)) ? url.match(reVersion)[0] : 0;
+    const version: number = reVersion.test(url) ? url.match(reVersion)[0] : 0;
     const reYear = /\d{4}/;
-    const year: number = (reYear.test(url)) ? url.match(reYear)[0] : 0;
+    const year: number = reYear.test(url) ? url.match(reYear)[0] : 0;
 
     // That ruleset is already displayed
     if (currentVersion === version && currentYear === year) {
@@ -46,45 +39,34 @@ const RuleSetPage = (props: Props): JSX.Element => {
     }
 
     // Remove host
-    let noHost: string = url.replace(/http(s|):\/\//i, '');
-    const split: string = noHost.replace(version, '').split('/');
+    const noHost: string = url.replace(/http(s|):\/\//i, "");
+    const split: string = noHost.replace(version, "").split("/");
 
     // If it is an invalid ruleset url
-    const re1 = /media[.]wizards[.]com/i
-    const path1: string = re1.test(split[0])
-      ? split[0].match(re1)[0]
-      : '';
+    const re1 = /media[.]wizards[.]com/i;
+    const path1: string = re1.test(split[0]) ? split[0].match(re1)[0] : "";
 
     const re2 = /downloads/i;
-    const path2: string = (re2.test(split[2]))
-      ? (split[2].match(re2))[0]
-      : '';
+    const path2: string = re2.test(split[2]) ? split[2].match(re2)[0] : "";
 
     const re3 = /MagicCompRules%.txt/i;
-    const path3: string = (re3.test(split[3]))
-      ? split[3].match(re3)[0]
-      : '';
+    const path3: string = re3.test(split[3]) ? split[3].match(re3)[0] : "";
 
     if (!path1 || !year || !path2 || !path3 || !version) {
       // Url invalid
       return 2;
     }
 
-    // Finally, check if the properly formed link returns text
-    const result = fetchText(url);
-    if (!result) {
-      // No ruleset is found at that link
-      return 4;
-    }
+    // TODO Finally, check if the properly formed link returns text
 
     // Link validated, update router
     // DEBUG
     // router.query.version = '2020190823';
     // router.query.year = '2019';
-    // router.query.version = version;
-    // router.query.year = year;
+    router.query.version = version;
+    router.query.year = year;
     // Trigger ISR page update
-    //router.push(router);
+    router.push(router);
     return 1;
   };
 
@@ -93,82 +75,89 @@ const RuleSetPage = (props: Props): JSX.Element => {
     return (
       <div className={styles.spinnerDiv}>
         <Spinner
-          animation='border'
-          role='status'
-          variant='dark'
+          animation="border"
+          role="status"
+          variant="dark"
           className={styles.spinnerComponent}
         >
           <span className={styles.loadingText}>Loading...</span>
         </Spinner>
       </div>
-    )
+    );
   }
 
   // Sort nodes
   const sections = sortBy(
-    nodes.filter((node) => node.type === 'section'),
-    ['sectionNumber'],
+    nodes.filter((node) => node.type === "section"),
+    ["sectionNumber"]
   );
   const chapters = sortBy(
-    nodes.filter((node) => node.type === 'chapter'),
-    ['sectionNumber', 'chapterNumber'],
+    nodes.filter((node) => node.type === "chapter"),
+    ["sectionNumber", "chapterNumber"]
   );
-  const rules = nodes.filter((node) => node.type === 'rule');
-  const subrules = nodes.filter((node) => node.type === 'subrule');
+  const rules = nodes.filter((node) => node.type === "rule");
+  const subrules = nodes.filter((node) => node.type === "subrule");
 
-  //DEBUG values
-  console.log(sections)
-  console.log(chapters)
-  console.log(rules)
-  console.log(subrules)
+  // DEBUG values
+  console.log(sections);
+  console.log(chapters);
+  console.log(rules);
+  console.log(subrules);
 
   return (
     <div>
-       <div>
-          <Form
-            validateUrl={validateUrl}
-            initialUrl={currentUrl}
-            formText='Original Ruleset Link:'
-            smallText='Change and submit a link to view a different ruleset.'
-          />
+      <div>
+        <Form
+          validateUrl={validateUrl}
+          initialUrl={currentUrl}
+          formText="Original Ruleset Link:"
+          smallText="Change and submit a link to view a different ruleset."
+        />
+      </div>
+      <div className={styles.views}>
+        <div className={styles.tocSections}>
+          <TocSections sections={sections} chapters={chapters} />
         </div>
-        <div className={styles.views}>
-          <div className={styles.tocSections} >
-            <TocSections sections={sections} chapters={chapters} />
-          </div>
-          <div>
-            <div className={styles.chapterList}>
-              <ChapterList chapters={chapters} rules={rules} subrules={subrules} />
-            </div>
+        <div>
+          <div className={styles.chapterList}>
+            <ChapterList
+              chapters={chapters}
+              rules={rules}
+              subrules={subrules}
+            />
           </div>
         </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export const getStaticProps: getStaticProps = async ({ params }) => {
   // Fetch rule set
   try {
-    const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`
+    const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`;
     const res: string = await fetch(url);
     const rawRuleSetText: string = await res.text();
     // Parse rules text to an array of rule nodes
-    const nodes = await rulesParse(rawRuleSetText);
+    const nodes: Nodes = await rulesParse(rawRuleSetText);
 
     return {
       props: { nodes },
       revalidate: 1,
-    }
+    };
   } catch (err) {
-    // TODO handle error
+    // TODO handle error, should lead to a 404 not found
+    console.log("getStaticProps error");
     console.error(err);
   }
-}
+};
 
 export const getStaticPaths: getStaticPaths = async () => {
-  const values = [['2021', '2020210419']];
-  const paths = values.map((value) => ({ params: { year: value[0], version: value[1] } }));
+  const values = [["2021", "2020210419"]];
+  const paths = values.map((value) => ({
+    params: { year: value[0], version: value[1] },
+  }));
   return { paths, fallback: true };
-}
+};
 
 export default RuleSetPage;

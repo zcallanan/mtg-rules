@@ -1,7 +1,5 @@
-import React from 'react';
-import { Alert } from 'react-bootstrap';
-import { SectionI, ChapterI } from '../../../app/types.ts';
-import styles from '../../../styles/Form.module.scss';
+import React from "react";
+import styles from "../../../styles/Form.module.scss";
 
 interface Props {
   initialUrl: string;
@@ -22,21 +20,29 @@ const Form = (props: Props): JSX.Element => {
     const input = document.getElementById(`${styles.ruleset}`);
 
     // Reset to default or validation is wrong after going invalid > valid input
-    input.setCustomValidity('');
+    input.setCustomValidity("");
 
     // Validate url
     const result: number = validateUrl(url);
     // Set custom validation messages
     if (result === 0) {
-      input.setCustomValidity('Field empty! Please enter a valid ruleset link.');
+      input.setCustomValidity(
+        "Field empty! Please enter a valid ruleset link."
+      );
     } else if (result === 2) {
-      input.setCustomValidity('Invalid ruleset link! Please enter a valid link.');
+      input.setCustomValidity(
+        "Invalid ruleset link! Please enter a valid link."
+      );
     } else if (result === 3) {
-      input.setCustomValidity('The rules found at this link are displayed below.');
+      input.setCustomValidity(
+        "The rules found at this link are displayed below."
+      );
     } else if (result === 4) {
-      input.setCustomValidity('Alas, no ruleset was found at that link. Please try another.')
+      input.setCustomValidity(
+        "Alas, no ruleset was found at that link. Please try another."
+      );
     } else if (result === 1) {
-      input.setCustomValidity('');
+      input.setCustomValidity("");
     }
     // Display custom validation message
     if (!input.checkValidity()) {
@@ -51,7 +57,9 @@ const Form = (props: Props): JSX.Element => {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <label htmlFor="ruleset" className={styles.searchLabel}>{formText}</label>
+      <label htmlFor="ruleset" className={styles.searchLabel}>
+        {formText}
+      </label>
       <input
         onChange={handleChange}
         value={url}
@@ -63,9 +71,11 @@ const Form = (props: Props): JSX.Element => {
       <small id={styles.helpText} className="form-text text-muted">
         {smallText}
       </small>
-      <button className="btn btn-primary" type="submit">Click</button>
+      <button className="btn btn-primary" type="submit">
+        Click
+      </button>
     </form>
-  )
+  );
 };
 
 export default Form;
