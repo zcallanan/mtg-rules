@@ -1,4 +1,5 @@
 import React from "react";
+import { Router } from "next/router";
 import styles from "../../../styles/Form.module.scss";
 
 interface Props {
@@ -9,12 +10,17 @@ interface Props {
 }
 
 const Form = (props: Props): JSX.Element => {
-  const { initialUrl, validateUrl, formText, smallText } = props;
+  const {
+    initialUrl,
+    validateUrl,
+    formText,
+    smallText,
+  } = props;
 
   // Create local state to validate a submission
   const [url, setUrl] = React.useState(initialUrl);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     // Select element to return a custom validation message
     const input = document.getElementById(`${styles.ruleset}`);
@@ -23,23 +29,23 @@ const Form = (props: Props): JSX.Element => {
     input.setCustomValidity("");
 
     // Validate url
-    const result: number = validateUrl(url);
+    const result = await validateUrl(url);
     // Set custom validation messages
     if (result === 0) {
       input.setCustomValidity(
-        "Field empty! Please enter a valid ruleset link."
+        "Field empty! Please enter a valid ruleset link.",
       );
     } else if (result === 2) {
       input.setCustomValidity(
-        "Invalid ruleset link! Please enter a valid link."
+        "Invalid ruleset link! Please enter a valid link.",
       );
     } else if (result === 3) {
       input.setCustomValidity(
-        "The rules found at this link are displayed below."
+        "The rules found at this link are displayed below.",
       );
     } else if (result === 4) {
       input.setCustomValidity(
-        "Alas, no ruleset was found at that link. Please try another."
+        "Alas, no ruleset was found at that link. Please try another.",
       );
     } else if (result === 1) {
       input.setCustomValidity("");

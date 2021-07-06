@@ -22,7 +22,8 @@ const ChapterTitle = (props: Props): JSX.Element => {
       {toc
         ? (<li key={`${key}${chapter.chapterNumber}`} className={styles.chapterList}>
           <Link
-            href={`${pathname}#${chapter.chapterNumber.toString()}`}
+            href={"/rules/[year]/[version]"} as={`${pathname}#${chapter.chapterNumber}`}
+            // href={`${pathname}#${chapter.chapterNumber.toString()}`}
             scroll={false}
           >
             <a>

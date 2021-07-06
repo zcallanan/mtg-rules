@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint . --ext .ts,.tsx"
+    "lint": "next lint . --ext .ts,.tsx,.js"
   },
   "dependencies": {
     "bootstrap": "^5.0.2",
+    "cors": "^2.8.5",
     "lodash": "^4.17.21",
     "next": "11.0.1",
     "react": "17.0.2",
