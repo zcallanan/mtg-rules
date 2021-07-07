@@ -16,12 +16,14 @@ const RuleList = (props: Props): JSX.Element => {
     <div>
       {ruleSubset.map((rule, index) => (
         <div key={`d-${index}`}>
-          <li
-            key={`r${rule.ruleNumber}`}
-            className={`${styles.ruleText} list-group-item`}
-          >
-            {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {rule.text}
-          </li>
+          <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
+            <li
+              key={`r${rule.ruleNumber}`}
+              className={`${styles.ruleText} list-group-item`}
+            >
+              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {rule.text}
+            </li>
+          </section>
           <Example rule={rule} />
           <SubruleGroup rule={rule} subrules={subrules} />
         </div>

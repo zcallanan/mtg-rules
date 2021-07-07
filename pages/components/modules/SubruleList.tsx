@@ -14,13 +14,17 @@ const SubruleList = (props: Props): JSX.Element => {
     <div>
       {subruleSubset.map((subrule, index) => (
         <div key={`dv${index}`}>
-          <li
-            key={`subr-${index}`}
-            className={`${styles.subruleText} list-group-item`}
+          <section
+            id={`${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter}`}
           >
-            {subrule.chapterNumber}.{subrule.ruleNumber}
-            {subrule.subruleLetter} &nbsp; {subrule.text}
-          </li>
+            <li
+              key={`subr-${index}`}
+              className={`${styles.subruleText} list-group-item`}
+            >
+              {subrule.chapterNumber}.{subrule.ruleNumber}
+              {subrule.subruleLetter} &nbsp; {subrule.text}
+            </li>
+          </section>
           <Example subrule={subrule} />
         </div>
       ))}
