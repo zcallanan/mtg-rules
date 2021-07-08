@@ -1,6 +1,6 @@
 import { Parser } from "simple-text-parser";
 import parseExamples from "./parse-examples";
-import { Nodes } from './types';
+import { Nodes } from "./types";
 
 const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
   // Retry 3 times
@@ -19,24 +19,29 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
       const subruleRegex = /^(\d{3}).(\d+)([a-z]+)\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
 
       // Add rules
-      parser.addRule(sectionRegex, (match, section, text) => {
+      parser.addRule(sectionRegex, (match, section, txt) => {
         const sectionNumber = Number(section);
 
-        return { type: "section", text, sectionNumber };
+        return { type: "section", txt, sectionNumber };
       });
-      parser.addRule(chapterRegex, (match, chapter, text) => {
+      parser.addRule(chapterRegex, (match, chapter, txt) => {
         const sectionNumber = Number(chapter[0]);
         const chapterNumber = Number(chapter);
 
-        return { type: "chapter", text, sectionNumber, chapterNumber };
+        return {
+          type: "chapter",
+          text: txt,
+          sectionNumber,
+          chapterNumber,
+        };
       });
-      parser.addRule(ruleRegex, (match, chapter, rule, text) => {
+      parser.addRule(ruleRegex, (match, chapter, rule, txt) => {
         const sectionNumber = Number(chapter[0]);
         const chapterNumber = Number(chapter);
         const ruleNumber = Number(rule);
 
         // Handle text that has examples
-        const textParse = parseExamples(text);
+        const textParse = parseExamples(txt);
 
         return {
           type: "rule",
@@ -49,13 +54,13 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
       });
       parser.addRule(
         subruleRegex,
-        (match, chapter, rule, subruleLetter, text) => {
+        (match, chapter, rule, subruleLetter, txt) => {
           const sectionNumber = Number(chapter[2]);
           const chapterNumber = Number(chapter);
           const ruleNumber = Number(rule);
 
           // Handle text that has examples
-          const textParse = parseExamples(text);
+          const textParse = parseExamples(txt);
 
           return {
             type: "subrule",
@@ -79,7 +84,6 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
 
       let val = i;
       val += 1;
-      console.log(`Retry count: ${i}`);
       rulesParse(rawText, val);
     }
   }

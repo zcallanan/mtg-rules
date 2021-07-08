@@ -33,3 +33,8 @@ export interface Subrule {
 export interface Nodes {
   nodes: (Section | Chapter | Rule | Subrule)[];
 }
+
+export interface RouterValues {
+  year: string;
+  version: string;
+}
