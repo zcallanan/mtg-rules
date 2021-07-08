@@ -22,7 +22,7 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
       parser.addRule(sectionRegex, (match, section, txt) => {
         const sectionNumber = Number(section);
 
-        return { type: "section", txt, sectionNumber };
+        return { type: "section", text: txt, sectionNumber };
       });
       parser.addRule(chapterRegex, (match, chapter, txt) => {
         const sectionNumber = Number(chapter[0]);

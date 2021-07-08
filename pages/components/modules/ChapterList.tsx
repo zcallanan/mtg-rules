@@ -11,13 +11,17 @@ interface Props {
 }
 
 const ChapterList = (props: Props): JSX.Element => {
-  const { chapters, rules, subrules } = props;
+  const {
+    chapters,
+    rules,
+    subrules,
+  } = props;
 
   return (
     <div>
       {chapters.map((chapter, index) => (
-        <div key={index}>
-          <ChapterTitle chapter={chapter} toc={0}/>
+        <div key={`chapter${chapter.chapterNumber}-${index}`}>
+          <ChapterTitle chapter={chapter} toc={0} />
           <RuleGroup chapter={chapter} rules={rules} subrules={subrules} />
         </div>
       ))}

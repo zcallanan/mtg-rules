@@ -4,9 +4,9 @@ import Spinner from "react-bootstrap/Spinner";
 import rulesParse from "../../../app/rules-parse";
 import formValidation from "../../../app/form-validation";
 import TocSections from "../../components/modules/TocSections";
-import ChapterList from "../../components/modules/ChapterList";
+import SectionList from "../../components/modules/SectionList";
 import Form from "../../components/modules/Form";
-import { Nodes } from "../../../app/types";
+import { Nodes, RouterValues } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -47,9 +47,12 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const router = useRouter();
 
   // Get currentUrl for Form
-  const currentYear = router.query.year;
-  const currentVersion = router.query.version;
-  const currentUrl = `https://media.wizards.com/${currentYear}/downloads/MagicCompRules%${currentVersion}.txt`;
+  const routerValues: RouterValues = {
+    year: router.query.year,
+    version: router.query.version,
+  };
+
+  const currentUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
 
   // Form validation Prop. Validate different ruleset
   const validateUrl = async (url: string): Promise<number> => {
@@ -64,7 +67,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
     const year: number = reYear.test(url) ? url.match(reYear)[0] : 0;
 
     // That ruleset is already displayed
-    if (currentVersion === version && currentYear === year) {
+    if (routerValues.version === version && routerValues.year === year) {
       return 3;
     }
 
@@ -134,7 +137,8 @@ const RuleSetPage = (props: Props): JSX.Element => {
         </div>
         <div>
           <div className={styles.chapterList}>
-            <ChapterList
+            <SectionList
+              sections={sections}
               chapters={chapters}
               rules={rules}
               subrules={subrules}
