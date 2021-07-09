@@ -40,6 +40,7 @@ const parseLink = (
   const regexChapter = /\s+(\d{3}[\s,.;])/gim;
   const regexRule = /(\d{3})\.(\d+)/gim;
   const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
+  const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
   const findMatches = (
     regex: RegExp,
@@ -61,7 +62,7 @@ const parseLink = (
 
       // Remove extra characters from chapter ruleNumbers
       if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
-        matchArray[i] = ruleNumber.replaceAll(/\s|\.|,|;|-|:/g, "");
+        matchArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");
       }
     });
 
@@ -73,18 +74,12 @@ const parseLink = (
   };
 
   // Test if subrule, rule, chapter, and section numbers appear in text
-  if (regexSubrule.test(linkText)) {
-    linkText = findMatches(regexSubrule, linkText);
-  }
-  if (regexRule.test(linkText)) {
-    linkText = findMatches(regexRule, linkText);
-  }
-  if (regexChapter.test(linkText)) {
-    linkText = findMatches(regexChapter, linkText);
-  }
-  if (regexSection.test(linkText)) {
-    linkText = findMatches(regexSection, linkText);
-  }
+  regexes.forEach((regex) => {
+    if (regex.test(linkText)) {
+      linkText = findMatches(regex, linkText);
+    }
+  });
+
   // Return original string or string with links
   return linkText;
 };
