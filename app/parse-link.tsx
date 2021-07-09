@@ -34,6 +34,13 @@ const parseLink = (
 ): string | JSX.element => {
   let linkText: string = exampleText || obj.text;
 
+  // Regex
+  const regexSection = /section\s+(\d)/gim;
+  // Include extra characters to avoid creating links on erroneous numbers, ex: 2011
+  const regexChapter = /\s+(\d{3}[\s,.;])/gim;
+  const regexRule = /(\d{3})\.(\d+)/gim;
+  const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
+
   const findMatches = (
     regex: RegExp,
     text: string | JSX.Element,
@@ -45,10 +52,16 @@ const parseLink = (
       ? exampleText.match(regex)
       : obj.text.match(regex);
 
-    // Remove /section\s+/ from matchArray
-    matchArray.forEach((value, i) => {
-      if (value.includes("section")) {
-        matchArray[i] = value.replace(/section\s+/, "");
+    // Remove extra characters from matchArray
+    matchArray.forEach((ruleNumber, i) => {
+      // Remove /section\s+/ from matchArray
+      if (ruleNumber.includes("section")) {
+        matchArray[i] = ruleNumber.replace(/section\s+/, "");
+      }
+
+      // Remove extra characters from chapter ruleNumbers
+      if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
+        matchArray[i] = ruleNumber.replaceAll(/\s|\.|,|;|-|:/g, "");
       }
     });
 
@@ -59,13 +72,7 @@ const parseLink = (
     return updatedText;
   };
 
-  // Regex
-  const regexSection = /section\s+(\d)/gim;
-  const regexChapter = /(\d{3})/gim;
-  const regexRule = /(\d{3}).(\d+)/gim;
-  const regexSubrule = /(\d{3}).(\d+)([a-z]+)/gim;
-
-  // Test if a chapter, rule, and subrule are referenced in text
+  // Test if subrule, rule, chapter, and section numbers appear in text
   if (regexSubrule.test(linkText)) {
     linkText = findMatches(regexSubrule, linkText);
   }

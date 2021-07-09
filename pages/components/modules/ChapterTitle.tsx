@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Chapter, Section } from "../../../app/types";
+import { Chapter } from "../../../app/types";
 import styles from "../../../styles/ChapterTitle.module.scss";
 
 interface Props {
