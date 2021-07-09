@@ -32,7 +32,7 @@ const SectionList = (props: Props): JSX.Element => {
             {section.sectionNumber}. &nbsp; {section.text}
           </span>
         </section>
-          <ChapterList chapters={chapters} rules={rules} subrules={subrules} />
+          <ChapterList section={section} chapters={chapters} rules={rules} subrules={subrules} />
         </div>
       ))}
     </div>
