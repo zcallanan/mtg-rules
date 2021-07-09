@@ -5,19 +5,29 @@ import { Chapter, Rule, Subrule } from "../../../app/types";
 import styles from "../../../styles/ChapterList.module.scss";
 
 interface Props {
+  section: Section;
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
 }
 
 const ChapterList = (props: Props): JSX.Element => {
-  const { chapters, rules, subrules } = props;
+  const {
+    section,
+    chapters,
+    rules,
+    subrules,
+  } = props;
+
+  const chapterSubset = chapters.filter(
+    (chapter) => chapter.sectionNumber === section.sectionNumber,
+  );
 
   return (
     <div>
-      {chapters.map((chapter, index) => (
-        <div key={index}>
-          <ChapterTitle chapter={chapter} toc={0}/>
+      {chapterSubset.map((chapter, index) => (
+        <div key={`chapter${chapter.chapterNumber}-${index}`}>
+          <ChapterTitle chapter={chapter} toc={0} />
           <RuleGroup chapter={chapter} rules={rules} subrules={subrules} />
         </div>
       ))}

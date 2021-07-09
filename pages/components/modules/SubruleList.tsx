@@ -1,6 +1,8 @@
 import React from "react";
+import { useRouter } from "next/router";
 import Example from "./Example";
-import { Subrule } from "../../../app/types";
+import parseLink from "../../../app/parse-link";
+import { Subrule, RouterValues } from "../../../app/types";
 import styles from "../../../styles/SubruleList.module.scss";
 
 interface Props {
@@ -10,17 +12,27 @@ interface Props {
 const SubruleList = (props: Props): JSX.Element => {
   const { subruleSubset } = props;
 
+  const router = useRouter();
+  const routerValues: RouterValues = {
+    year: router.query.year,
+    version: router.query.version,
+  };
+
   return (
     <div>
       {subruleSubset.map((subrule, index) => (
         <div key={`dv${index}`}>
-          <li
-            key={`subr-${index}`}
-            className={`${styles.subruleText} list-group-item`}
+          <section
+            id={`${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter}`}
           >
-            {subrule.chapterNumber}.{subrule.ruleNumber}
-            {subrule.subruleLetter} &nbsp; {subrule.text}
-          </li>
+            <li
+              key={`subr-${index}`}
+              className={`${styles.subruleText} list-group-item`}
+            >
+              {subrule.chapterNumber}.{subrule.ruleNumber}
+              {subrule.subruleLetter} &nbsp; {parseLink(subrule, routerValues)}
+            </li>
+          </section>
           <Example subrule={subrule} />
         </div>
       ))}

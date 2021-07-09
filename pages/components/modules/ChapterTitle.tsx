@@ -17,22 +17,29 @@ const ChapterTitle = (props: Props): JSX.Element => {
   const { version, year }: string = router.query;
   const pathname = `/${router.pathname.split("/")[1]}/${year}/${version}/`;
 
+  // If toc, return toc chapter title. Else rule list chapter title
   return (
     <div>
-      {toc
-        ? (<li key={`${key}${chapter.chapterNumber}`} className={styles.chapterList}>
+      {toc ? (
+        <li
+          key={`${key}${chapter.chapterNumber}`}
+          className={styles.chapterList}
+        >
           <Link
-            href={"/rules/[year]/[version]"} as={`${pathname}#${chapter.chapterNumber}`}
-            // href={`${pathname}#${chapter.chapterNumber.toString()}`}
+            href={"/rules/[year]/[version]"}
+            as={`${pathname}#${chapter.chapterNumber}`}
             scroll={false}
           >
             <a>
-              <span className={styles.chapterNum}>{chapter.chapterNumber}.</span>
+              <span className={styles.chapterNum}>
+                {chapter.chapterNumber}.
+              </span>
               <span className={styles.chapterTextToc}>{chapter.text}</span>
             </a>
           </Link>
-        </li>)
-        : (<div>
+        </li>
+      ) : (
+        <div>
           <section id={`${chapter.chapterNumber}`}>
             <span
               key={`${key}${chapter.chapterNumber}`}
@@ -41,8 +48,8 @@ const ChapterTitle = (props: Props): JSX.Element => {
               {chapter.chapterNumber}. &nbsp; {chapter.text}
             </span>
           </section>
-        </div>)
-      }
+        </div>
+      )}
     </div>
   );
 };
