@@ -13,6 +13,7 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
+  elRef: HTMLDivElement | null;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -21,18 +22,22 @@ const SectionList = (props: Props): JSX.Element => {
     chapters,
     rules,
     subrules,
+    elRef,
   } = props;
 
   return (
-    <div>
+    <div className={styles.scrollableDiv}>
       {sections.map((section, index) => (
         <div key={`${section.sectionNumber}-${index}`}>
-        <section id={`${section.sectionNumber}`}>
-          <span>
-            {section.sectionNumber}. &nbsp; {section.text}
-          </span>
-        </section>
-          <ChapterList section={section} chapters={chapters} rules={rules} subrules={subrules} />
+          <section id={`${section.sectionNumber}`}>
+          </section>
+          <ChapterList
+            section={section}
+            chapters={chapters}
+            rules={rules}
+            subrules={subrules}
+            elRef={elRef}
+          />
         </div>
       ))}
     </div>

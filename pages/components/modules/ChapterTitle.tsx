@@ -11,7 +11,7 @@ interface Props {
 
 const ChapterTitle = (props: Props): JSX.Element => {
   const { chapter, toc } = props;
-  const key = toc ? "toc" : "c";
+  const key = toc ? "toc" : "chapter";
 
   const router = useRouter();
   const { version, year }: string = router.query;
@@ -40,14 +40,13 @@ const ChapterTitle = (props: Props): JSX.Element => {
         </li>
       ) : (
         <div>
-          <section id={`${chapter.chapterNumber}`}>
-            <span
+          {<span
               key={`${key}${chapter.chapterNumber}`}
               className={styles.chapterText}
             >
               {chapter.chapterNumber}. &nbsp; {chapter.text}
             </span>
-          </section>
+          }
         </div>
       )}
     </div>

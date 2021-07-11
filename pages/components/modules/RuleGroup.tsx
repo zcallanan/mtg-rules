@@ -6,10 +6,16 @@ interface Props {
   chapter: Chapter;
   rules: Rule[];
   subrules: Subrule[];
+  elRef: HTMLDivElement | null;
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
-  const { chapter, rules, subrules } = props;
+  const {
+    chapter,
+    rules,
+    subrules,
+    elRef,
+  } = props;
 
   const ruleSubset = rules.filter(
     (rule) => rule.chapterNumber === chapter.chapterNumber,
@@ -23,6 +29,7 @@ const RuleGroup = (props: Props): JSX.Element => {
             chapter={chapter}
             ruleSubset={ruleSubset}
             subrules={subrules}
+            elRef={elRef}
           />
         </ul>
       )}

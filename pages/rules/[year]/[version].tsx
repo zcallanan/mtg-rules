@@ -1,11 +1,13 @@
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
-import Spinner from "react-bootstrap/Spinner";
+import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/rules-parse";
-import formValidation from "../../../app/form-validation";
 import TocSections from "../../components/modules/TocSections";
 import SectionList from "../../components/modules/SectionList";
-import Form from "../../components/modules/Form";
+import ChapterTitle from "../../components/modules/ChapterTitle";
+import RulesetForm from "../../components/modules/RulesetForm";
+import SearchForm from "../../components/modules/SearchForm";
 import { Nodes, RouterValues } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
@@ -28,7 +30,6 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
     };
   } catch (err) {
     // TODO handle error, should lead to a 404 not found
-    console.log("getStaticProps error");
     console.error(err);
   }
   return null;
@@ -45,47 +46,70 @@ export const getStaticPaths: getStaticPaths = async () => {
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
   const router = useRouter();
+  const [titleNumber, setTitle] = useState(100); // temp
+  const [refArray, setRefArray] = useState([]);
+
+  // RuleList viewport ref
+  const root = useRef();
+
+  // Rule div ref
+  const ref = useRef();
+
+  // Ref to store intersection observer across renders
+  const observer = useRef();
+
+  // Callback to collect an array of rule div refs
+  const setRefs = useCallback(
+    (node) => {
+      ref.current = node;
+      if (node) {
+        setRefArray((oldArray) => [...oldArray, node]);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    observer.current = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        // console.log(entry)
+        // console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
+        // console.log(entry)
+        if (entry && entry.intersectionRect.top === entry.rootBounds.top) {
+          console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
+          console.log(entry)
+          // if (entry.target.nextSibling) {
+          //   console.log(entry)
+          //   console.log(entry.target.nextSibling.outerHTML.match(/(\d{3})/g)[0])
+          // }
+        }
+      },
+      {
+        root,
+        rootMargin: "180px, 0px, 0px, 0px",
+      }),
+    );
+    const { current: currentObserver } = observer;
+
+    if (refArray.length) {
+      refArray.forEach((r) => {
+        currentObserver.observe(r);
+      });
+    }
+
+    return () => currentObserver.disconnect();
+  }, [refArray]);
 
   // Get currentUrl for Form
   const routerValues: RouterValues = {
     year: router.query.year,
     version: router.query.version,
   };
-
   const currentUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
-
-  // Form validation Prop. Validate different ruleset
-  const validateUrl = async (url: string): Promise<number> => {
-    if (!url.length) {
-      // If it is an empty string
-      return 0;
-    }
-
-    const reVersion = /\d{10}/;
-    const version: number = reVersion.test(url) ? url.match(reVersion)[0] : 0;
-    const reYear = /\d{4}/;
-    const year: number = reYear.test(url) ? url.match(reYear)[0] : 0;
-
-    // That ruleset is already displayed
-    if (routerValues.version === version && routerValues.year === year) {
-      return 3;
-    }
-
-    // Offload validation to util fn
-    const result = await formValidation(url, version, year);
-    // Change the displayed ruleset
-    if (result === 200) {
-      // Link validated, update router
-      router.query.version = version;
-      router.query.year = year;
-      // Trigger ISR page update
-      // TODO: Unknown key error in dev, although update works
-      router.push(router);
-      return 1;
-    }
-    // No data found at that link
-    return 4;
-  };
 
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
@@ -123,26 +147,40 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   return (
     <div>
-      <div>
-        <Form
-          validateUrl={validateUrl}
-          initialUrl={currentUrl}
-          formText="Original Ruleset Link:"
-          smallText="Change and submit a link to view a different ruleset."
-        />
-      </div>
-      <div className={styles.views}>
-        <div className={styles.tocSections}>
+      <div className={styles.bodyContainer}>
+        <div className={styles.leftContainer}>
           <TocSections sections={sections} chapters={chapters} />
         </div>
-        <div>
-          <div className={styles.chapterList}>
-            <SectionList
-              sections={sections}
-              chapters={chapters}
-              rules={rules}
-              subrules={subrules}
-            />
+        <div className={styles.rightContainer}>
+          <div className={styles.rightRelative}>
+            <div className={styles.tabsContainer}>
+              <Tabs defaultActiveKey="search">
+                <Tab eventKey="search" title="Search Ruleset">
+                  <div>
+                    <SearchForm />
+                  </div>
+                </Tab>
+                <Tab eventKey="ruleset" title="Load Another Ruleset">
+                  <RulesetForm
+                    initialUrl={currentUrl}
+                    smallText="Change and submit a link to view a different ruleset."
+                  />
+                </Tab>
+              </Tabs>
+            </div>
+            <div className={styles.chapterTitleContainer}>
+              <ChapterTitle chapter={chapters
+                .find((chapter) => chapter.chapterNumber === titleNumber)} toc={0} />
+            </div>
+            <div className={styles.rulesContainer} ref={root}>
+              <SectionList
+                sections={sections}
+                chapters={chapters}
+                rules={rules}
+                subrules={subrules}
+                elRef={setRefs}
+              />
+            </div>
           </div>
         </div>
       </div>

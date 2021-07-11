@@ -1,14 +1,14 @@
 import React from "react";
 import RuleGroup from "./RuleGroup";
-import ChapterTitle from "./ChapterTitle";
 import { Chapter, Rule, Subrule } from "../../../app/types";
 import styles from "../../../styles/ChapterList.module.scss";
 
 interface Props {
-  section: Section;
+  section?: Section;
   chapters: Chapter[];
-  rules: Rule[];
-  subrules: Subrule[];
+  rules?: Rule[];
+  subrules?: Subrule[];
+  elRef: HTMLDivElement | null;
 }
 
 const ChapterList = (props: Props): JSX.Element => {
@@ -17,18 +17,28 @@ const ChapterList = (props: Props): JSX.Element => {
     chapters,
     rules,
     subrules,
+    elRef,
   } = props;
 
-  const chapterSubset = chapters.filter(
-    (chapter) => chapter.sectionNumber === section.sectionNumber,
-  );
+  let chapterSubset: Chapter[];
+  if (section) {
+    chapterSubset = chapters.filter(
+      (chapter) => chapter.sectionNumber === section.sectionNumber,
+    );
+  }
 
   return (
     <div>
       {chapterSubset.map((chapter, index) => (
         <div key={`chapter${chapter.chapterNumber}-${index}`}>
-          <ChapterTitle chapter={chapter} toc={0} />
-          <RuleGroup chapter={chapter} rules={rules} subrules={subrules} />
+          <section id={`${chapter.chapterNumber}`}>
+          </section>
+          <RuleGroup
+            chapter={chapter}
+            rules={rules}
+            subrules={subrules}
+            elRef={elRef}
+          />
         </div>
       ))}
     </div>
