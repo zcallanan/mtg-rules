@@ -81,7 +81,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
         if (entry.isIntersecting) {
           console.log("test", entry)
         }
-        if (entry && entry.intersectionRect.top === entry.rootBounds.bottom) {
+        if (entry && entry.intersectionRect.top === entry.rootBounds.top) {
           console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
           console.log(entry)
           // if (entry.target.nextSibling) {
@@ -153,7 +153,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
         <div className={styles.leftContainer}>
           <TocSections sections={sections} chapters={chapters} />
         </div>
-        <div className={styles.rightContainer}>
+        <div className={styles.rightContainer} ref={root}>
           <div className={styles.rightRelative}>
             <div className={styles.tabsContainer}>
               <Tabs defaultActiveKey="search">
@@ -181,7 +181,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
                 rules={rules}
                 subrules={subrules}
                 elRef={setRefs}
-                root={root}
+                // root={root}
               />
             </div>
           </div>

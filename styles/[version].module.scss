@@ -43,7 +43,8 @@
 .rulesContainer {
   position: absolute;
   height: 75vh;
-  overflow: hidden;
+  // overflow: hidden;
+  overflow-y: scroll;
   z-index: 0;
   top: 180px;
 }
