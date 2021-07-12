@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
-// import useOnScreen from "./useOnScreen";
 import parseLink from "../../../app/parse-link";
 import { Rule, Subrule, RouterValues } from "../../../app/types";
 import styles from "../../../styles/RuleList.module.scss";

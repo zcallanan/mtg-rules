@@ -78,8 +78,10 @@ const RuleSetPage = (props: Props): JSX.Element => {
       (entries) => entries.forEach((entry) => {
         // console.log(entry)
         // console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
-        // console.log(entry)
-        if (entry && entry.intersectionRect.top === entry.rootBounds.top) {
+        if (entry.isIntersecting) {
+          console.log("test", entry)
+        }
+        if (entry && entry.intersectionRect.top === entry.rootBounds.bottom) {
           console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
           console.log(entry)
           // if (entry.target.nextSibling) {
@@ -90,7 +92,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
       },
       {
         root,
-        rootMargin: "180px, 0px, 0px, 0px",
+        rootMargin: "0px, 0px, -100%, 0px",
       }),
     );
     const { current: currentObserver } = observer;
@@ -172,13 +174,14 @@ const RuleSetPage = (props: Props): JSX.Element => {
               <ChapterTitle chapter={chapters
                 .find((chapter) => chapter.chapterNumber === titleNumber)} toc={0} />
             </div>
-            <div className={styles.rulesContainer} ref={root}>
+            <div className={styles.rulesContainer}>
               <SectionList
                 sections={sections}
                 chapters={chapters}
                 rules={rules}
                 subrules={subrules}
                 elRef={setRefs}
+                root={root}
               />
             </div>
           </div>

@@ -14,6 +14,7 @@ interface Props {
   rules: Rule[];
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
+  root: HTMLDivElement | null;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -23,10 +24,11 @@ const SectionList = (props: Props): JSX.Element => {
     rules,
     subrules,
     elRef,
+    root,
   } = props;
 
   return (
-    <div className={styles.scrollableDiv}>
+    <div className={styles.scrollableDiv} ref={root}>
       {sections.map((section, index) => (
         <div key={`${section.sectionNumber}-${index}`}>
           <section id={`${section.sectionNumber}`}>
