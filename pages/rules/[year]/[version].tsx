@@ -47,7 +47,9 @@ export const getStaticPaths: getStaticPaths = async () => {
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
   const router = useRouter();
-  const [titleNumber, setTitle] = useState(100); // temp
+
+  // Determine Rulelist chapter title from ToC anchor or scrolling
+  const [titleNumber, setTitle] = useState(100);
   const [refArray, setRefArray] = useState([]);
 
   // RuleList viewport ref
@@ -61,7 +63,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
     (node) => {
       ref.current = node;
       if (node && !refArray.includes(node)) {
-        console.log(node)
         setRefArray((oldArray) => [...oldArray, node]);
       }
     },
@@ -70,17 +71,10 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   const root: RefObject<HTMLDivElement> = rootRef.current || null;
   const title = useTopRule(refArray, root) || 100;
-  console.log(title)
   if (titleNumber !== title) {
+    console.log("title:", title)
     setTitle(title);
   }
-
-  // Get currentUrl for Form
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
-  const currentUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
 
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
@@ -133,7 +127,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
                 </Tab>
                 <Tab eventKey="ruleset" title="Load Another Ruleset">
                   <RulesetForm
-                    initialUrl={currentUrl}
                     smallText="Change and submit a link to view a different ruleset."
                   />
                 </Tab>

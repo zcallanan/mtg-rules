@@ -1,27 +1,33 @@
-import React from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import formValidation from "../../../app/form-validation";
 import styles from "../../../styles/RulesetForm.module.scss";
 
 interface Props {
-  initialUrl: string;
   smallText: string;
 }
 
 const RulesetForm = (props: Props): JSX.Element => {
-  const {
-    initialUrl,
-    smallText,
-  } = props;
+  const { smallText } = props;
 
   // Create local state to validate a submission
-  const [url, setUrl] = React.useState(initialUrl);
-  const router = useRouter();
+  const [url, setUrl] = useState("");
 
+  // Get url query values
+  const router = useRouter();
   const routerValues: RouterValues = {
     year: router.query.year,
     version: router.query.version,
   };
+  const initUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
+
+  // Set initial url on page load
+  useEffect(() => {
+    setUrl(initUrl);
+  }, [initUrl]);
+
+  // Input element ref
+  const input = useRef<HTMLInputElement>();
 
   const validateUrl = async (rulesetUrl: string): Promise<number> => {
     if (!rulesetUrl.length) {
@@ -59,36 +65,35 @@ const RulesetForm = (props: Props): JSX.Element => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     // Select element to return a custom validation message
-    const input = document.getElementById(`${styles.ruleset}`);
 
     // Reset to default or validation is wrong after going invalid > valid input
-    input.setCustomValidity("");
+    input.current.setCustomValidity("");
 
     // Validate url
     const result = await validateUrl(url);
     // Set custom validation messages
     if (result === 0) {
-      input.setCustomValidity(
+      input.current.setCustomValidity(
         "Field empty! Please enter a valid ruleset link.",
       );
     } else if (result === 2) {
-      input.setCustomValidity(
+      input.current.setCustomValidity(
         "Invalid ruleset link! Please enter a valid link.",
       );
     } else if (result === 3) {
-      input.setCustomValidity(
+      input.current.setCustomValidity(
         "The rules found at this link are displayed below.",
       );
     } else if (result === 4) {
-      input.setCustomValidity(
+      input.current.setCustomValidity(
         "Alas, no ruleset was found at that link. Please try another.",
       );
     } else if (result === 1) {
-      input.setCustomValidity("");
+      input.current.setCustomValidity("");
     }
     // Display custom validation message
-    if (!input.checkValidity()) {
-      input.reportValidity();
+    if (!input.current.checkValidity()) {
+      input.current.reportValidity();
     }
   };
 
@@ -102,6 +107,7 @@ const RulesetForm = (props: Props): JSX.Element => {
     <form onSubmit={handleSubmit} noValidate>
       <div className={styles.inputContainer}>
         <input
+          ref={input}
           onChange={handleChange}
           value={url}
           id={styles.input}

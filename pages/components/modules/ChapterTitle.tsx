@@ -31,10 +31,14 @@ const ChapterTitle = (props: Props): JSX.Element => {
             scroll={false}
           >
             <a>
-              <span className={styles.chapterNum}>
+              <span
+                className={styles.chapterNum}
+              >
                 {chapter.chapterNumber}.
               </span>
-              <span className={styles.chapterTextToc}>{chapter.text}</span>
+              <span
+                className={styles.chapterTextToc}
+              >{chapter.text}</span>
             </a>
           </Link>
         </li>
