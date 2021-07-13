@@ -3,6 +3,7 @@ import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/rules-parse";
+import useTopRule from "../../components/modules/useTopRule";
 import TocSections from "../../components/modules/TocSections";
 import SectionList from "../../components/modules/SectionList";
 import ChapterTitle from "../../components/modules/ChapterTitle";
@@ -50,61 +51,29 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const [refArray, setRefArray] = useState([]);
 
   // RuleList viewport ref
-  const root = useRef();
+  const rootRef = useRef<HTMLDivElement>();
 
   // Rule div ref
-  const ref = useRef();
-
-  // Ref to store intersection observer across renders
-  const observer = useRef();
+  const ref = useRef<HTMLDivElement>();
 
   // Callback to collect an array of rule div refs
   const setRefs = useCallback(
     (node) => {
       ref.current = node;
-      if (node) {
+      if (node && !refArray.includes(node)) {
+        console.log(node)
         setRefArray((oldArray) => [...oldArray, node]);
       }
     },
-    [],
+    [refArray],
   );
 
-  useEffect(() => {
-    if (observer.current) {
-      observer.current.disconnect();
-    }
-
-    observer.current = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => {
-        // console.log(entry)
-        // console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
-        if (entry.isIntersecting) {
-          console.log("test", entry)
-        }
-        if (entry && entry.intersectionRect.top === entry.rootBounds.top) {
-          console.log(entry.target.outerHTML.match(/(\d{3})/g)[0]);
-          console.log(entry)
-          // if (entry.target.nextSibling) {
-          //   console.log(entry)
-          //   console.log(entry.target.nextSibling.outerHTML.match(/(\d{3})/g)[0])
-          // }
-        }
-      },
-      {
-        root,
-        rootMargin: "0px, 0px, -100%, 0px",
-      }),
-    );
-    const { current: currentObserver } = observer;
-
-    if (refArray.length) {
-      refArray.forEach((r) => {
-        currentObserver.observe(r);
-      });
-    }
-
-    return () => currentObserver.disconnect();
-  }, [refArray]);
+  const root: RefObject<HTMLDivElement> = rootRef.current || null;
+  const title = useTopRule(refArray, root) || 100;
+  console.log(title)
+  if (titleNumber !== title) {
+    setTitle(title);
+  }
 
   // Get currentUrl for Form
   const routerValues: RouterValues = {
@@ -153,7 +122,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
         <div className={styles.leftContainer}>
           <TocSections sections={sections} chapters={chapters} />
         </div>
-        <div className={styles.rightContainer} ref={root}>
+        <div className={styles.rightContainer}>
           <div className={styles.rightRelative}>
             <div className={styles.tabsContainer}>
               <Tabs defaultActiveKey="search">
@@ -181,7 +150,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
                 rules={rules}
                 subrules={subrules}
                 elRef={setRefs}
-                // root={root}
+                root={rootRef}
               />
             </div>
           </div>
