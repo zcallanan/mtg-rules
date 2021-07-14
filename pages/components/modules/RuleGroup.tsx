@@ -1,4 +1,3 @@
-import React from "react";
 import { Chapter, Rule, Subrule } from "../../../app/types";
 import RuleList from "./RuleList";
 

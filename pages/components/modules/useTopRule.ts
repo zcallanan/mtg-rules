@@ -7,9 +7,9 @@ import {
 } from "react";
 
 const useTopRule = (
-  refArray: RefObject<HTMLElement>[],
+  refArray: RefObject<HTMLElement>[] = null,
   root: RefObject<HTMLDivElement> | null = null,
-): number => {
+): number | void => {
   const observerRef = useRef<IntersectionObserver>(null);
   const [ruleNumber, setRuleNumber] = useState();
 
@@ -37,11 +37,17 @@ const useTopRule = (
     }
 
     // Observe all rule ref contents
-    console.log(refArray);
     refArray.forEach((r) => {
       observerRef.current.observe(r);
     });
   }, [refArray]);
+
+  // Cleanup
+  useEffect(() => () => {
+    observerRef.current.disconnect();
+  }, []);
+
+  // Return
   return ruleNumber;
 };
 

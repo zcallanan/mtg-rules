@@ -1,4 +1,3 @@
-import React from "react";
 import ChapterList from "./ChapterList";
 import {
   Section,

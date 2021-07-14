@@ -1,4 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  FormEvent,
+  ChangeEvent
+} from "react";
 import { useRouter } from "next/router";
 import formValidation from "../../../app/form-validation";
 import styles from "../../../styles/RulesetForm.module.scss";
@@ -62,7 +68,7 @@ const RulesetForm = (props: Props): JSX.Element => {
     return 4;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     // Select element to return a custom validation message
 
@@ -97,7 +103,7 @@ const RulesetForm = (props: Props): JSX.Element => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     // Set value to state
     setUrl(e.target.value);
   };

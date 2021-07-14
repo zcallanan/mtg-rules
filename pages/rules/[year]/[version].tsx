@@ -9,7 +9,7 @@ import SectionList from "../../components/modules/SectionList";
 import ChapterTitle from "../../components/modules/ChapterTitle";
 import RulesetForm from "../../components/modules/RulesetForm";
 import SearchForm from "../../components/modules/SearchForm";
-import { Nodes, RouterValues } from "../../../app/types";
+import { Nodes } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -49,16 +49,22 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const router = useRouter();
 
   // Determine Rulelist chapter title from ToC anchor or scrolling
-  const [titleNumber, setTitle] = useState(100);
   const [refArray, setRefArray] = useState([]);
+  const [throttle, setThrottle] = useState(false);
+  const [chapterValues, setChapterValues] = useState({
+    chapterNumber: 100,
+  });
 
-  // RuleList viewport ref
+  // SectionList viewport ref
   const rootRef = useRef<HTMLDivElement>();
+
+  // SectionList rootRef.current, observed element
+  const root: RefObject<HTMLDivElement> = rootRef.current || null;
 
   // Rule div ref
   const ref = useRef<HTMLDivElement>();
 
-  // Callback to collect an array of rule div refs
+  // Callback to collect an array of rule div refs to observe
   const setRefs = useCallback(
     (node) => {
       ref.current = node;
@@ -69,12 +75,78 @@ const RuleSetPage = (props: Props): JSX.Element => {
     [refArray],
   );
 
-  const root: RefObject<HTMLDivElement> = rootRef.current || null;
-  const title = useTopRule(refArray, root) || 100;
-  if (titleNumber !== title) {
-    console.log("title:", title)
-    setTitle(title);
+  /*
+    When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
+    This value is overriden by the callback on render, unless the update is
+    throttled, callback chapterNumber saved to state, and a condition prevents the
+    callback chapterNumber from being saved by setTitle.
+  */
+
+  // Apply throttle
+  useEffect(() => {
+    if (throttle) {
+      setTimeout(() => {
+        setThrottle(!throttle);
+      }, 1500);
+    }
+  }, [throttle]);
+
+  // Save the initial url hash value to state
+  useEffect(() => {
+    // Get the url hash value
+    const anchorValue = router.asPath.split("#");
+    // Set the initial hash value
+    setChapterValues((prevValues) => ({
+      ...prevValues,
+      init: Number(anchorValue[1]),
+    }));
+  // Eslint complains, but this should only be done once at init, so [] included
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Callback that observes rule divs for intersection with the top of viewport
+  const chapterNumber = useTopRule(refArray, root) || chapterValues.init;
+
+  // Save chapter number to state, used by ChapterTitle chapter attr
+  const updateTitle = (chapterN): void => {
+    if (!throttle && chapterValues.chapterNumber !== chapterN) {
+      setChapterValues((prevValues) => ({
+        ...prevValues,
+        chapterNumber: chapterN,
+      }));
+      setThrottle(true);
+    }
+  };
+
+  // ToC chapter title click prop
+  const tocOnClick = (chapterN: number): number => {
+    updateTitle(chapterN);
+  };
+
+  let callbackNumber: number;
+
+  if (!throttle && chapterNumber) {
+    callbackNumber = chapterNumber;
   }
+
+  // Update title with callback return if it was not returned while throttled
+  if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
+    updateTitle(callbackNumber);
+  }
+
+  // TODO: Shallow routing a hash forces a new render?
+  // // Update url hash with chapterNumber
+  // useEffect(() => {
+  //   if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
+  //     const anchorValue = router.asPath.split("#");
+  //     const newPath = `${anchorValue[0]}#${callbackNumber}`;
+
+  //     // If it is a new path, then update url
+  //     if (newPath !== router.asPath) {
+  //       router.push(`#${callbackNumber}`, undefined, { shallow: true });
+  //     }
+  //   }
+  // }, [router, callbackNumber, chapterValues.chapterNumber]);
 
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
@@ -105,16 +177,16 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const subrules = nodes.filter((node) => node.type === "subrule");
 
   // DEBUG values
-  console.log(sections);
-  console.log(chapters);
-  console.log(rules);
-  console.log(subrules);
+  // console.log(sections);
+  // console.log(chapters);
+  // console.log(rules);
+  // console.log(subrules);
 
   return (
     <div>
       <div className={styles.bodyContainer}>
         <div className={styles.leftContainer}>
-          <TocSections sections={sections} chapters={chapters} />
+          <TocSections sections={sections} chapters={chapters} tocOnClick={tocOnClick}/>
         </div>
         <div className={styles.rightContainer}>
           <div className={styles.rightRelative}>
@@ -134,7 +206,8 @@ const RuleSetPage = (props: Props): JSX.Element => {
             </div>
             <div className={styles.chapterTitleContainer}>
               <ChapterTitle chapter={chapters
-                .find((chapter) => chapter.chapterNumber === titleNumber)} toc={0} />
+                .find((chapter) => chapter
+                  .chapterNumber === chapterValues.chapterNumber)} toc={0} />
             </div>
             <div className={styles.rulesContainer}>
               <SectionList

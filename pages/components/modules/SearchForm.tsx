@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import styles from "../../../styles/SearchForm.module.scss";
 
 interface Props {
@@ -11,9 +11,9 @@ const SearchForm = (props: Props): JSX.Element => {
   // } = props;
 
   // Create local state to validate a submission
-  const [query, setQuery] = React.useState();
+  const [query, setQuery] = useState();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     // Select element to return a custom validation message
     const input = document.getElementById(`${styles.search}`);
@@ -49,7 +49,7 @@ const SearchForm = (props: Props): JSX.Element => {
   //   }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     // Set value to state
     setSearch(e.target.value);
   };
