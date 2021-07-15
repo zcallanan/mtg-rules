@@ -18,7 +18,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
   // If toc, return toc chapter title. Else rule list chapter title
   return (
     <div>
-      {toc ? (
+      { toc ? (
         <li
           key={`${key}${chapter.chapterNumber}`}
           className={styles.chapterList}

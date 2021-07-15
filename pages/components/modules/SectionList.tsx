@@ -13,7 +13,7 @@ interface Props {
   rules: Rule[];
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
-  // root: HTMLDivElement | null;
+  root: HTMLDivElement | null;
 }
 
 const SectionList = (props: Props): JSX.Element => {

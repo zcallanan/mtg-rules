@@ -9,7 +9,8 @@ import SectionList from "../../components/modules/SectionList";
 import ChapterTitle from "../../components/modules/ChapterTitle";
 import RulesetForm from "../../components/modules/RulesetForm";
 import SearchForm from "../../components/modules/SearchForm";
-import { Nodes } from "../../../app/types";
+import Custom404 from "../../404";
+import { Nodes, Chapter } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -50,9 +51,11 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   // Determine Rulelist chapter title from ToC anchor or scrolling
   const [refArray, setRefArray] = useState([]);
-  const [throttle, setThrottle] = useState(false);
+  const [pause, setPause] = useState(false);
+  const anchorArray = router.asPath.split("#");
   const [chapterValues, setChapterValues] = useState({
     chapterNumber: 100,
+    hiddenAnchor: anchorArray[1] || 100,
   });
 
   // SectionList viewport ref
@@ -78,27 +81,25 @@ const RuleSetPage = (props: Props): JSX.Element => {
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
     This value is overriden by the callback on render, unless the update is
-    throttled, callback chapterNumber saved to state, and a condition prevents the
+    paused, callback chapterNumber saved to state, and a condition prevents the
     callback chapterNumber from being saved by setTitle.
   */
 
-  // Apply throttle
+  // Apply pause
   useEffect(() => {
-    if (throttle) {
+    if (pause) {
       setTimeout(() => {
-        setThrottle(!throttle);
+        setPause(!pause);
       }, 1500);
     }
-  }, [throttle]);
+  }, [pause]);
 
   // Save the initial url hash value to state
   useEffect(() => {
-    // Get the url hash value
-    const anchorValue = router.asPath.split("#");
     // Set the initial hash value
     setChapterValues((prevValues) => ({
       ...prevValues,
-      init: Number(anchorValue[1]),
+      init: (Number(anchorArray[1]) || 100),
     }));
   // Eslint complains, but this should only be done once at init, so [] included
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,32 +108,82 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Callback that observes rule divs for intersection with the top of viewport
   const chapterNumber = useTopRule(refArray, root) || chapterValues.init;
 
-  // Save chapter number to state, used by ChapterTitle chapter attr
-  const updateTitle = (chapterN): void => {
-    if (!throttle && chapterValues.chapterNumber !== chapterN) {
-      setChapterValues((prevValues) => ({
-        ...prevValues,
-        chapterNumber: chapterN,
-      }));
-      setThrottle(true);
-    }
-  };
-
-  // ToC chapter title click prop
-  const tocOnClick = (chapterN: number): number => {
-    updateTitle(chapterN);
-  };
-
   let callbackNumber: number;
 
-  if (!throttle && chapterNumber) {
+  if (!pause && chapterNumber) {
     callbackNumber = chapterNumber;
   }
 
-  // Update title with callback return if it was not returned while throttled
-  if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
-    updateTitle(callbackNumber);
-  }
+  // ToC chapter title click prop
+  const tocOnClick = (chapterN: number): number => {
+    let source: string;
+    // Initiate a pause as chapterNumber is supplied by prop
+    setPause(true);
+    const cValue = chapterValues.chapterNumber;
+    if (cValue && chapterN < cValue) {
+      source = "prop decrease";
+    } else if (cValue && chapterN > cValue) {
+      source = "prop increase";
+    }
+
+    // Save values
+    if (chapterValues.chapterNumber !== chapterN) {
+      setChapterValues((prevValues) => ({
+        ...prevValues,
+        currentCallback: callbackNumber,
+        chapterNumber: chapterN,
+        source,
+        hiddenAnchor: chapterN,
+      }));
+    }
+  };
+
+  /*
+    Update ChapterTitle # if:
+      - callbackNumber has value
+      - Updates are not paused after a change from toc prop
+      - Current chapterNumber is different from # returned by callback
+      - Callback # saved during pause is different from the latest callback #
+  */
+
+  useEffect(() => {
+    // TODO: This does not recognize initial change of url hash value
+    const anchorNumber = Number(anchorArray[1]);
+    if (
+      anchorNumber
+      && anchorNumber !== chapterValues.hiddenAnchor
+      && anchorNumber !== chapterValues.chapterNumber
+    ) {
+      setChapterValues((prevValues) => ({
+        ...prevValues,
+        chapterNumber: anchorNumber,
+        source: "anchor tag",
+        hiddenAnchor: anchorNumber,
+      }));
+    } else if (callbackNumber
+      && !pause
+      && chapterValues.chapterNumber !== callbackNumber
+      && chapterValues.currentCallback !== callbackNumber
+    ) {
+      let c: number;
+      const valueSource = chapterValues.source;
+      if (valueSource === "prop decrease") {
+        c = callbackNumber + 1;
+      } else {
+        c = callbackNumber;
+      }
+      if (c && c !== chapterValues.chapterNumber) {
+        setChapterValues((prevValues) => ({
+          ...prevValues,
+          source: "callback",
+          chapterNumber: c,
+          currentCallback: c,
+          hiddenAnchor: c,
+        }));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.asPath, callbackNumber, pause]);
 
   // TODO: Shallow routing a hash forces a new render?
   // // Update url hash with chapterNumber
@@ -176,14 +227,18 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const rules = nodes.filter((node) => node.type === "rule");
   const subrules = nodes.filter((node) => node.type === "subrule");
 
-  // DEBUG values
-  // console.log(sections);
-  // console.log(chapters);
-  // console.log(rules);
-  // console.log(subrules);
+  // Don't try to scroll to an invalid chapter from anchor tag
+  const validateChapter = (chapterN: number): Chapter | undefined => chapters
+    .find((chapter) => chapter.chapterNumber === chapterN);
+
+  // If falsy, 404
+  const result = validateChapter(chapterValues.chapterNumber);
 
   return (
     <div>
+    { !result ? (
+      <Custom404 reason={"invalid-hash"} value={chapterValues.chapterNumber}/>
+    ) : (
       <div className={styles.bodyContainer}>
         <div className={styles.leftContainer}>
           <TocSections sections={sections} chapters={chapters} tocOnClick={tocOnClick}/>
@@ -205,9 +260,8 @@ const RuleSetPage = (props: Props): JSX.Element => {
               </Tabs>
             </div>
             <div className={styles.chapterTitleContainer}>
-              <ChapterTitle chapter={chapters
-                .find((chapter) => chapter
-                  .chapterNumber === chapterValues.chapterNumber)} toc={0} />
+              <ChapterTitle chapter={chapters.find((chapter) => chapter
+                .chapterNumber === chapterValues.chapterNumber)} toc={0} />
             </div>
             <div className={styles.rulesContainer}>
               <SectionList
@@ -222,6 +276,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
           </div>
         </div>
       </div>
+    )}
     </div>
   );
 };
