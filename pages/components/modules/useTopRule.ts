@@ -16,7 +16,7 @@ const useTopRule = (
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
       console.log(entry);
-      setRuleNumber(Number(entry.target.outerHTML.match(/(\d{3})/g)[0]));
+      setRuleNumber(Number(entry.target.outerText.match(/(\d{3})/g)[0]));
     }
   }, []);
 

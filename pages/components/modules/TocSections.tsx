@@ -6,10 +6,16 @@ interface Props {
   sections: Section[];
   chapters: Chapter[];
   tocOnClick: (chapterNumber: number) => number;
+  tocTitleRef: HTMLElement | null;
 }
 
 const TocSections = (props: Props): JSX.Element => {
-  const { sections, chapters, tocOnClick } = props;
+  const {
+    sections,
+    chapters,
+    tocOnClick,
+    tocTitleRef,
+  } = props;
 
   return (
     <div>
@@ -23,6 +29,7 @@ const TocSections = (props: Props): JSX.Element => {
             chapters={chapters}
             toc="1"
             tocOnClick={tocOnClick}
+            tocTitleRef={tocTitleRef}
           />
         </div>
       ))}

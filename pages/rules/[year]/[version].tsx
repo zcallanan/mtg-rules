@@ -50,12 +50,14 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const router = useRouter();
 
   // Determine Rulelist chapter title from ToC anchor or scrolling
-  const [refArray, setRefArray] = useState([]);
+  const [refRuleArray, setRefRuleArray] = useState([]);
+  const [refTocArray, setRefTocArray] = useState([]);
   const [pause, setPause] = useState(false);
   const anchorArray = router.asPath.split("#");
   const [chapterValues, setChapterValues] = useState({
     chapterNumber: 100,
     hiddenAnchor: anchorArray[1] || 100,
+    source: "init",
   });
 
   // SectionList viewport ref
@@ -64,18 +66,24 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // SectionList rootRef.current, observed element
   const root: RefObject<HTMLDivElement> = rootRef.current || null;
 
-  // Rule div ref
-  const ref = useRef<HTMLDivElement>();
-
   // Callback to collect an array of rule div refs to observe
-  const setRefs = useCallback(
+  const setRuleRefs = useCallback(
     (node) => {
-      ref.current = node;
-      if (node && !refArray.includes(node)) {
-        setRefArray((oldArray) => [...oldArray, node]);
+      if (node && !refRuleArray.includes(node)) {
+        setRefRuleArray((oldArray) => [...oldArray, node]);
       }
     },
-    [refArray],
+    [refRuleArray],
+  );
+
+  // Callback to collect an array of toc chapterTitle div refs to scroll to
+  const setTocRefs = useCallback(
+    (node) => {
+      if (node && !refTocArray.includes(node)) {
+        setRefTocArray((oldArray) => [...oldArray, node]);
+      }
+    },
+    [refTocArray],
   );
 
   /*
@@ -106,7 +114,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   }, []);
 
   // Callback that observes rule divs for intersection with the top of viewport
-  const chapterNumber = useTopRule(refArray, root) || chapterValues.init;
+  const chapterNumber = useTopRule(refRuleArray, root) || chapterValues.init;
 
   let callbackNumber: number;
 
@@ -134,6 +142,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
         chapterNumber: chapterN,
         source,
         hiddenAnchor: chapterN,
+        propValue: chapterN,
       }));
     }
   };
@@ -146,6 +155,15 @@ const RuleSetPage = (props: Props): JSX.Element => {
       - Callback # saved during pause is different from the latest callback #
   */
 
+  // Scroll the ToC list to the anchor tag chapter title
+  useEffect(() => {
+    if (chapterValues.source === "anchor tag") {
+      const re = new RegExp(`(${chapterValues.chapterNumber})`);
+      const element = refTocArray.find((elem) => re.test(elem.outerText));
+      element.scrollIntoView();
+    }
+  }, [refTocArray, chapterValues.source, chapterValues.chapterNumber]);
+
   useEffect(() => {
     // TODO: This does not recognize initial change of url hash value
     const anchorNumber = Number(anchorArray[1]);
@@ -153,6 +171,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
       anchorNumber
       && anchorNumber !== chapterValues.hiddenAnchor
       && anchorNumber !== chapterValues.chapterNumber
+      && chapterValues.source === "init"
     ) {
       setChapterValues((prevValues) => ({
         ...prevValues,
@@ -166,20 +185,31 @@ const RuleSetPage = (props: Props): JSX.Element => {
       && chapterValues.currentCallback !== callbackNumber
     ) {
       let c: number;
-      const valueSource = chapterValues.source;
-      if (valueSource === "prop decrease") {
-        c = callbackNumber + 1;
-      } else {
-        c = callbackNumber;
-      }
-      if (c && c !== chapterValues.chapterNumber) {
+      const { source, propValue } = chapterValues;
+      const updateState = (n: number): void => {
         setChapterValues((prevValues) => ({
           ...prevValues,
           source: "callback",
-          chapterNumber: c,
-          currentCallback: c,
-          hiddenAnchor: c,
+          chapterNumber: n,
+          currentCallback: n,
+          hiddenAnchor: n,
         }));
+      };
+      if (source === "prop decrease") {
+        /*
+          When the prop returns a # less than the state chapterNumber, the observer
+          callback returns the wrong value. In this case use propValue instead.
+        */
+        c = propValue;
+        if (c) {
+          updateState(c);
+        }
+      } else {
+        // callbackNumber is correct, so use it
+        c = callbackNumber;
+        if (c && c !== chapterValues.chapterNumber) {
+          updateState(c);
+        }
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -241,7 +271,12 @@ const RuleSetPage = (props: Props): JSX.Element => {
     ) : (
       <div className={styles.bodyContainer}>
         <div className={styles.leftContainer}>
-          <TocSections sections={sections} chapters={chapters} tocOnClick={tocOnClick}/>
+          <TocSections
+            sections={sections}
+            chapters={chapters}
+            tocOnClick={tocOnClick}
+            tocTitleRef={setTocRefs}
+          />
         </div>
         <div className={styles.rightContainer}>
           <div className={styles.rightRelative}>
@@ -269,7 +304,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
                 chapters={chapters}
                 rules={rules}
                 subrules={subrules}
-                elRef={setRefs}
+                elRef={setRuleRefs}
                 root={rootRef}
               />
             </div>

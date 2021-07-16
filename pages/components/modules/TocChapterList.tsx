@@ -7,6 +7,7 @@ interface Props {
   sectionNumber: number;
   toc: number;
   tocOnClick: (chapterNumber: number) => number;
+  tocTitleRef: HTMLElement | null;
 }
 
 const TocChapterList = (props: Props): JSX.Element => {
@@ -14,7 +15,8 @@ const TocChapterList = (props: Props): JSX.Element => {
     chapters,
     sectionNumber,
     toc,
-    tocOnClick
+    tocOnClick,
+    tocTitleRef,
   } = props;
 
   const chapterSubset = chapters.filter((chapter) => chapter.sectionNumber === sectionNumber);
@@ -23,7 +25,12 @@ const TocChapterList = (props: Props): JSX.Element => {
     <div className={styles.tocChapters}>
       {chapterSubset.map((chapter, index) => (
         <ul className={"list-group"} key={`titles-${index}`}>
-          <ChapterTitle chapter={chapter} toc={toc} tocOnClick={tocOnClick} />
+          <ChapterTitle
+            chapter={chapter}
+            toc={toc}
+            tocOnClick={tocOnClick}
+            tocTitleRef={tocTitleRef}
+          />
         </ul>
       ))}
     </div>

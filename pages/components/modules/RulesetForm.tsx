@@ -3,7 +3,7 @@ import {
   useState,
   useEffect,
   FormEvent,
-  ChangeEvent
+  ChangeEvent,
 } from "react";
 import { useRouter } from "next/router";
 import formValidation from "../../../app/form-validation";

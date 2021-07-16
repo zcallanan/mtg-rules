@@ -6,11 +6,17 @@ import styles from "../../../styles/ChapterTitle.module.scss";
 interface Props {
   chapter: Chapter;
   toc: number;
-  tocOnClick: (chapterNumber: number) => number;
+  tocOnClick?: (chapterNumber: number) => number;
+  tocTitleRef?: HTMLElement | null;
 }
 
 const ChapterTitle = (props: Props): JSX.Element => {
-  const { chapter, toc, tocOnClick } = props;
+  const {
+    chapter,
+    toc,
+    tocOnClick,
+    tocTitleRef,
+  } = props;
   const key = toc ? "toc" : "chapter";
 
   const router = useRouter();
@@ -19,29 +25,31 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       { toc ? (
-        <li
-          key={`${key}${chapter.chapterNumber}`}
-          className={styles.chapterList}
-        >
-          <Link
-            href={"/rules/[year]/[version]"}
-            as={`${router.asPath.split("#")[0]}#${chapter.chapterNumber}`}
-            scroll={false}
+        <div ref={tocTitleRef}>
+          <li
+            key={`${key}${chapter.chapterNumber}`}
+            className={styles.chapterList}
           >
-            <a>
-              <span
-                className={styles.chapterNum}
-                onClick={() => tocOnClick(chapter.chapterNumber)}
-              >
-                {chapter.chapterNumber}.
-              </span>
-              <span
-                className={styles.chapterTextToc}
-                onClick={() => tocOnClick(chapter.chapterNumber)}
-              >{chapter.text}</span>
-            </a>
-          </Link>
-        </li>
+            <Link
+              href={"/rules/[year]/[version]"}
+              as={`${router.asPath.split("#")[0]}#${chapter.chapterNumber}`}
+              scroll={false}
+            >
+              <a>
+                <span
+                  className={styles.chapterNum}
+                  onClick={() => tocOnClick(chapter.chapterNumber)}
+                >
+                  {chapter.chapterNumber}.
+                </span>
+                <span
+                  className={styles.chapterTextToc}
+                  onClick={() => tocOnClick(chapter.chapterNumber)}
+                >{chapter.text}</span>
+              </a>
+            </Link>
+          </li>
+        </div>
       ) : (
         <div>
           {<span
