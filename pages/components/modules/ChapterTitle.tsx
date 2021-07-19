@@ -21,31 +21,33 @@ const ChapterTitle = (props: Props): JSX.Element => {
 
   const router = useRouter();
 
+  const chapterObj = chapter || { chapterNumber: 0, text: "" };
+
   // If toc, return toc chapter title. Else rule list chapter title
   return (
     <div>
       { toc ? (
         <div ref={tocTitleRef}>
           <li
-            key={`${key}${chapter.chapterNumber}`}
+            key={`${key}${chapterObj.chapterNumber}`}
             className={styles.chapterList}
           >
             <Link
               href={"/rules/[year]/[version]"}
-              as={`${router.asPath.split("#")[0]}#${chapter.chapterNumber}`}
+              as={`${router.asPath.split("#")[0]}#${chapterObj.chapterNumber}`}
               scroll={false}
             >
               <a>
                 <span
                   className={styles.chapterNum}
-                  onClick={() => tocOnClick(chapter.chapterNumber)}
+                  onClick={() => tocOnClick(chapterObj.chapterNumber)}
                 >
-                  {chapter.chapterNumber}.
+                  {chapterObj.chapterNumber}.
                 </span>
                 <span
                   className={styles.chapterTextToc}
-                  onClick={() => tocOnClick(chapter.chapterNumber)}
-                >{chapter.text}</span>
+                  onClick={() => tocOnClick(chapterObj.chapterNumber)}
+                >{chapterObj.text}</span>
               </a>
             </Link>
           </li>
@@ -53,10 +55,10 @@ const ChapterTitle = (props: Props): JSX.Element => {
       ) : (
         <div>
           {<span
-              key={`${key}${chapter.chapterNumber}`}
+              key={`${key}${chapterObj.chapterNumber}`}
               className={styles.chapterText}
             >
-              {chapter.chapterNumber}. &nbsp; {chapter.text}
+              {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
             </span>
           }
         </div>
