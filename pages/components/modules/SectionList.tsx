@@ -15,6 +15,7 @@ interface Props {
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
   root: HTMLDivElement | null;
+  onLinkClick: (chapterNumber: number) => number;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -25,6 +26,7 @@ const SectionList = (props: Props): JSX.Element => {
     subrules,
     elRef,
     root,
+    onLinkClick,
   } = props;
 
   return (
@@ -40,6 +42,7 @@ const SectionList = (props: Props): JSX.Element => {
               rules={rules}
               subrules={subrules}
               elRef={elRef}
+              onLinkClick={onLinkClick}
             />
           </div>
         )))

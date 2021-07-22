@@ -5,7 +5,7 @@ import {
   FormEvent,
   ChangeEvent,
 } from "react";
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import formValidation from "../../../app/form-validation";
 import styles from "../../../styles/RulesetForm.module.scss";
 
@@ -20,7 +20,7 @@ const RulesetForm = (props: Props): JSX.Element => {
   const [url, setUrl] = useState("");
 
   // Get url query values
-  const router = useRouter();
+  const router: NextRouter = useRouter();
   const routerValues: RouterValues = {
     year: router.query.year,
     version: router.query.version,

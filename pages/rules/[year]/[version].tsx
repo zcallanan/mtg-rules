@@ -5,7 +5,7 @@ import React, {
   useEffect,
 } from "react";
 import sortBy from "lodash/sortBy";
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/rules-parse";
 import useTopRule from "../../components/modules/useTopRule";
@@ -15,7 +15,14 @@ import ChapterTitle from "../../components/modules/ChapterTitle";
 import RulesetForm from "../../components/modules/RulesetForm";
 import SearchForm from "../../components/modules/SearchForm";
 import CustomErrors from "../../components/modules/CustomErrors";
-import { Nodes, Chapter, ChapterValues } from "../../../app/types";
+import {
+  Nodes,
+  ChapterValues,
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+} from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -40,7 +47,7 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
 
   const result = (nodes)
     ? {
-      props: { nodes, effectiveDate },
+      props: { nodes, effectiveDate, rawRuleSetText },
       revalidate: 1,
     }
     : {
@@ -66,18 +73,17 @@ const RuleSetPage = (props: Props): JSX.Element => {
     validChapter: true,
   });
 
-  const router = useRouter();
+  const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
-  // Determine Rulelist chapter title from ToC anchor or scrolling
-  const [refRuleArray, setRefRuleArray] = useState([]);
-  const [refTocArray, setRefTocArray] = useState([]);
-  const [pause, setPause] = useState(false);
+  const [refRuleArray, setRefRuleArray] = useState<HTMLDivElement[]>([]);
+  const [refTocArray, setRefTocArray] = useState<HTMLDivElement[]>([]);
+  const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({});
-  const [sections, setSections] = useState([]);
-  const [chapters, setChapters] = useState([]);
-  const [rules, setRules] = useState([]);
-  const [subrules, setSubrules] = useState([]);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [rules, setRules] = useState<Rule[]>([]);
+  const [subrules, setSubrules] = useState<Subrule[]>([]);
 
   // Collect and sort rule set categories into node arrays
   if (nodes && nodes.length
@@ -109,7 +115,9 @@ const RuleSetPage = (props: Props): JSX.Element => {
   useEffect(() => {
     // Get anchor value from url hash via router
     if (!chapterValues.anchorValue) {
-      const anchorValue = Number(path[1]);
+      // Hash can refer to rule or subrule, so isolate chapter digits
+      const [anchorChapter] = path[1].match(/\d{3}/);
+      const anchorValue = Number(anchorChapter);
 
       setChapterValues((prevValue) => ({
         ...prevValue,
@@ -199,26 +207,31 @@ const RuleSetPage = (props: Props): JSX.Element => {
     callbackNumber = callbackChapterNumber;
   }
 
-  // ToC chapter title click prop
-  const tocOnClick = (chapterN: number): number => {
+  // Prop used by ToC links and section list viewport links
+  const onLinkClick = (chapterN: number): number => {
+    // chapterN can be a 3 digit chapter number or a single digit section number
+    const linkNumber: number = (/\d{1}/.test(chapterN))
+      ? chapterN * 100
+      : chapterN;
+
     let source: string;
     // Initiate a pause as chapterNumber is supplied by prop
     setPause(true);
     const { chapterNumber } = chapterValues;
-    if (chapterNumber && chapterN < chapterNumber) {
+    if (chapterNumber && linkNumber < chapterNumber) {
       source = "prop decrease";
-    } else if (chapterNumber && chapterN > chapterNumber) {
+    } else if (chapterNumber && linkNumber > chapterNumber) {
       source = "prop increase";
     }
 
     // Save value from prop
-    if (chapterValues.chapterNumber !== chapterN) {
+    if (chapterValues.chapterNumber !== linkNumber) {
       setChapterValues((prevValue) => ({
         ...prevValue,
-        chapterNumber: chapterN,
-        anchorValue: chapterN,
+        chapterNumber: linkNumber,
+        anchorValue: linkNumber,
         source,
-        propValue: chapterN,
+        propValue: linkNumber,
       }));
     }
   };
@@ -312,7 +325,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
           <TocSections
             sections={sections}
             chapters={chapters}
-            tocOnClick={tocOnClick}
+            onLinkClick={onLinkClick}
             tocTitleRef={setTocRefs}
           />
         </div>
@@ -338,6 +351,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
                   .chapterNumber === chapterValues.chapterNumber)}
                 toc={0}
                 effectiveDate={effectiveDate}
+                sections={sections}
               />
             </div>
             <div className={styles.rulesContainer}>
@@ -348,6 +362,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
                 subrules={subrules}
                 elRef={setRuleRefs}
                 root={rootRef}
+                onLinkClick={onLinkClick}
               />
             </div>
           </div>

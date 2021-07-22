@@ -7,6 +7,7 @@ const element = (
   ruleNumber: string,
   routerValues: RouterValues,
   obj: Rule | Subrule,
+  onLinkClick: (chapterNumber: number) => number,
 ): string => reactStringReplace(updatedText, ruleNumber, (match, i) => (
     <span
       key={
@@ -21,7 +22,11 @@ const element = (
         scroll={false}
       >
         <a>
-          <span>{match}</span>
+          <span onClick={() => onLinkClick((/\d{3}/.test(ruleNumber))
+            ? Number(ruleNumber.match(/\d{3}/)[0])
+            : Number(ruleNumber))}>
+            {match}
+          </span>
         </a>
       </Link>
     </span>
@@ -30,6 +35,7 @@ const element = (
 const parseLink = (
   obj: Rule | Subrule,
   routerValues: RouterValues,
+  onLinkClick: (chapterNumber: number) => number,
   exampleText = "",
 ): string | JSX.element => {
   let linkText: string = exampleText || obj.text;
@@ -60,6 +66,7 @@ const parseLink = (
         matchArray[i] = ruleNumber.replace(/section\s+/, "");
       }
 
+      // TODO: 121.8, 723 link is incorrect
       // Remove extra characters from chapter ruleNumbers
       if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
         matchArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");
@@ -68,7 +75,7 @@ const parseLink = (
 
     // Cycle through text for each rule number string, replacing number with jsx
     matchArray.forEach((ruleNumber) => {
-      updatedText = element(updatedText, ruleNumber, routerValues, obj);
+      updatedText = element(updatedText, ruleNumber, routerValues, obj, onLinkClick);
     });
     return updatedText;
   };

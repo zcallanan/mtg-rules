@@ -46,3 +46,8 @@ export interface ChapterValues {
   init: number;
   source: string;
 }
+
+export interface ErrorData {
+  reason: string;
+  value: number;
+}

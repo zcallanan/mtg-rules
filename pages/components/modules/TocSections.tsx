@@ -5,7 +5,7 @@ import styles from "../../../styles/TocSections.module.scss";
 interface Props {
   sections: Section[];
   chapters: Chapter[];
-  tocOnClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number) => number;
   tocTitleRef: HTMLElement | null;
 }
 
@@ -13,7 +13,7 @@ const TocSections = (props: Props): JSX.Element => {
   const {
     sections,
     chapters,
-    tocOnClick,
+    onLinkClick,
     tocTitleRef,
   } = props;
 
@@ -28,7 +28,7 @@ const TocSections = (props: Props): JSX.Element => {
             sectionNumber={section.sectionNumber}
             chapters={chapters}
             toc="1"
-            tocOnClick={tocOnClick}
+            onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
           />
         </div>

@@ -6,6 +6,7 @@ interface Props {
   rules: Rule[];
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
+  onLinkClick: (chapterNumber: number) => number;
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
@@ -14,6 +15,7 @@ const RuleGroup = (props: Props): JSX.Element => {
     rules,
     subrules,
     elRef,
+    onLinkClick,
   } = props;
 
   const ruleSubset = rules.filter(
@@ -29,6 +31,7 @@ const RuleGroup = (props: Props): JSX.Element => {
             ruleSubset={ruleSubset}
             subrules={subrules}
             elRef={elRef}
+            onLinkClick={onLinkClick}
           />
         </ul>
       )}

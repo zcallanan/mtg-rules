@@ -1,11 +1,7 @@
 import styles from "../styles/Custom404.module.scss";
+import { ErrorData } from "../app/types";
 
-interface Props {
-  reason: string;
-  value: number;
-}
-
-const Custom404 = (props: Props): JSX.Element => {
+const Custom404 = (props: ErrorData): JSX.Element => {
   const { reason, value } = props;
 
   return (

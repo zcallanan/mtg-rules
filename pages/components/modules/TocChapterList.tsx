@@ -6,7 +6,7 @@ interface Props {
   chapters: Chapter[];
   sectionNumber: number;
   toc: number;
-  tocOnClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number) => number;
   tocTitleRef: HTMLElement | null;
 }
 
@@ -15,7 +15,7 @@ const TocChapterList = (props: Props): JSX.Element => {
     chapters,
     sectionNumber,
     toc,
-    tocOnClick,
+    onLinkClick,
     tocTitleRef,
   } = props;
 
@@ -28,7 +28,7 @@ const TocChapterList = (props: Props): JSX.Element => {
           <ChapterTitle
             chapter={chapter}
             toc={toc}
-            tocOnClick={tocOnClick}
+            onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
           />
         </ul>
