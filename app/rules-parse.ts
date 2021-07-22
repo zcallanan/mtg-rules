@@ -19,6 +19,7 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
       const subruleRegex = /^(\d{3}).(\d+)([a-z]+)\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
 
       // Add rules
+
       parser.addRule(sectionRegex, (match, section, txt) => {
         const sectionNumber = Number(section);
 

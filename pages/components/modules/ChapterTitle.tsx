@@ -9,6 +9,7 @@ interface Props {
   toc: number;
   tocOnClick?: (chapterNumber: number) => number;
   tocTitleRef?: HTMLElement | null;
+  effectiveDate?: string;
 }
 
 const ChapterTitle = (props: Props): JSX.Element => {
@@ -17,6 +18,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
     toc,
     tocOnClick,
     tocTitleRef,
+    effectiveDate,
   } = props;
   const key = toc ? "toc" : "chapter";
 
@@ -39,12 +41,16 @@ const ChapterTitle = (props: Props): JSX.Element => {
           </Spinner>
         </div>)
         : (
-          <div>
+          <div className={styles.chapterText}>
             {<span
                 key={`${key}${chapterObj.chapterNumber}`}
-                className={styles.chapterText}
               >
                 {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
+              </span>
+            }
+            {
+              <span className={styles.effectiveDate}>
+                Effective: &nbsp; {effectiveDate}
               </span>
             }
           </div>

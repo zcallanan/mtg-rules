@@ -20,6 +20,7 @@ import styles from "../../../styles/[version].module.scss";
 
 interface Props {
   nodes: Nodes;
+  effectiveDate: string;
 }
 
 export const getStaticProps: getStaticProps = async ({ params }): Promise<void | Nodes> => {
@@ -30,9 +31,16 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
   // Parse rules text to an array of rule nodes
   const nodes: Nodes = await rulesParse(rawRuleSetText);
 
+  // Parse rules text for effective date
+  const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
+  let effectiveDate: string;
+  if (effectiveDateRegex.test(rawRuleSetText)) {
+    [effectiveDate] = rawRuleSetText.match(effectiveDateRegex);
+  }
+
   const result = (nodes)
     ? {
-      props: { nodes },
+      props: { nodes, effectiveDate },
       revalidate: 1,
     }
     : {
@@ -53,7 +61,7 @@ export const getStaticPaths: getStaticPaths = async () => {
 };
 
 const RuleSetPage = (props: Props): JSX.Element => {
-  const { nodes } = props;
+  const { nodes, effectiveDate } = props;
   const [errorData, setErrorData] = useState({
     nodes: [],
     validChapter: true,
@@ -327,8 +335,12 @@ const RuleSetPage = (props: Props): JSX.Element => {
               </Tabs>
             </div>
             <div className={styles.chapterTitleContainer}>
-              <ChapterTitle chapter={chapters.find((chapter) => chapter
-                .chapterNumber === chapterValues.chapterNumber)} toc={0} />
+              <ChapterTitle
+                chapter={chapters.find((chapter) => chapter
+                  .chapterNumber === chapterValues.chapterNumber)}
+                toc={0}
+                effectiveDate={effectiveDate}
+              />
             </div>
             <div className={styles.rulesContainer}>
               <SectionList
