@@ -15,7 +15,7 @@ import ChapterTitle from "../../components/modules/ChapterTitle";
 import RulesetForm from "../../components/modules/RulesetForm";
 import SearchForm from "../../components/modules/SearchForm";
 import CustomErrors from "../../components/modules/CustomErrors";
-import { Nodes, Chapter } from "../../../app/types";
+import { Nodes, Chapter, ChapterValues } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -66,18 +66,11 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const [refRuleArray, setRefRuleArray] = useState([]);
   const [refTocArray, setRefTocArray] = useState([]);
   const [pause, setPause] = useState(false);
-  const [chapterValues, setChapterValues] = useState({});
+  const [chapterValues, setChapterValues] = useState<ChapterValues>({});
   const [sections, setSections] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [rules, setRules] = useState([]);
   const [subrules, setSubrules] = useState([]);
-
-  useEffect(() => {
-    console.log("path is", path.length)
-    if (path.length === 1) {
-      router.push("#100", undefined, { shallow: true });
-    }
-  }, [router, path]);
 
   // Collect and sort rule set categories into node arrays
   if (nodes.length
@@ -98,21 +91,24 @@ const RuleSetPage = (props: Props): JSX.Element => {
     setSubrules(nodes.filter((node) => node.type === "subrule"));
   }
 
+  // Add a hash to url if none provided
+  useEffect(() => {
+    if (path.length === 1) {
+      router.push("#100", undefined, { shallow: true });
+    }
+  }, [router, path]);
+
   // Initialize chapterValue state
   useEffect(() => {
     // Get anchor value from url hash via router
-    console.log("path", path)
     if (!chapterValues.anchorValue) {
-      console.log("init anchorValue")
       const anchorValue = Number(path[1]);
-      console.log("anchorValue is", anchorValue)
 
       setChapterValues((prevValue) => ({
         ...prevValue,
         currentCallback: 100,
         chapterNumber: anchorValue,
         anchorValue,
-        hiddenAnchor: anchorValue,
         init: anchorValue,
         source: "init",
       }));
@@ -123,7 +119,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
   useEffect(() => {
     // errorData.nodes = nodes;
     if (!errorData.nodes.length) {
-      console.log("setNodes")
       setErrorData((prevValue) => ({
         ...prevValue,
         nodes,
@@ -134,12 +129,10 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Error Detection: Add anchorValue to errorData
   useEffect(() => {
     // Confirm anchor value is found in chapters array
-    const validateChapter = (chapterN: number): Chapter | undefined => {
-      console.log("chapter:", chapterN)
-      return chapters.find((chapter) => chapter.chapterNumber === chapterN);
-    };
+    const validateChapter = (chapterN: number): Chapter | undefined => chapters
+      .find((chapter) => chapter.chapterNumber === chapterN);
+
     if (chapterValues.anchorValue) {
-      console.log("setValidChapter")
       setErrorData((prevValue) => ({
         ...prevValue,
         validChapter: validateChapter(chapterValues.anchorValue),
@@ -159,7 +152,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const setRuleRefs = useCallback(
     (node) => {
       if (node && !refRuleArray.includes(node)) {
-        console.log("setRuleArray")
         setRefRuleArray((oldArray) => [...oldArray, node]);
       }
     },
@@ -170,7 +162,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const setTocRefs = useCallback(
     (node) => {
       if (node && !refTocArray.includes(node)) {
-        console.log("setToC")
         setRefTocArray((oldArray) => [...oldArray, node]);
       }
     },
@@ -187,20 +178,19 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Apply pause
   useEffect(() => {
     if (pause) {
-      console.log("setPause")
       setTimeout(() => {
         setPause(!pause);
-      }, 1500);
+      }, 500);
     }
   }, [pause]);
 
   // Callback that observes rule divs for intersection with the top of viewport
-  const chapterNumber = useTopRule(refRuleArray, root) || chapterValues.init;
+  const callbackChapterNumber = useTopRule(refRuleArray, root) || chapterValues.init;
 
   let callbackNumber: number;
 
-  if (!pause && chapterNumber) {
-    callbackNumber = chapterNumber;
+  if (!pause && callbackChapterNumber) {
+    callbackNumber = callbackChapterNumber;
   }
 
   // ToC chapter title click prop
@@ -208,92 +198,82 @@ const RuleSetPage = (props: Props): JSX.Element => {
     let source: string;
     // Initiate a pause as chapterNumber is supplied by prop
     setPause(true);
-    const cValue = chapterValues.chapterNumber;
-    if (cValue && chapterN < cValue) {
+    const { chapterNumber } = chapterValues;
+    if (chapterNumber && chapterN < chapterNumber) {
       source = "prop decrease";
-    } else if (cValue && chapterN > cValue) {
+    } else if (chapterNumber && chapterN > chapterNumber) {
       source = "prop increase";
     }
 
-    // Save values
+    // Save value from prop
     if (chapterValues.chapterNumber !== chapterN) {
-      console.log("toc")
       setChapterValues((prevValue) => ({
         ...prevValue,
         chapterNumber: chapterN,
         anchorValue: chapterN,
         source,
-        hiddenAnchor: chapterN,
         propValue: chapterN,
       }));
     }
   };
 
   /*
-    Update ChapterTitle # if:
-      - callbackNumber has value
-      - Updates are not paused after a change from toc prop
-      - Current chapterNumber is different from # returned by callback
-      - Callback # saved during pause is different from the latest callback #
+    If at initialization, use hash value as anchor link, and scroll to that chapter
+      in ToC list
+    Else use propValue or callbackNumber
   */
 
   useEffect(() => {
     const anchorNumber = chapterValues.anchorValue;
-    console.log("anc", anchorNumber, chapterValues)
     if (
       anchorNumber
       && chapterValues.source === "init"
       && refTocArray.length
       && chapters.length
     ) {
-      console.log("callback anchor")
       setChapterValues((prevValue) => ({
         ...prevValue,
         chapterNumber: anchorNumber,
         source: "anchor tag",
-        hiddenAnchor: anchorNumber,
       }));
 
       // Scroll ToC viewport to anchor tag's chapter title
       const re = new RegExp(`(${chapterValues.chapterNumber})`);
       const element = refTocArray.find((elem) => re.test(elem.outerText));
-      console.log(element)
       element.scrollIntoView();
     } else if (callbackNumber
       && !pause
       && chapterValues.chapterNumber !== callbackNumber
       && chapterValues.currentCallback !== callbackNumber
     ) {
-      let c: number;
       const { source, propValue } = chapterValues;
-      const updateState = (n: number): void => {
-        console.log("updateState")
+
+      // Update chapterValues chapterNumber and currentCallback fn
+      const updateState = (chapterN: number): void => {
         setChapterValues((prevValue) => ({
           ...prevValue,
           source: "callback",
-          chapterNumber: n,
-          currentCallback: n,
-          hiddenAnchor: n,
+          chapterNumber: chapterN,
+          currentCallback: chapterN,
         }));
       };
-      if (source === "prop decrease" || source === "prop increase") {
-        /*
-          When the prop returns a # less than the state chapterNumber, the observer
-          callback returns the wrong value. In this case use propValue instead.
-        */
-        c = propValue;
-        if (c) {
-          updateState(c);
-        }
-      } else {
-        // callbackNumber is correct, so use it
-        c = callbackNumber;
-        if (c && c !== chapterValues.chapterNumber) {
-          updateState(c);
-        }
+
+      /*
+        When the prop returns a # less than the state chapterNumber, the observer
+          callback returns the wrong value.
+        When the prop returns a # greater than the state chapterNumber, the observer
+          does not return a value at all.
+        In this case use propValue instead.
+      */
+
+      if ((source === "prop decrease" || source === "prop increase") && propValue) {
+        updateState(propValue);
+      } else if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
+        updateState(callbackNumber);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Eslint complains of missing dependencies that are unnecessary here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath, callbackNumber, pause]);
 
   // Display a fallback page if waiting to transition to another page
