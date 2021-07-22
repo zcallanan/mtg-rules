@@ -34,8 +34,6 @@ const SectionList = (props: Props): JSX.Element => {
       {sections.length
         ? (sections.map((section, index) => (
           <div key={`${section.sectionNumber}-${index}`}>
-            <section id={`${section.sectionNumber}`}>
-            </section>
             <ChapterList
               section={section}
               chapters={chapters}

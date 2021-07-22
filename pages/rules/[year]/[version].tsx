@@ -207,31 +207,38 @@ const RuleSetPage = (props: Props): JSX.Element => {
     callbackNumber = callbackChapterNumber;
   }
 
+  // Scroll ToC to chapterTitle corresponding to url hash value
+  const scrollToc = (chapterNumber: number) => {
+    const re = new RegExp(`(${chapterNumber})`);
+    const element = refTocArray.find((elem) => re.test(elem.outerText));
+    element.scrollIntoView();
+  };
+
   // Prop used by ToC links and section list viewport links
-  const onLinkClick = (chapterN: number): number => {
-    // chapterN can be a 3 digit chapter number or a single digit section number
-    const linkNumber: number = (/\d{1}/.test(chapterN))
-      ? chapterN * 100
-      : chapterN;
+  const onLinkClick = (chapterN: number, dataSource: string): number => {
+    // If chapterN comes from a sectionList viewport link, scroll Toc
+    if (dataSource === "rules") {
+      scrollToc(chapterN);
+    }
 
     let source: string;
     // Initiate a pause as chapterNumber is supplied by prop
     setPause(true);
     const { chapterNumber } = chapterValues;
-    if (chapterNumber && linkNumber < chapterNumber) {
+    if (chapterNumber && chapterN < chapterNumber) {
       source = "prop decrease";
-    } else if (chapterNumber && linkNumber > chapterNumber) {
+    } else if (chapterNumber && chapterN > chapterNumber) {
       source = "prop increase";
     }
 
     // Save value from prop
-    if (chapterValues.chapterNumber !== linkNumber) {
+    if (chapterValues.chapterNumber !== chapterN) {
       setChapterValues((prevValue) => ({
         ...prevValue,
-        chapterNumber: linkNumber,
-        anchorValue: linkNumber,
+        chapterNumber: chapterN,
+        anchorValue: chapterN,
         source,
-        propValue: linkNumber,
+        propValue: chapterN,
       }));
     }
   };
@@ -257,9 +264,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
       }));
 
       // Scroll ToC viewport to anchor tag's chapter title
-      const re = new RegExp(`(${chapterValues.chapterNumber})`);
-      const element = refTocArray.find((elem) => re.test(elem.outerText));
-      element.scrollIntoView();
+      scrollToc(chapterValues.chapterNumber);
     } else if (callbackNumber
       && !pause
       && chapterValues.chapterNumber !== callbackNumber

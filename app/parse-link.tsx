@@ -8,7 +8,13 @@ const element = (
   routerValues: RouterValues,
   obj: Rule | Subrule,
   onLinkClick: (chapterNumber: number) => number,
-): string => reactStringReplace(updatedText, ruleNumber, (match, i) => (
+): string => reactStringReplace(updatedText, ruleNumber, (match, i) => {
+  // Convert section digits to the first chapter value of a section
+  const chapterValue = (/\d{3}/.test(ruleNumber))
+    ? Number(ruleNumber.match(/\d{3}/)[0])
+    : Number(ruleNumber) * 100;
+
+  return (
     <span
       key={
         obj.type === "rule"
@@ -18,19 +24,18 @@ const element = (
     >
       <Link
         href={"/rules/[routerValues.year]/[routerValues.version]"}
-        as={`/rules/${routerValues.year}/${routerValues.version}#${ruleNumber}`}
+        as={`/rules/${routerValues.year}/${routerValues.version}#${chapterValue}`}
         scroll={false}
       >
         <a>
-          <span onClick={() => onLinkClick((/\d{3}/.test(ruleNumber))
-            ? Number(ruleNumber.match(/\d{3}/)[0])
-            : Number(ruleNumber))}>
+          <span onClick={() => onLinkClick(chapterValue, "rules")}>
             {match}
           </span>
         </a>
       </Link>
     </span>
-));
+  );
+});
 
 const parseLink = (
   obj: Rule | Subrule,
@@ -43,7 +48,7 @@ const parseLink = (
   // Regex
   const regexSection = /section\s+(\d)/gim;
   // Include extra characters to avoid creating links on erroneous numbers, ex: 2011
-  const regexChapter = /\s+(\d{3}[\s,.;])/gim;
+  const regexChapter = /\s+(\d{3})[\s,.;]/gim;
   const regexRule = /(\d{3})\.(\d+)/gim;
   const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
@@ -66,7 +71,7 @@ const parseLink = (
         matchArray[i] = ruleNumber.replace(/section\s+/, "");
       }
 
-      // TODO: 121.8, 723 link is incorrect
+      // TODO: Prevent invalid chapter values like 999
       // Remove extra characters from chapter ruleNumbers
       if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
         matchArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");

@@ -90,13 +90,13 @@ const ChapterTitle = (props: Props): JSX.Element => {
               <a>
                 <span
                   className={styles.chapterNum}
-                  onClick={() => onLinkClick(chapterObj.chapterNumber)}
+                  onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >
                   {chapterObj.chapterNumber}.
                 </span>
                 <span
                   className={styles.chapterTextToc}
-                  onClick={() => onLinkClick(chapterObj.chapterNumber)}
+                  onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >{chapterObj.text}</span>
               </a>
             </Link>
