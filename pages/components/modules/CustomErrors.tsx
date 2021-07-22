@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Custom404 from "../../404";
 import { Nodes, Chapter } from "../../../app/types";
 
@@ -17,12 +18,15 @@ const CustomErrors = ((props: Props): JSX.Element | void => {
   const [values, setValues] = useState({ reason: "", value: null });
 
   useEffect(() => {
+    console.log("customErrors")
     if (data.nodes && !data.nodes.length) {
+      console.log("custom error nodes")
       setValues((prevValue) => ({
         ...prevValue,
         reason: "ruleset-fetch-failed",
       }));
     } else if (!data.validChapter) {
+      console.log("invalid-hash")
       setValues({ reason: "invalid-hash", value: chapterNumber });
     }
   }, [chapterNumber, data]);

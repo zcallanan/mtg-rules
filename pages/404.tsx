@@ -13,7 +13,7 @@ const Custom404 = (props: Props): JSX.Element => {
       {reason === "invalid-hash"
         && <div>
           <h1>{`404 - Chapter ${value} was not found.`}</h1>
-        <h4>{`Please update "#${value}" in the url to a valid number, such as "#100".`}</h4>
+          <h4>{`Please update "#${value}" in the url to a valid number, such as "#100".`}</h4>
         </div>
 
       }

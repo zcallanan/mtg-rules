@@ -60,44 +60,70 @@ const RuleSetPage = (props: Props): JSX.Element => {
   });
 
   const router = useRouter();
+  const path = router.asPath.split("#");
 
   // Determine Rulelist chapter title from ToC anchor or scrolling
   const [refRuleArray, setRefRuleArray] = useState([]);
   const [refTocArray, setRefTocArray] = useState([]);
   const [pause, setPause] = useState(false);
   const [chapterValues, setChapterValues] = useState({});
+  const [sections, setSections] = useState([]);
+  const [chapters, setChapters] = useState([]);
+  const [rules, setRules] = useState([]);
+  const [subrules, setSubrules] = useState([]);
+
+  useEffect(() => {
+    console.log("path is", path.length)
+    if (path.length === 1) {
+      router.push("#100", undefined, { shallow: true });
+    }
+  }, [router, path]);
 
   // Collect and sort rule set categories into node arrays
-  const sections = sortBy(
-    nodes.filter((node) => node.type === "section"),
-    ["sectionNumber"],
-  );
-  const chapters = sortBy(
-    nodes.filter((node) => node.type === "chapter"),
-    ["sectionNumber", "chapterNumber"],
-  );
-  const rules = nodes.filter((node) => node.type === "rule");
-  const subrules = nodes.filter((node) => node.type === "subrule");
+  if (nodes.length
+    && !sections.length
+    && !chapters.length
+    && !rules.length
+    && !subrules.length
+  ) {
+    setSections(sortBy(
+      nodes.filter((node) => node.type === "section"),
+      ["sectionNumber"],
+    ));
+    setChapters(sortBy(
+      nodes.filter((node) => node.type === "chapter"),
+      ["sectionNumber", "chapterNumber"],
+    ));
+    setRules(nodes.filter((node) => node.type === "rule"));
+    setSubrules(nodes.filter((node) => node.type === "subrule"));
+  }
 
   // Initialize chapterValue state
   useEffect(() => {
     // Get anchor value from url hash via router
-    const anchorValue = Number(router.asPath.split("#")[1]);
+    console.log("path", path)
+    if (!chapterValues.anchorValue) {
+      console.log("init anchorValue")
+      const anchorValue = Number(path[1]);
+      console.log("anchorValue is", anchorValue)
 
-    setChapterValues((prevValue) => ({
-      ...prevValue,
-      chapterNumber: anchorValue,
-      anchorValue,
-      hiddenAnchor: anchorValue,
-      init: anchorValue,
-      source: "init",
-    }));
-  }, [router.asPath]);
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        currentCallback: 100,
+        chapterNumber: anchorValue,
+        anchorValue,
+        hiddenAnchor: anchorValue,
+        init: anchorValue,
+        source: "init",
+      }));
+    }
+  }, [path, chapterValues.anchorValue]);
 
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
     // errorData.nodes = nodes;
     if (!errorData.nodes.length) {
+      console.log("setNodes")
       setErrorData((prevValue) => ({
         ...prevValue,
         nodes,
@@ -108,12 +134,17 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Error Detection: Add anchorValue to errorData
   useEffect(() => {
     // Confirm anchor value is found in chapters array
-    const validateChapter = (chapterN: number): Chapter | undefined => chapters
-      .find((chapter) => chapter.chapterNumber === chapterN);
-    setErrorData((prevValue) => ({
-      ...prevValue,
-      validChapter: validateChapter(chapterValues.anchorValue),
-    }));
+    const validateChapter = (chapterN: number): Chapter | undefined => {
+      console.log("chapter:", chapterN)
+      return chapters.find((chapter) => chapter.chapterNumber === chapterN);
+    };
+    if (chapterValues.anchorValue) {
+      console.log("setValidChapter")
+      setErrorData((prevValue) => ({
+        ...prevValue,
+        validChapter: validateChapter(chapterValues.anchorValue),
+      }));
+    }
   // eslint complains chapters not included, but need this set only once
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterValues.anchorValue]);
@@ -128,6 +159,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const setRuleRefs = useCallback(
     (node) => {
       if (node && !refRuleArray.includes(node)) {
+        console.log("setRuleArray")
         setRefRuleArray((oldArray) => [...oldArray, node]);
       }
     },
@@ -138,6 +170,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const setTocRefs = useCallback(
     (node) => {
       if (node && !refTocArray.includes(node)) {
+        console.log("setToC")
         setRefTocArray((oldArray) => [...oldArray, node]);
       }
     },
@@ -154,6 +187,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Apply pause
   useEffect(() => {
     if (pause) {
+      console.log("setPause")
       setTimeout(() => {
         setPause(!pause);
       }, 1500);
@@ -183,10 +217,12 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
     // Save values
     if (chapterValues.chapterNumber !== chapterN) {
+      console.log("toc")
       setChapterValues((prevValue) => ({
         ...prevValue,
-        currentCallback: callbackNumber,
+        // currentCallback: chapterN,
         chapterNumber: chapterN,
+        anchorValue: chapterN,
         source,
         hiddenAnchor: chapterN,
         propValue: chapterN,
@@ -203,46 +239,57 @@ const RuleSetPage = (props: Props): JSX.Element => {
   */
 
   // Scroll the ToC list to the anchor tag chapter title
-  useEffect(() => {
-    if (chapterValues.source === "anchor tag"
-      && errorData.nodes.length
-      && errorData.validChapter
-    ) {
-      /*
-        When page loads and there is an anchor, there is no observer callback and
-        router does not register the url change, so get val from
-        window.location.hash. Then update chapterNumber state.
-      */
-      const c = Number(window.location.hash.substr(1, 3));
-      if (c) {
-        setChapterValues((prevValue) => ({
-          ...prevValue,
-          chapterNumber: c,
-          source: "anchor tag set",
-          hiddenAnchor: c,
-        }));
-      }
-      // Scroll ToC viewport to anchor tag's chapter title
-      const re = new RegExp(`(${chapterValues.chapterNumber})`);
-      const element = refTocArray.find((elem) => re.test(elem.outerText));
-      element.scrollIntoView();
-    }
-  }, [refTocArray, chapterValues.source, chapterValues.chapterNumber, errorData]);
+  // useEffect(() => {
+  //   console.log(chapterValues.source)
+  //   if (
+  //     errorData.nodes.length
+  //     && errorData.validChapter
+  //   ) {
+  //     /*
+  //       When page loads and there is an anchor, there is no observer callback and
+  //       router does not register the url change, so get val from
+  //       window.location.hash. Then update chapterNumber state.
+  //     */
+  //     const c = Number(window.location.hash.substr(1, 3));
+  //     console.log("hash", c)
+  //     if (c) {
+  //       console.log("anchor tag set")
+  //       setChapterValues((prevValue) => ({
+  //         ...prevValue,
+  //         chapterNumber: c,
+  //         source: "anchor tag set",
+  //         hiddenAnchor: c,
+  //       }));
+  //     }
+  //     // Scroll ToC viewport to anchor tag's chapter title
+  //     const re = new RegExp(`(${chapterValues.chapterNumber})`);
+  //     const element = refTocArray.find((elem) => re.test(elem.outerText));
+  //     element.scrollIntoView();
+  //   }
+  // }, [refTocArray, chapterValues.source, chapterValues.chapterNumber, errorData]);
 
   useEffect(() => {
     const anchorNumber = chapterValues.anchorValue;
+    console.log("anc", anchorNumber, chapterValues)
     if (
       anchorNumber
-      && anchorNumber !== chapterValues.hiddenAnchor
-      && anchorNumber !== chapterValues.chapterNumber
       && chapterValues.source === "init"
+      && refTocArray.length
+      && chapters.length
     ) {
+      console.log("callback anchor")
       setChapterValues((prevValue) => ({
         ...prevValue,
         chapterNumber: anchorNumber,
         source: "anchor tag",
         hiddenAnchor: anchorNumber,
       }));
+
+      // Scroll ToC viewport to anchor tag's chapter title
+      const re = new RegExp(`(${chapterValues.chapterNumber})`);
+      const element = refTocArray.find((elem) => re.test(elem.outerText));
+      console.log(element)
+      element.scrollIntoView();
     } else if (callbackNumber
       && !pause
       && chapterValues.chapterNumber !== callbackNumber
@@ -251,6 +298,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
       let c: number;
       const { source, propValue } = chapterValues;
       const updateState = (n: number): void => {
+        console.log("updateState")
         setChapterValues((prevValue) => ({
           ...prevValue,
           source: "callback",
@@ -295,7 +343,11 @@ const RuleSetPage = (props: Props): JSX.Element => {
     );
   }
 
-  const errorResult = (obj): number => Object.values(obj).every(Boolean);
+  const errorResult = (obj): number => {
+    const result = Object.values(obj).every(Boolean);
+    console.log("errorResult:", result, obj)
+    return result
+  }
 
   return (
     <div>

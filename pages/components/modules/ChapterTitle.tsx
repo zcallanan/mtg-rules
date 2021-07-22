@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { Chapter } from "../../../app/types";
 import styles from "../../../styles/ChapterTitle.module.scss";
@@ -21,7 +22,36 @@ const ChapterTitle = (props: Props): JSX.Element => {
 
   const router = useRouter();
 
+  // Chapter prop or PH zero chapter if unavailable
   const chapterObj = chapter || { chapterNumber: 0, text: "" };
+
+  // If url has no chapter, #100 is added. Display spinner until ready
+  const handleZeroChapter = (chapterNumber: number) => (
+    <div>
+      { (chapterNumber === 0)
+        ? (<div className={styles.spinnerDiv}>
+          <Spinner
+            animation="border"
+            role="status"
+            variant="dark"
+            className={styles.spinnerComponent}
+          >
+          </Spinner>
+        </div>)
+        : (
+          <div>
+            {<span
+                key={`${key}${chapterObj.chapterNumber}`}
+                className={styles.chapterText}
+              >
+                {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
+              </span>
+            }
+          </div>
+        )
+      }
+    </div>
+  );
 
   // If toc, return toc chapter title. Else rule list chapter title
   return (
@@ -52,17 +82,8 @@ const ChapterTitle = (props: Props): JSX.Element => {
             </Link>
           </li>
         </div>
-      ) : (
-        <div>
-          {<span
-              key={`${key}${chapterObj.chapterNumber}`}
-              className={styles.chapterText}
-            >
-              {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
-            </span>
-          }
-        </div>
-      )}
+      ) : handleZeroChapter(chapterObj.chapterNumber)
+    }
     </div>
   );
 };

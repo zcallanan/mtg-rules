@@ -1,3 +1,4 @@
+import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
   Section,
@@ -28,19 +29,33 @@ const SectionList = (props: Props): JSX.Element => {
 
   return (
     <div className={styles.scrollableDiv} ref={root}>
-      {sections.map((section, index) => (
-        <div key={`${section.sectionNumber}-${index}`}>
-          <section id={`${section.sectionNumber}`}>
-          </section>
-          <ChapterList
-            section={section}
-            chapters={chapters}
-            rules={rules}
-            subrules={subrules}
-            elRef={elRef}
-          />
-        </div>
-      ))}
+      {sections.length
+        ? (sections.map((section, index) => (
+          <div key={`${section.sectionNumber}-${index}`}>
+            <section id={`${section.sectionNumber}`}>
+            </section>
+            <ChapterList
+              section={section}
+              chapters={chapters}
+              rules={rules}
+              subrules={subrules}
+              elRef={elRef}
+            />
+          </div>
+        )))
+        : (
+          <div className={styles.spinnerDiv}>
+            <Spinner
+              animation="border"
+              role="status"
+              variant="dark"
+              className={styles.spinnerComponent}
+            >
+              <span className={styles.loadingText}>Loading</span>
+            </Spinner>
+          </div>
+        )
+      }
     </div>
   );
 };
