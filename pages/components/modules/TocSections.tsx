@@ -1,4 +1,3 @@
-import React from "react";
 import TocChapterList from "./TocChapterList";
 import { Section, Chapter } from "../../../app/types";
 import styles from "../../../styles/TocSections.module.scss";
@@ -6,10 +5,17 @@ import styles from "../../../styles/TocSections.module.scss";
 interface Props {
   sections: Section[];
   chapters: Chapter[];
+  tocOnClick: (chapterNumber: number) => number;
+  tocTitleRef: HTMLElement | null;
 }
 
 const TocSections = (props: Props): JSX.Element => {
-  const { sections, chapters } = props;
+  const {
+    sections,
+    chapters,
+    tocOnClick,
+    tocTitleRef,
+  } = props;
 
   return (
     <div>
@@ -22,6 +28,8 @@ const TocSections = (props: Props): JSX.Element => {
             sectionNumber={section.sectionNumber}
             chapters={chapters}
             toc="1"
+            tocOnClick={tocOnClick}
+            tocTitleRef={tocTitleRef}
           />
         </div>
       ))}

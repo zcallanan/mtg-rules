@@ -1,4 +1,4 @@
-import React from "react";
+import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
   Section,
@@ -13,6 +13,8 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
+  elRef: HTMLDivElement | null;
+  root: HTMLDivElement | null;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -21,20 +23,39 @@ const SectionList = (props: Props): JSX.Element => {
     chapters,
     rules,
     subrules,
+    elRef,
+    root,
   } = props;
 
   return (
-    <div>
-      {sections.map((section, index) => (
-        <div key={`${section.sectionNumber}-${index}`}>
-        <section id={`${section.sectionNumber}`}>
-          <span>
-            {section.sectionNumber}. &nbsp; {section.text}
-          </span>
-        </section>
-          <ChapterList section={section} chapters={chapters} rules={rules} subrules={subrules} />
-        </div>
-      ))}
+    <div className={styles.scrollableDiv} ref={root}>
+      {sections.length
+        ? (sections.map((section, index) => (
+          <div key={`${section.sectionNumber}-${index}`}>
+            <section id={`${section.sectionNumber}`}>
+            </section>
+            <ChapterList
+              section={section}
+              chapters={chapters}
+              rules={rules}
+              subrules={subrules}
+              elRef={elRef}
+            />
+          </div>
+        )))
+        : (
+          <div className={styles.spinnerDiv}>
+            <Spinner
+              animation="border"
+              role="status"
+              variant="dark"
+              className={styles.spinnerComponent}
+            >
+              <span className={styles.loadingText}>Loading</span>
+            </Spinner>
+          </div>
+        )
+      }
     </div>
   );
 };

@@ -38,3 +38,11 @@ export interface RouterValues {
   year: string;
   version: string;
 }
+
+export interface ChapterValues {
+  currentCallback: number;
+  chapterNumber: number;
+  anchorValue: number;
+  init: number;
+  source: string;
+}

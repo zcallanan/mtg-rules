@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 import parseLink from "../../../app/parse-link";
 import { Rule, Subrule, RouterValues } from "../../../app/types";

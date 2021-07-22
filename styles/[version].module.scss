@@ -1,13 +1,52 @@
-.views {
+.bodyContainer {
   display: flex;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  flex-direction: row;
 }
 
-.tocSections {
-
+.leftContainer {
+  left: 0;
+  position: fixed;
+  overflow-y: scroll;
+  height: 100vh;
+  width: 30%;
 }
 
-.chapterList {
+.rightContainer {
+  position: absolute;
+  left: 30%;
+  width: 70%;
+}
 
+.rightRelative {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tabsContainer {
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+.chapterTitleContainer {
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 20%
+}
+
+.rulesContainer {
+  position: absolute;
+  height: 75vh;
+  overflow: hidden;
+  // overflow-y: scroll;
+  z-index: 0;
+  top: 180px;
 }
 
 .spinnerDiv {
@@ -19,8 +58,4 @@
   position: fixed;
   left: 50%;
   top: 50%;
-}
-
-.spinnerText {
-
 }

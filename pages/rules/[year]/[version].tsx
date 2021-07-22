@@ -1,12 +1,21 @@
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
-import Spinner from "react-bootstrap/Spinner";
+import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/rules-parse";
-import formValidation from "../../../app/form-validation";
+import useTopRule from "../../components/modules/useTopRule";
 import TocSections from "../../components/modules/TocSections";
 import SectionList from "../../components/modules/SectionList";
-import Form from "../../components/modules/Form";
-import { Nodes, RouterValues } from "../../../app/types";
+import ChapterTitle from "../../components/modules/ChapterTitle";
+import RulesetForm from "../../components/modules/RulesetForm";
+import SearchForm from "../../components/modules/SearchForm";
+import CustomErrors from "../../components/modules/CustomErrors";
+import { Nodes, Chapter, ChapterValues } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
@@ -15,23 +24,23 @@ interface Props {
 
 export const getStaticProps: getStaticProps = async ({ params }): Promise<void | Nodes> => {
   // Fetch rule set
-  try {
-    const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`;
-    const res: string = await fetch(url);
-    const rawRuleSetText: string = await res.text();
-    // Parse rules text to an array of rule nodes
-    const nodes: Nodes = await rulesParse(rawRuleSetText);
+  const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`;
+  const res: string = await fetch(url);
+  const rawRuleSetText: string = await res.text();
+  // Parse rules text to an array of rule nodes
+  const nodes: Nodes = await rulesParse(rawRuleSetText);
 
-    return {
+  const result = (nodes)
+    ? {
       props: { nodes },
       revalidate: 1,
+    }
+    : {
+      props: {},
+      notFound: true,
     };
-  } catch (err) {
-    // TODO handle error, should lead to a 404 not found
-    console.log("getStaticProps error");
-    console.error(err);
-  }
-  return null;
+
+  return result;
 };
 
 export const getStaticPaths: getStaticPaths = async () => {
@@ -40,52 +49,232 @@ export const getStaticPaths: getStaticPaths = async () => {
     params: { year: value[0], version: value[1] },
   }));
   return { paths, fallback: true };
+  // return { paths, fallback: "blocking" };
 };
 
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes } = props;
+  const [errorData, setErrorData] = useState({
+    nodes: [],
+    validChapter: true,
+  });
+
   const router = useRouter();
+  const path = router.asPath.split("#");
 
-  // Get currentUrl for Form
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
+  // Determine Rulelist chapter title from ToC anchor or scrolling
+  const [refRuleArray, setRefRuleArray] = useState([]);
+  const [refTocArray, setRefTocArray] = useState([]);
+  const [pause, setPause] = useState(false);
+  const [chapterValues, setChapterValues] = useState<ChapterValues>({});
+  const [sections, setSections] = useState([]);
+  const [chapters, setChapters] = useState([]);
+  const [rules, setRules] = useState([]);
+  const [subrules, setSubrules] = useState([]);
+
+  // Collect and sort rule set categories into node arrays
+  if (nodes.length
+    && !sections.length
+    && !chapters.length
+    && !rules.length
+    && !subrules.length
+  ) {
+    setSections(sortBy(
+      nodes.filter((node) => node.type === "section"),
+      ["sectionNumber"],
+    ));
+    setChapters(sortBy(
+      nodes.filter((node) => node.type === "chapter"),
+      ["sectionNumber", "chapterNumber"],
+    ));
+    setRules(nodes.filter((node) => node.type === "rule"));
+    setSubrules(nodes.filter((node) => node.type === "subrule"));
+  }
+
+  // Add a hash to url if none provided
+  useEffect(() => {
+    if (path.length === 1) {
+      router.push("#100", undefined, { shallow: true });
+    }
+  }, [router, path]);
+
+  // Initialize chapterValue state
+  useEffect(() => {
+    // Get anchor value from url hash via router
+    if (!chapterValues.anchorValue) {
+      const anchorValue = Number(path[1]);
+
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        currentCallback: 100,
+        chapterNumber: anchorValue,
+        anchorValue,
+        init: anchorValue,
+        source: "init",
+      }));
+    }
+  }, [path, chapterValues.anchorValue]);
+
+  // Error Detection: Add nodes array to errorData
+  useEffect(() => {
+    // errorData.nodes = nodes;
+    if (!errorData.nodes.length) {
+      setErrorData((prevValue) => ({
+        ...prevValue,
+        nodes,
+      }));
+    }
+  }, [nodes, errorData.nodes.length]);
+
+  // Error Detection: Add anchorValue to errorData
+  useEffect(() => {
+    // Confirm anchor value is found in chapters array
+    const validateChapter = (chapterN: number): Chapter | undefined => chapters
+      .find((chapter) => chapter.chapterNumber === chapterN);
+
+    if (chapterValues.anchorValue) {
+      setErrorData((prevValue) => ({
+        ...prevValue,
+        validChapter: validateChapter(chapterValues.anchorValue),
+      }));
+    }
+  // eslint complains chapters not included, but need this set only once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapterValues.anchorValue]);
+
+  // SectionList viewport ref
+  const rootRef = useRef<HTMLDivElement>();
+
+  // SectionList rootRef.current, observed element
+  const root: RefObject<HTMLDivElement> = rootRef.current || null;
+
+  // Callback to collect an array of rule div refs to observe
+  const setRuleRefs = useCallback(
+    (node) => {
+      if (node && !refRuleArray.includes(node)) {
+        setRefRuleArray((oldArray) => [...oldArray, node]);
+      }
+    },
+    [refRuleArray],
+  );
+
+  // Callback to collect an array of toc chapterTitle div refs to scroll to
+  const setTocRefs = useCallback(
+    (node) => {
+      if (node && !refTocArray.includes(node)) {
+        setRefTocArray((oldArray) => [...oldArray, node]);
+      }
+    },
+    [refTocArray],
+  );
+
+  /*
+    When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
+    This value is overriden by the callback on render, unless the update is
+    paused, callback chapterNumber saved to state, and a condition prevents the
+    callback chapterNumber from being saved to state.
+  */
+
+  // Apply pause
+  useEffect(() => {
+    if (pause) {
+      setTimeout(() => {
+        setPause(!pause);
+      }, 500);
+    }
+  }, [pause]);
+
+  // Callback that observes rule divs for intersection with the top of viewport
+  const callbackChapterNumber = useTopRule(refRuleArray, root) || chapterValues.init;
+
+  let callbackNumber: number;
+
+  if (!pause && callbackChapterNumber) {
+    callbackNumber = callbackChapterNumber;
+  }
+
+  // ToC chapter title click prop
+  const tocOnClick = (chapterN: number): number => {
+    let source: string;
+    // Initiate a pause as chapterNumber is supplied by prop
+    setPause(true);
+    const { chapterNumber } = chapterValues;
+    if (chapterNumber && chapterN < chapterNumber) {
+      source = "prop decrease";
+    } else if (chapterNumber && chapterN > chapterNumber) {
+      source = "prop increase";
+    }
+
+    // Save value from prop
+    if (chapterValues.chapterNumber !== chapterN) {
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        chapterNumber: chapterN,
+        anchorValue: chapterN,
+        source,
+        propValue: chapterN,
+      }));
+    }
   };
 
-  const currentUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
+  /*
+    If at initialization, use hash value as anchor link, and scroll to that chapter
+      in ToC list
+    Else use propValue or callbackNumber
+  */
 
-  // Form validation Prop. Validate different ruleset
-  const validateUrl = async (url: string): Promise<number> => {
-    if (!url.length) {
-      // If it is an empty string
-      return 0;
+  useEffect(() => {
+    const anchorNumber = chapterValues.anchorValue;
+    if (
+      anchorNumber
+      && chapterValues.source === "init"
+      && refTocArray.length
+      && chapters.length
+    ) {
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        chapterNumber: anchorNumber,
+        source: "anchor tag",
+      }));
+
+      // Scroll ToC viewport to anchor tag's chapter title
+      const re = new RegExp(`(${chapterValues.chapterNumber})`);
+      const element = refTocArray.find((elem) => re.test(elem.outerText));
+      element.scrollIntoView();
+    } else if (callbackNumber
+      && !pause
+      && chapterValues.chapterNumber !== callbackNumber
+      && chapterValues.currentCallback !== callbackNumber
+    ) {
+      const { source, propValue } = chapterValues;
+
+      // Update chapterValues chapterNumber and currentCallback fn
+      const updateState = (chapterN: number): void => {
+        setChapterValues((prevValue) => ({
+          ...prevValue,
+          source: "callback",
+          chapterNumber: chapterN,
+          currentCallback: chapterN,
+        }));
+      };
+
+      /*
+        When the prop returns a # less than the state chapterNumber, the observer
+          callback returns the wrong value.
+        When the prop returns a # greater than the state chapterNumber, the observer
+          does not return a value at all.
+        In this case use propValue instead.
+      */
+
+      if ((source === "prop decrease" || source === "prop increase") && propValue) {
+        updateState(propValue);
+      } else if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
+        updateState(callbackNumber);
+      }
     }
-
-    const reVersion = /\d{10}/;
-    const version: number = reVersion.test(url) ? url.match(reVersion)[0] : 0;
-    const reYear = /\d{4}/;
-    const year: number = reYear.test(url) ? url.match(reYear)[0] : 0;
-
-    // That ruleset is already displayed
-    if (routerValues.version === version && routerValues.year === year) {
-      return 3;
-    }
-
-    // Offload validation to util fn
-    const result = await formValidation(url, version, year);
-    // Change the displayed ruleset
-    if (result === 200) {
-      // Link validated, update router
-      router.query.version = version;
-      router.query.year = year;
-      // Trigger ISR page update
-      // TODO: Unknown key error in dev, although update works
-      router.push(router);
-      return 1;
-    }
-    // No data found at that link
-    return 4;
-  };
+    // Eslint complains of missing dependencies that are unnecessary here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.asPath, callbackNumber, pause]);
 
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
@@ -103,49 +292,58 @@ const RuleSetPage = (props: Props): JSX.Element => {
     );
   }
 
-  // Sort nodes
-  const sections = sortBy(
-    nodes.filter((node) => node.type === "section"),
-    ["sectionNumber"],
-  );
-  const chapters = sortBy(
-    nodes.filter((node) => node.type === "chapter"),
-    ["sectionNumber", "chapterNumber"],
-  );
-  const rules = nodes.filter((node) => node.type === "rule");
-  const subrules = nodes.filter((node) => node.type === "subrule");
-
-  // DEBUG values
-  console.log(sections);
-  console.log(chapters);
-  console.log(rules);
-  console.log(subrules);
+  const errorResult = (obj): number => Object.values(obj).every(Boolean);
 
   return (
     <div>
-      <div>
-        <Form
-          validateUrl={validateUrl}
-          initialUrl={currentUrl}
-          formText="Original Ruleset Link:"
-          smallText="Change and submit a link to view a different ruleset."
-        />
-      </div>
-      <div className={styles.views}>
-        <div className={styles.tocSections}>
-          <TocSections sections={sections} chapters={chapters} />
+      { (!errorResult(errorData))
+        ? (<div>
+          <CustomErrors data={errorData} chapterNumber={chapterValues.chapterNumber} />
         </div>
-        <div>
-          <div className={styles.chapterList}>
-            <SectionList
-              sections={sections}
-              chapters={chapters}
-              rules={rules}
-              subrules={subrules}
-            />
+        ) : (
+      <div className={styles.bodyContainer}>
+        <div className={styles.leftContainer}>
+          <TocSections
+            sections={sections}
+            chapters={chapters}
+            tocOnClick={tocOnClick}
+            tocTitleRef={setTocRefs}
+          />
+        </div>
+        <div className={styles.rightContainer}>
+          <div className={styles.rightRelative}>
+            <div className={styles.tabsContainer}>
+              <Tabs defaultActiveKey="search">
+                <Tab eventKey="search" title="Search Ruleset">
+                  <div>
+                    <SearchForm />
+                  </div>
+                </Tab>
+                <Tab eventKey="ruleset" title="Load Another Ruleset">
+                  <RulesetForm
+                    smallText="Change and submit a link to view a different ruleset."
+                  />
+                </Tab>
+              </Tabs>
+            </div>
+            <div className={styles.chapterTitleContainer}>
+              <ChapterTitle chapter={chapters.find((chapter) => chapter
+                .chapterNumber === chapterValues.chapterNumber)} toc={0} />
+            </div>
+            <div className={styles.rulesContainer}>
+              <SectionList
+                sections={sections}
+                chapters={chapters}
+                rules={rules}
+                subrules={subrules}
+                elRef={setRuleRefs}
+                root={rootRef}
+              />
+            </div>
           </div>
         </div>
       </div>
+        )}
     </div>
   );
 };
