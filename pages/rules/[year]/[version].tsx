@@ -47,7 +47,6 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
       props: {},
       notFound: true,
     };
-
   return result;
 };
 
@@ -81,7 +80,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const [subrules, setSubrules] = useState([]);
 
   // Collect and sort rule set categories into node arrays
-  if (nodes.length
+  if (nodes && nodes.length
     && !sections.length
     && !chapters.length
     && !rules.length
@@ -125,14 +124,13 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
-    // errorData.nodes = nodes;
-    if (!errorData.nodes.length) {
+    if (nodes && nodes.length) {
       setErrorData((prevValue) => ({
         ...prevValue,
         nodes,
       }));
     }
-  }, [nodes, errorData.nodes.length]);
+  }, [nodes]);
 
   // Error Detection: Add anchorValue to errorData
   useEffect(() => {
@@ -140,7 +138,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
     const validateChapter = (chapterN: number): Chapter | undefined => chapters
       .find((chapter) => chapter.chapterNumber === chapterN);
 
-    if (chapterValues.anchorValue) {
+    if (chapterValues.anchorValue && chapters.length) {
       setErrorData((prevValue) => ({
         ...prevValue,
         validChapter: validateChapter(chapterValues.anchorValue),
