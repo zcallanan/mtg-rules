@@ -220,7 +220,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
       console.log("toc")
       setChapterValues((prevValue) => ({
         ...prevValue,
-        // currentCallback: chapterN,
         chapterNumber: chapterN,
         anchorValue: chapterN,
         source,
@@ -237,36 +236,6 @@ const RuleSetPage = (props: Props): JSX.Element => {
       - Current chapterNumber is different from # returned by callback
       - Callback # saved during pause is different from the latest callback #
   */
-
-  // Scroll the ToC list to the anchor tag chapter title
-  // useEffect(() => {
-  //   console.log(chapterValues.source)
-  //   if (
-  //     errorData.nodes.length
-  //     && errorData.validChapter
-  //   ) {
-  //     /*
-  //       When page loads and there is an anchor, there is no observer callback and
-  //       router does not register the url change, so get val from
-  //       window.location.hash. Then update chapterNumber state.
-  //     */
-  //     const c = Number(window.location.hash.substr(1, 3));
-  //     console.log("hash", c)
-  //     if (c) {
-  //       console.log("anchor tag set")
-  //       setChapterValues((prevValue) => ({
-  //         ...prevValue,
-  //         chapterNumber: c,
-  //         source: "anchor tag set",
-  //         hiddenAnchor: c,
-  //       }));
-  //     }
-  //     // Scroll ToC viewport to anchor tag's chapter title
-  //     const re = new RegExp(`(${chapterValues.chapterNumber})`);
-  //     const element = refTocArray.find((elem) => re.test(elem.outerText));
-  //     element.scrollIntoView();
-  //   }
-  // }, [refTocArray, chapterValues.source, chapterValues.chapterNumber, errorData]);
 
   useEffect(() => {
     const anchorNumber = chapterValues.anchorValue;
@@ -307,7 +276,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
           hiddenAnchor: n,
         }));
       };
-      if (source === "prop decrease") {
+      if (source === "prop decrease" || source === "prop increase") {
         /*
           When the prop returns a # less than the state chapterNumber, the observer
           callback returns the wrong value. In this case use propValue instead.
@@ -343,11 +312,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
     );
   }
 
-  const errorResult = (obj): number => {
-    const result = Object.values(obj).every(Boolean);
-    console.log("errorResult:", result, obj)
-    return result
-  }
+  const errorResult = (obj): number => Object.values(obj).every(Boolean);
 
   return (
     <div>
