@@ -1,17 +1,17 @@
 import {
   useEffect,
   useRef,
-  RefObject,
   useCallback,
   useState,
+  RefObject,
 } from "react";
 
 const useTopRule = (
-  refArray: RefObject<HTMLElement>[] = null,
+  refArray: RefObject<HTMLDivElement>[] = null,
   root: RefObject<HTMLDivElement> | null = null,
 ): number | void => {
   const observerRef = useRef<IntersectionObserver>(null);
-  const [ruleNumber, setRuleNumber] = useState();
+  const [ruleNumber, setRuleNumber] = useState<number>();
 
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
@@ -24,7 +24,7 @@ const useTopRule = (
     // IntersectionRect set to top of .scrollableDiv viewport
     const options = {
       rootMargin: "0px 0px -99% 0px",
-      root,
+      root: root.current,
     };
 
     observerRef.current = new IntersectionObserver(callback, options);
@@ -40,6 +40,8 @@ const useTopRule = (
     refArray.forEach((r) => {
       observerRef.current.observe(r);
     });
+    
+    
   }, [refArray]);
 
   // Cleanup

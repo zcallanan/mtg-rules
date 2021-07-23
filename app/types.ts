@@ -45,6 +45,7 @@ export interface ChapterValues {
   anchorValue: number;
   init: number;
   source: string;
+  propValue: number;
 }
 
 export interface ErrorData {

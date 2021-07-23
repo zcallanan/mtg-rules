@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
@@ -8,8 +9,8 @@ import styles from "../../../styles/RuleList.module.scss";
 interface Props {
   ruleSubset: Rule[];
   subrules: Subrule[];
-  elRef: HTMLDivElement | null;
-  onLinkClick: (chapterNumber: number) => number;
+  elRef: (node: RefObject<HTMLDivElement>) => void | null;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const RuleList = (props: Props): JSX.Element => {
@@ -21,10 +22,13 @@ const RuleList = (props: Props): JSX.Element => {
   } = props;
 
   const router: NextRouter = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
 
   return (
     <div>

@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  RefObject,
 } from "react";
 import sortBy from "lodash/sortBy";
 import { useRouter, NextRouter } from "next/router";
@@ -26,17 +27,28 @@ import {
 import styles from "../../../styles/[version].module.scss";
 
 interface Props {
-  nodes: Nodes;
+  nodes: void | (Section | Chapter | Rule | Subrule)[];
   effectiveDate: string;
 }
 
-export const getStaticProps: getStaticProps = async ({ params }): Promise<void | Nodes> => {
+interface GetStaticPropsResult {
+  props: Props | {};
+  revalidate?: number;
+  notFound?: boolean;
+}
+
+interface ValidateChapter {
+  nodes: (Section | Chapter | Rule | Subrule)[];
+  validChapter: Chapter | undefined | boolean;
+}
+
+export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> => {
   // Fetch rule set
   const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`;
-  const res: string = await fetch(url);
+  const res = await fetch(url);
   const rawRuleSetText: string = await res.text();
   // Parse rules text to an array of rule nodes
-  const nodes: Nodes = await rulesParse(rawRuleSetText);
+  const nodes: void | Nodes = await rulesParse(rawRuleSetText);
 
   // Parse rules text for effective date
   const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
@@ -45,9 +57,9 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
     [effectiveDate] = rawRuleSetText.match(effectiveDateRegex);
   }
 
-  const result = (nodes)
+  const result: GetStaticPropsResult = (nodes)
     ? {
-      props: { nodes, effectiveDate, rawRuleSetText },
+      props: { nodes, effectiveDate },
       revalidate: 1,
     }
     : {
@@ -57,7 +69,7 @@ export const getStaticProps: getStaticProps = async ({ params }): Promise<void |
   return result;
 };
 
-export const getStaticPaths: getStaticPaths = async () => {
+export const getStaticPaths = async () => {
   const values = [["2021", "2020210419"]];
   const paths = values.map((value) => ({
     params: { year: value[0], version: value[1] },
@@ -68,16 +80,17 @@ export const getStaticPaths: getStaticPaths = async () => {
 
 const RuleSetPage = (props: Props): JSX.Element => {
   const { nodes, effectiveDate } = props;
-  const [errorData, setErrorData] = useState({
-    nodes: [],
+  const array: (Section | Chapter | Rule | Subrule)[] = [];
+  const [errorData, setErrorData] = useState<ValidateChapter>({
+    nodes: array,
     validChapter: true,
   });
 
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
-  const [refRuleArray, setRefRuleArray] = useState<HTMLDivElement[]>([]);
-  const [refTocArray, setRefTocArray] = useState<HTMLDivElement[]>([]);
+  const [refRuleArray, setRefRuleArray] = useState<RefObject<HTMLDivElement>[]>([]);
+  const [refTocArray, setRefTocArray] = useState<RefObject<HTMLDivElement>[]>([]);
   const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({});
   const [sections, setSections] = useState<Section[]>([]);
@@ -114,7 +127,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   // Initialize chapterValue state
   useEffect(() => {
     // Get anchor value from url hash via router
-    if (!chapterValues.anchorValue) {
+    if (!chapterValues.anchorValue && path[1]) {
       // Hash can refer to rule or subrule, so isolate chapter digits
       const [anchorChapter] = path[1].match(/\d{3}/);
       const anchorValue = Number(anchorChapter);
@@ -147,7 +160,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
       .find((chapter) => chapter.chapterNumber === chapterN);
 
     if (chapterValues.anchorValue && chapters.length) {
-      setErrorData((prevValue) => ({
+      setErrorData((prevValue: ValidateChapter) => ({
         ...prevValue,
         validChapter: validateChapter(chapterValues.anchorValue),
       }));
@@ -160,11 +173,11 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const rootRef = useRef<HTMLDivElement>();
 
   // SectionList rootRef.current, observed element
-  const root: RefObject<HTMLDivElement> = rootRef.current || null;
+  const root: HTMLDivElement = rootRef.current;
 
   // Callback to collect an array of rule div refs to observe
   const setRuleRefs = useCallback(
-    (node) => {
+    (node: RefObject<HTMLDivElement>) => {
       if (node && !refRuleArray.includes(node)) {
         setRefRuleArray((oldArray) => [...oldArray, node]);
       }
@@ -174,7 +187,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   // Callback to collect an array of toc chapterTitle div refs to scroll to
   const setTocRefs = useCallback(
-    (node) => {
+    (node: RefObject<HTMLDivElement>) => {
       if (node && !refTocArray.includes(node)) {
         setRefTocArray((oldArray) => [...oldArray, node]);
       }
@@ -199,7 +212,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   }, [pause]);
 
   // Callback that observes rule divs for intersection with the top of viewport
-  const callbackChapterNumber = useTopRule(refRuleArray, root) || chapterValues.init;
+  const callbackChapterNumber = useTopRule(refRuleArray, rootRef) || chapterValues.init;
 
   let callbackNumber: number;
 
@@ -215,7 +228,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
   };
 
   // Prop used by ToC links and section list viewport links
-  const onLinkClick = (chapterN: number, dataSource: string): number => {
+  const onLinkClick = (chapterN: number, dataSource: string): void => {
     // If chapterN comes from a sectionList viewport link, scroll Toc
     if (dataSource === "rules") {
       scrollToc(chapterN);
@@ -316,7 +329,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
     );
   }
 
-  const errorResult = (obj): number => Object.values(obj).every(Boolean);
+  const errorResult = (obj: ValidateChapter ): boolean => Object.values(obj).every(Boolean);
 
   return (
     <div>

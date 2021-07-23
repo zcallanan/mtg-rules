@@ -5,8 +5,8 @@ import styles from "../../../styles/TocSections.module.scss";
 interface Props {
   sections: Section[];
   chapters: Chapter[];
-  onLinkClick: (chapterNumber: number) => number;
-  tocTitleRef: HTMLElement | null;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  tocTitleRef: HTMLDivElement | null;
 }
 
 const TocSections = (props: Props): JSX.Element => {
@@ -27,7 +27,7 @@ const TocSections = (props: Props): JSX.Element => {
           <TocChapterList
             sectionNumber={section.sectionNumber}
             chapters={chapters}
-            toc="1"
+            toc={1}
             onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
           />

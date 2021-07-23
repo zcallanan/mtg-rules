@@ -1,5 +1,5 @@
 import RuleGroup from "./RuleGroup";
-import { Chapter, Rule, Subrule } from "../../../app/types";
+import { Section, Chapter, Rule, Subrule } from "../../../app/types";
 import styles from "../../../styles/ChapterList.module.scss";
 
 interface Props {

@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import Custom404 from "../../404";
-import { Nodes, Chapter, ErrorData } from "../../../app/types";
+import {
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+  ErrorData
+} from "../../../app/types";
 
 interface Errors {
-  nodes?: Nodes;
+  nodes?: (Section | Chapter | Rule | Subrule)[];
   validChapter?: Chapter | undefined;
 }
 
@@ -12,7 +18,7 @@ interface Props {
   chapterNumber?: number;
 }
 
-const CustomErrors = ((props: Props): JSX.Element | void => {
+const CustomErrors = ((props: Props): JSX.Element => {
   const { data, chapterNumber } = props;
   const [values, setValues] = useState<ErrorData>({ reason: "", value: null });
 

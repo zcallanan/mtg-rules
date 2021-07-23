@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import formValidation from "../../../app/form-validation";
+import { RouterValues } from "../../../app/types";
 import styles from "../../../styles/RulesetForm.module.scss";
 
 interface Props {
@@ -21,10 +22,13 @@ const RulesetForm = (props: Props): JSX.Element => {
 
   // Get url query values
   const router: NextRouter = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
   const initUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
 
   // Set initial url on page load

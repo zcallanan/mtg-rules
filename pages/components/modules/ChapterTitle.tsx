@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
-import { Chapter } from "../../../app/types";
+import { Section, Chapter } from "../../../app/types";
 import styles from "../../../styles/ChapterTitle.module.scss";
 
 interface Props {
@@ -27,7 +27,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
   const router: NextRouter = useRouter();
 
   // Chapter prop or PH zero chapter if unavailable
-  const chapterObj = chapter || { chapterNumber: 0, text: "" };
+  const chapterObj = chapter || { chapterNumber: 0, text: "", sectionNumber: 0, type: "chapter" };
 
   let sectionObj: Section;
   if (chapterObj.chapterNumber && !toc) {

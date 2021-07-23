@@ -6,7 +6,7 @@ interface Props {
   rules: Rule[];
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
-  onLinkClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
@@ -27,7 +27,6 @@ const RuleGroup = (props: Props): JSX.Element => {
       {ruleSubset && (
         <ul key={`c-u${chapter.chapterNumber}`} className={"list-group"}>
           <RuleList
-            chapter={chapter}
             ruleSubset={ruleSubset}
             subrules={subrules}
             elRef={elRef}

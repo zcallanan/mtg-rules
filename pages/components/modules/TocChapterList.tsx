@@ -6,8 +6,8 @@ interface Props {
   chapters: Chapter[];
   sectionNumber: number;
   toc: number;
-  onLinkClick: (chapterNumber: number) => number;
-  tocTitleRef: HTMLElement | null;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  tocTitleRef: HTMLDivElement | null;
 }
 
 const TocChapterList = (props: Props): JSX.Element => {

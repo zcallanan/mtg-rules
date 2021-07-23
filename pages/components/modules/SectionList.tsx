@@ -15,7 +15,7 @@ interface Props {
   subrules: Subrule[];
   elRef: HTMLDivElement | null;
   root: HTMLDivElement | null;
-  onLinkClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const SectionList = (props: Props): JSX.Element => {
