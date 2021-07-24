@@ -65,16 +65,13 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
     const matchArray: RegExpMatchArray[] = [];
     let ruleNumberArray: string[];
 
+    // Push all matched ruleNumber strings to matchArray
     regexArray.forEach((regex) => {
       // Find all matches for a particular regex
-      if (typeof(text) === "string") {
-        matchArray.push(text.match(regex));
-      } else {
-        console.log(text)
-      }
+      matchArray.push(text.match(regex));
     })
 
-    // Push all matched ruleNumber strings to ruleNumberArray
+    // Flatten matchArray
     ruleNumberArray = matchArray.flat();
 
     // Remove extra characters from matchArray
@@ -91,7 +88,6 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
       }
     });
 
-    // return updatedText;
     const args: ReplaceRuleNumbers = (rule) 
       ? {text, ruleNumberArray, routerValues, onLinkClick, rule}
       : {text, ruleNumberArray, routerValues, onLinkClick, subrule}
@@ -103,7 +99,6 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   regexes.forEach((regex) => {
     if (regex.test(linkText)) {
       regexArray.push(regex);
-      // linkText = findMatches(regex, linkText);
     }
   });
   
