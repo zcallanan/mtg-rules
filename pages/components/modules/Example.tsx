@@ -6,7 +6,7 @@ import styles from "../../../styles/Example.module.scss";
 interface Props {
   rule?: Rule;
   subrule?: Subrule;
-  onLinkClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const Example = (props: Props): JSX.Element => {
@@ -30,7 +30,11 @@ const Example = (props: Props): JSX.Element => {
             key={rule ? `rule-e${index}` : `subrule-e${index}`}
             className={`${styles.example} list-group-item`}
           >
-            {parseLink(data, routerValues, onLinkClick, example)}
+            {parseLink(
+              (rule)
+              ? {routerValues, onLinkClick, example, rule }
+              : {routerValues, onLinkClick, example, subrule }
+            )}
           </li>
         ),
       )}

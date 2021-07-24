@@ -1,4 +1,4 @@
-const parseExamples = (text: string): string[] => {
+const parseExamples = (text: string): (string | string[])[] => {
   // Split example text
   const splitText: string[] = text.split("\r\n");
 
@@ -10,8 +10,13 @@ const parseExamples = (text: string): string[] => {
     ? splitText.map((example) => example)
     : [];
 
+  // Result
+  const result: (string | string[])[] = [];
+  result.push(mainText);
+  result.push(exampleText)
+
   // Return
-  return [mainText, exampleText];
+  return result;
 };
 
 export default parseExamples;

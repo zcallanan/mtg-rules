@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
@@ -7,8 +8,8 @@ import styles from "../../../styles/ChapterTitle.module.scss";
 interface Props {
   chapter: Chapter;
   toc: number;
-  onLinkClick?: (chapterNumber: number) => number;
-  tocTitleRef?: HTMLElement | null;
+  onLinkClick?: (chapterNumber: number, dataSource: string) => void;
+  tocTitleRef?: (node: RefObject<HTMLDivElement>) => void | null;
   effectiveDate?: string;
   sections?: Section[];
 }

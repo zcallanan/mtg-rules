@@ -4,7 +4,7 @@ import SubruleList from "./SubruleList";
 interface Props {
   rule: Rule;
   subrules: Subrule[];
-  onLinkClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const SubruleGroup = (props: Props): JSX.Element => {

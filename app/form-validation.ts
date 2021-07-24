@@ -3,10 +3,10 @@ const dev = process.env.NODE_ENV !== "production";
 const formValidation = async (url: string, version: number, year: number): Promise<number> => {
   // Remove host
   const noHost: string = url.replace(/http(s|):\/\//i, "");
-  const split: string = noHost.replace(version, "").split("/");
+  const split: string[] = noHost.replace(`${version}`, "").split("/");
 
   // If it is an invalid ruleset url
-  const re1 = /media[.]wizards[.]com/i;
+  const re1 = /media\.wizards\.com/i;
   const path1: string = re1.test(split[0]) ? split[0].match(re1)[0] : "";
 
   const re2 = /downloads/i;
@@ -20,13 +20,16 @@ const formValidation = async (url: string, version: number, year: number): Promi
     return 2;
   }
 
+  const versionString = `${version}`;
+  const yearString = `${year}`;
+
   const result = await (dev
     ? fetch("/api/ruleset-validation",
       {
         headers:
           {
-            version,
-            year,
+            version: versionString,
+            year: yearString,
           },
       })
     : fetch(url)

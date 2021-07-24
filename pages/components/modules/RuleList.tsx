@@ -39,11 +39,7 @@ const RuleList = (props: Props): JSX.Element => {
               key={`r${rule.ruleNumber}`}
               className={`${styles.ruleText} list-group-item`}
             >
-              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {parseLink(
-                rule,
-                routerValues,
-                onLinkClick,
-              )}
+              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {parseLink({routerValues, onLinkClick, rule})}
             </li>
           </section>
           <Example rule={rule} onLinkClick={onLinkClick} />

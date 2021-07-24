@@ -52,3 +52,20 @@ export interface ErrorData {
   reason: string;
   value: number;
 }
+
+export interface ParseLinkArgs {
+  routerValues: RouterValues;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  example?: string;
+  rule?: Rule;
+  subrule?: Subrule;
+}
+
+export interface ReplaceRuleNumbers {
+  text: string;
+  ruleNumberArray: string[];
+  routerValues: RouterValues;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  rule?: Rule;
+  subrule?: Subrule;
+}

@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import { Chapter, Rule, Subrule } from "../../../app/types";
 import RuleList from "./RuleList";
 
@@ -5,7 +6,7 @@ interface Props {
   chapter: Chapter;
   rules: Rule[];
   subrules: Subrule[];
-  elRef: HTMLDivElement | null;
+  elRef: (node: RefObject<HTMLDivElement>) => void | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 

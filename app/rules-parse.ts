@@ -41,7 +41,7 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
         const ruleNumber = Number(rule);
 
         // Handle text that has examples
-        const textParse = parseExamples(txt);
+        const textParse: string[] = parseExamples(txt);
 
         return {
           type: "rule",
@@ -60,7 +60,7 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
           const ruleNumber = Number(rule);
 
           // Handle text that has examples
-          const textParse = parseExamples(txt);
+          const textParse: string[] = parseExamples(txt);
 
           return {
             type: "subrule",

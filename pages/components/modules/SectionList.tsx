@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
@@ -13,8 +14,8 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
-  elRef: HTMLDivElement | null;
-  root: HTMLDivElement | null;
+  elRef: (node: RefObject<HTMLDivElement>) => void | null;
+  root: RefObject<HTMLDivElement> | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 

@@ -6,17 +6,20 @@ import styles from "../../../styles/SubruleList.module.scss";
 
 interface Props {
   subruleSubset: Subrule[];
-  onLinkClick: (chapterNumber: number) => number;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const SubruleList = (props: Props): JSX.Element => {
   const { subruleSubset, onLinkClick } = props;
 
   const router: NextRouter = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
 
   return (
     <div>
@@ -30,11 +33,7 @@ const SubruleList = (props: Props): JSX.Element => {
               className={`${styles.subruleText} list-group-item`}
             >
               {subrule.chapterNumber}.{subrule.ruleNumber}
-              {subrule.subruleLetter} &nbsp; {parseLink(
-                subrule,
-                routerValues,
-                onLinkClick,
-              )}
+              {subrule.subruleLetter} &nbsp; {parseLink({ routerValues, onLinkClick, subrule })}
             </li>
           </section>
           <Example subrule={subrule} onLinkClick={onLinkClick}/>

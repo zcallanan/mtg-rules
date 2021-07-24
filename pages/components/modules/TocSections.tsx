@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import TocChapterList from "./TocChapterList";
 import { Section, Chapter } from "../../../app/types";
 import styles from "../../../styles/TocSections.module.scss";
@@ -6,7 +7,7 @@ interface Props {
   sections: Section[];
   chapters: Chapter[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  tocTitleRef: HTMLDivElement | null;
+  tocTitleRef: (node: RefObject<HTMLDivElement>) => void | null;
 }
 
 const TocSections = (props: Props): JSX.Element => {
