@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { LegacyRef, RefObject } from "react";
 import RuleGroup from "./RuleGroup";
 import { Section, Chapter, Rule, Subrule } from "../../../app/types";
 import styles from "../../../styles/ChapterList.module.scss";
@@ -8,7 +8,7 @@ interface Props {
   chapters: Chapter[];
   rules?: Rule[];
   subrules?: Subrule[];
-  elRef: (node: RefObject<HTMLDivElement>) => void | null;
+  elRef: (node: LegacyRef<HTMLDivElement>) => void | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 

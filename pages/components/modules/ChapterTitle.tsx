@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { MutableRefObject, useEffect, useState } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
@@ -7,9 +7,10 @@ import styles from "../../../styles/ChapterTitle.module.scss";
 
 interface Props {
   chapter: Chapter;
+  i?: number;
   toc: number;
   onLinkClick?: (chapterNumber: number, dataSource: string) => void;
-  tocTitleRef?: (node: RefObject<HTMLDivElement>) => void | null;
+  tocTitleRef?: MutableRefObject<HTMLDivElement[]>;
   effectiveDate?: string;
   sections?: Section[];
 }
@@ -17,12 +18,15 @@ interface Props {
 const ChapterTitle = (props: Props): JSX.Element => {
   const {
     chapter,
+    i,
     toc,
     onLinkClick,
     tocTitleRef,
     effectiveDate,
     sections,
   } = props;
+  
+  console.log(i)
   const key = toc ? "toc" : "chapter";
 
   const router: NextRouter = useRouter();
@@ -78,7 +82,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       { toc ? (
-        <div ref={tocTitleRef}>
+        <div ref={el => tocTitleRef.current[i] = el}>
           <li
             key={`${key}${chapterObj.chapterNumber}`}
             className={styles.chapterList}

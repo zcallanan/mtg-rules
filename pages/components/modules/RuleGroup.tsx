@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { MutableRefObject, RefObject } from "react";
 import { Chapter, Rule, Subrule } from "../../../app/types";
 import RuleList from "./RuleList";
 
@@ -6,7 +6,7 @@ interface Props {
   chapter: Chapter;
   rules: Rule[];
   subrules: Subrule[];
-  elRef: (node: RefObject<HTMLDivElement>) => void | null;
+  elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
@@ -29,6 +29,7 @@ const RuleGroup = (props: Props): JSX.Element => {
         <ul key={`c-u${chapter.chapterNumber}`} className={"list-group"}>
           <RuleList
             ruleSubset={ruleSubset}
+            rules={rules}
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}

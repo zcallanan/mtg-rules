@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { MutableRefObject } from "react";
 import ChapterTitle from "./ChapterTitle";
 import { Chapter } from "../../../app/types";
 import styles from "../../../styles/TocChapterList.module.scss";
@@ -8,7 +8,7 @@ interface Props {
   sectionNumber: number;
   toc: number;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  tocTitleRef: (node: RefObject<HTMLDivElement>) => void | null;
+  tocTitleRef: MutableRefObject<HTMLDivElement[]>;
 }
 
 const TocChapterList = (props: Props): JSX.Element => {
@@ -31,6 +31,7 @@ const TocChapterList = (props: Props): JSX.Element => {
             toc={toc}
             onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
+            i={chapters.findIndex((ch) => ch.chapterNumber === chapter.chapterNumber)}
           />
         </ul>
       ))}

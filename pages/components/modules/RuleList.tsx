@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { MutableRefObject, useState } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
@@ -8,14 +8,16 @@ import styles from "../../../styles/RuleList.module.scss";
 
 interface Props {
   ruleSubset: Rule[];
+  rules: Rule[];
   subrules: Subrule[];
-  elRef: (node: RefObject<HTMLDivElement>) => void | null;
+  elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const RuleList = (props: Props): JSX.Element => {
   const {
     ruleSubset,
+    rules,
     subrules,
     elRef,
     onLinkClick,
@@ -33,7 +35,9 @@ const RuleList = (props: Props): JSX.Element => {
   return (
     <div>
       {ruleSubset.map((rule, index) => (
-        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={elRef}>
+        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={el => elRef.current[
+          rules.findIndex((r) => r.ruleNumber === rule.ruleNumber && r.chapterNumber === rule.chapterNumber)
+        ] = el}>
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
               key={`r${rule.ruleNumber}`}

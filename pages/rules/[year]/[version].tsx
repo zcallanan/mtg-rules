@@ -4,6 +4,7 @@ import React, {
   useRef,
   useEffect,
   RefObject,
+  LegacyRef,
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
@@ -79,8 +80,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
-  const [refRuleArray, setRefRuleArray] = useState<RefObject<HTMLDivElement>[]>([]);
-  const [refTocArray, setRefTocArray] = useState<RefObject<HTMLDivElement>[]>([]);
   const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({
     currentCallback: 0,
@@ -164,28 +163,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // SectionList viewport ref
   const rootRef = useRef<HTMLDivElement>();
 
-  // SectionList rootRef.current, observed element
-  const root: HTMLDivElement = rootRef.current;
-
-  // Callback to collect an array of rule div refs to observe
-  const setRuleRefs = useCallback(
-    (node: RefObject<HTMLDivElement>) => {
-      if (node && !refRuleArray.includes(node)) {
-        setRefRuleArray((oldArray) => [...oldArray, node]);
-      }
-    },
-    [refRuleArray],
-  );
-
-  // Callback to collect an array of toc chapterTitle div refs to scroll to
-  const setTocRefs = useCallback(
-    (node: RefObject<HTMLDivElement>) => {
-      if (node && !refTocArray.includes(node)) {
-        setRefTocArray((oldArray) => [...oldArray, node]);
-      }
-    },
-    [refTocArray],
-  );
+  const tocRefs = useRef<HTMLDivElement[]>([]);
 
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
@@ -203,8 +181,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   }, [pause]);
 
+  // Collect mutable refs in [] for useTopRule to iterate over and observe
+  const rulesRef = useRef<HTMLDivElement[]>([]);
+
   // Callback that observes rule divs for intersection with the top of viewport
-  const callbackChapterNumber = useTopRule(refRuleArray, rootRef) || chapterValues.init;
+  const callbackChapterNumber = useTopRule(rulesRef.current, rootRef) || chapterValues.init;
 
   let callbackNumber: number;
 
@@ -215,7 +196,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Scroll ToC to chapterTitle corresponding to url hash value
   const scrollToc = (chapterNumber: number) => {
     const re = new RegExp(`(${chapterNumber})`);
-    const element = refTocArray.find((elem) => re.test(elem.outerText));
+    console.log(tocRefs)
+    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
     element.scrollIntoView();
   };
 
@@ -259,7 +241,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     if (
       anchorNumber
       && chapterValues.source === "init"
-      && refTocArray.length
+      && tocRefs.current.length
       && chapters.length
     ) {
       setChapterValues((prevValue) => ({
@@ -336,7 +318,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
             sections={sections}
             chapters={chapters}
             onLinkClick={onLinkClick}
-            tocTitleRef={setTocRefs}
+            tocTitleRef={tocRefs}
           />
         </div>
         <div className={styles.rightContainer}>
@@ -370,7 +352,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                 chapters={chapters}
                 rules={rules}
                 subrules={subrules}
-                elRef={setRuleRefs}
+                elRef={rulesRef}
                 root={rootRef}
                 onLinkClick={onLinkClick}
               />

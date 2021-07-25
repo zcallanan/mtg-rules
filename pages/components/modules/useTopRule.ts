@@ -7,7 +7,7 @@ import {
 } from "react";
 
 const useTopRule = (
-  refArray: RefObject<HTMLDivElement>[] = null,
+  refArray: HTMLDivElement[] = null,
   root: RefObject<HTMLDivElement> | null = null,
 ): number | void => {
   const observerRef = useRef<IntersectionObserver>(null);
@@ -16,7 +16,7 @@ const useTopRule = (
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
       console.log(entry);
-      setRuleNumber(Number(entry.target.outerText.match(/(\d{3})/g)[0]));
+      setRuleNumber(Number(entry.target.innerText.match(/(\d{3})/g)[0]));
     }
   }, []);
 
