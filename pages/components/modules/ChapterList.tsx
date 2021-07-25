@@ -1,14 +1,19 @@
-import { LegacyRef, RefObject } from "react";
+import { MutableRefObject } from "react";
 import RuleGroup from "./RuleGroup";
-import { Section, Chapter, Rule, Subrule } from "../../../app/types";
-import styles from "../../../styles/ChapterList.module.scss";
+import {
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+} from "../../../app/types";
+// import styles from "../../../styles/ChapterList.module.scss";
 
 interface Props {
   section?: Section;
   chapters: Chapter[];
   rules?: Rule[];
   subrules?: Subrule[];
-  elRef: (node: LegacyRef<HTMLDivElement>) => void | null;
+  elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 

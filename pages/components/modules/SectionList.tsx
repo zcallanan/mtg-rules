@@ -1,4 +1,4 @@
-import { RefObject, LegacyRef } from "react";
+import { RefObject, MutableRefObject } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
@@ -14,7 +14,7 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
-  elRef: (node: LegacyRef<HTMLDivElement>) => void | null;
+  elRef: MutableRefObject<HTMLDivElement[]>;
   root: RefObject<HTMLDivElement> | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }

@@ -1,4 +1,4 @@
-import { MutableRefObject, useState } from "react";
+import { MutableRefObject } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
@@ -35,15 +35,18 @@ const RuleList = (props: Props): JSX.Element => {
   return (
     <div>
       {ruleSubset.map((rule, index) => (
-        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={el => elRef.current[
-          rules.findIndex((r) => r.ruleNumber === rule.ruleNumber && r.chapterNumber === rule.chapterNumber)
+        // eslint-disable-next-line no-return-assign
+        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={(el) => elRef.current[
+          rules.findIndex((r) => r.ruleNumber === rule.ruleNumber
+            && r.chapterNumber === rule.chapterNumber)
         ] = el}>
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
               key={`r${rule.ruleNumber}`}
               className={`${styles.ruleText} list-group-item`}
             >
-              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {parseLink({routerValues, onLinkClick, rule})}
+              {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
+                {parseLink({ routerValues, onLinkClick, rule })}
             </li>
           </section>
           <Example rule={rule} onLinkClick={onLinkClick} />

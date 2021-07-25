@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Node } from "simple-text-parser";
 import Custom404 from "../../404";
 import { ErrorData, ValidateChapter } from "../../../app/types";
 
@@ -13,7 +12,7 @@ const CustomErrors = ((props: Props): JSX.Element => {
   const [values, setValues] = useState<ErrorData>({ reason: "", value: null });
 
   useEffect(() => {
-    if (data.nodes && !data.nodes.length) {
+    if (data.nodes && !data.nodes.chapters.length) {
       setValues((prevValue) => ({
         ...prevValue,
         reason: "ruleset-fetch-failed",

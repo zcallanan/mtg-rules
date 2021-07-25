@@ -1,4 +1,4 @@
-import { MutableRefObject, RefObject } from "react";
+import { MutableRefObject } from "react";
 import { Chapter, Rule, Subrule } from "../../../app/types";
 import RuleList from "./RuleList";
 
