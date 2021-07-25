@@ -69,3 +69,8 @@ export interface ReplaceRuleNumbers {
   rule?: Rule;
   subrule?: Subrule;
 }
+
+export interface ParseExample {
+  mainText: string;
+  exampleTextArray: string[];
+}

@@ -1,6 +1,6 @@
 import { Parser } from "simple-text-parser";
 import parseExamples from "./parse-examples";
-import { Nodes } from "./types";
+import { Nodes, ParseExample } from "./types";
 
 const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
   // Retry 3 times
@@ -41,15 +41,15 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
         const ruleNumber = Number(rule);
 
         // Handle text that has examples
-        const textParse: string[] = parseExamples(txt);
+        const textParse: ParseExample = parseExamples(txt);
 
         return {
           type: "rule",
-          text: textParse[0],
+          text: (textParse) ? textParse.mainText : "",
           sectionNumber,
           chapterNumber,
           ruleNumber,
-          example: textParse[1],
+          example: (textParse) ? textParse.exampleTextArray : "",
         };
       });
       parser.addRule(
@@ -60,16 +60,16 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
           const ruleNumber = Number(rule);
 
           // Handle text that has examples
-          const textParse: string[] = parseExamples(txt);
+          const textParse: ParseExample = parseExamples(txt);
 
           return {
             type: "subrule",
-            text: textParse[0],
+            text: (textParse) ? textParse.mainText : "",
             sectionNumber,
             chapterNumber,
             ruleNumber,
             subruleLetter,
-            example: textParse[1],
+            example: (textParse) ? textParse.exampleTextArray : "",
           };
         },
       );

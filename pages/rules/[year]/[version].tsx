@@ -5,6 +5,7 @@ import React, {
   useEffect,
   RefObject,
 } from "react";
+import { Node } from "simple-text-parser";
 import sortBy from "lodash/sortBy";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
@@ -23,24 +24,10 @@ import {
   Chapter,
   Rule,
   Subrule,
+  GetStaticPropsResult,
+  ValidateChapter,
 } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
-
-interface Props {
-  nodes: void | (Section | Chapter | Rule | Subrule)[];
-  effectiveDate: string;
-}
-
-interface GetStaticPropsResult {
-  props: Props | {};
-  revalidate?: number;
-  notFound?: boolean;
-}
-
-interface ValidateChapter {
-  nodes: (Section | Chapter | Rule | Subrule)[];
-  validChapter: Chapter | undefined | boolean;
-}
 
 export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> => {
   // Fetch rule set
@@ -48,7 +35,7 @@ export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> 
   const res = await fetch(url);
   const rawRuleSetText: string = await res.text();
   // Parse rules text to an array of rule nodes
-  const nodes: void | Nodes = await rulesParse(rawRuleSetText);
+  const nodes: Node[] = await rulesParse(rawRuleSetText);
 
   // Parse rules text for effective date
   const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
