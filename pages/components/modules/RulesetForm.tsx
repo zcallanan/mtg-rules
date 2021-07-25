@@ -47,9 +47,9 @@ const RulesetForm = (props: Props): JSX.Element => {
 
     // Get version and year from rulsetUrl link
     const reVersion = /\d{10}/;
-    const version: number = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : 0;
+    const version: string = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : "";
     const reYear = /\d{4}/;
-    const year: number = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : 0;
+    const year: string = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : "";
 
     // That ruleset is already displayed
     if (routerValues.version === version && routerValues.year === year) {

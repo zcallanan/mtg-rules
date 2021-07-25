@@ -1,6 +1,6 @@
 const dev = process.env.NODE_ENV !== "production";
 
-const formValidation = async (url: string, version: number, year: number): Promise<number> => {
+const formValidation = async (url: string, version: string, year: string): Promise<number> => {
   // Remove host
   const noHost: string = url.replace(/http(s|):\/\//i, "");
   const split: string[] = noHost.replace(`${version}`, "").split("/");
