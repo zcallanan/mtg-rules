@@ -5,8 +5,9 @@ import {
   FormEvent,
   ChangeEvent,
 } from "react";
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import formValidation from "../../../app/form-validation";
+import { RouterValues } from "../../../app/types";
 import styles from "../../../styles/RulesetForm.module.scss";
 
 interface Props {
@@ -20,11 +21,14 @@ const RulesetForm = (props: Props): JSX.Element => {
   const [url, setUrl] = useState("");
 
   // Get url query values
-  const router = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const router: NextRouter = useRouter();
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
   const initUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
 
   // Set initial url on page load
@@ -43,9 +47,9 @@ const RulesetForm = (props: Props): JSX.Element => {
 
     // Get version and year from rulsetUrl link
     const reVersion = /\d{10}/;
-    const version: number = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : 0;
+    const version: string = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : "";
     const reYear = /\d{4}/;
-    const year: number = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : 0;
+    const year: string = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : "";
 
     // That ruleset is already displayed
     if (routerValues.version === version && routerValues.year === year) {

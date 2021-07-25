@@ -1,4 +1,6 @@
-const parseExamples = (text: string): string[] => {
+import { ParseExample } from "./types";
+
+const parseExamples = (text: string): ParseExample => {
   // Split example text
   const splitText: string[] = text.split("\r\n");
 
@@ -6,12 +8,15 @@ const parseExamples = (text: string): string[] => {
   const mainText: string = splitText.splice(0, 1)[0];
 
   // Create an array of example text
-  const exampleText: string[] = splitText
+  const exampleTextArray: string[] = splitText
     ? splitText.map((example) => example)
     : [];
 
-  // Return
-  return [mainText, exampleText];
+  // Return ParseExample object
+  return {
+    mainText,
+    exampleTextArray,
+  }
 };
 
 export default parseExamples;

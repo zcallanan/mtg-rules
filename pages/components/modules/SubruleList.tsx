@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import Example from "./Example";
 import parseLink from "../../../app/parse-link";
 import { Subrule, RouterValues } from "../../../app/types";
@@ -6,16 +6,20 @@ import styles from "../../../styles/SubruleList.module.scss";
 
 interface Props {
   subruleSubset: Subrule[];
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const SubruleList = (props: Props): JSX.Element => {
-  const { subruleSubset } = props;
+  const { subruleSubset, onLinkClick } = props;
 
-  const router = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const router: NextRouter = useRouter();
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
 
   return (
     <div>
@@ -29,10 +33,10 @@ const SubruleList = (props: Props): JSX.Element => {
               className={`${styles.subruleText} list-group-item`}
             >
               {subrule.chapterNumber}.{subrule.ruleNumber}
-              {subrule.subruleLetter} &nbsp; {parseLink(subrule, routerValues)}
+              {subrule.subruleLetter} &nbsp; {parseLink({ routerValues, onLinkClick, subrule })}
             </li>
           </section>
-          <Example subrule={subrule} />
+          <Example subrule={subrule} onLinkClick={onLinkClick}/>
         </div>
       ))}
     </div>

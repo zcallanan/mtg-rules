@@ -22,6 +22,7 @@
     "typescript": "^4.3.4"
   },
   "devDependencies": {
+    "@types/lodash.sortby": "^4.7.6",
     "@types/react": "^17.0.11",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",

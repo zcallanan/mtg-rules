@@ -1,87 +1,114 @@
+import { ReactNodeArray } from "react";
 import Link from "next/link";
 import reactStringReplace from "react-string-replace";
-import { Rule, Subrule, RouterValues } from "./types";
+import { ParseLinkArgs, ReplaceRuleNumbers } from "./types";
 
-const element = (
-  updatedText: string,
-  ruleNumber: string,
-  routerValues: RouterValues,
-  obj: Rule | Subrule,
-): string => reactStringReplace(updatedText, ruleNumber, (match, i) => (
-    <span
-      key={
-        obj.type === "rule"
-          ? `${obj.ruleNumber}-${ruleNumber}-${i}`
-          : `${obj.ruleNumber}${obj.subruleLetter}-${ruleNumber}-${i}`
-      }
-    >
-      <Link
-        href={"/rules/[routerValues.year]/[routerValues.version]"}
-        as={`/rules/${routerValues.year}/${routerValues.version}#${ruleNumber}`}
-        scroll={false}
+const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
+  const { text, ruleNumberArray, routerValues, onLinkClick, rule, subrule } = args;
+  let updatedText: ReactNodeArray;
+  ruleNumberArray.forEach((ruleNumber, index) => {
+    const chapterValue = (/\d{3}/.test(ruleNumber))
+      ? Number(ruleNumber.match(/\d{3}/)[0])
+      : Number(ruleNumber) * 100;
+      
+    updatedText = reactStringReplace(
+      ((index === 0) ? text : updatedText),
+      ruleNumber,
+      (match: string, i: number) => (
+      <span
+        key={
+          rule
+            ? `${rule.ruleNumber}-${ruleNumber}-${i}`
+            : `${subrule.ruleNumber}${subrule.subruleLetter}-${ruleNumber}-${i}`
+        }
       >
-        <a>
-          <span>{match}</span>
-        </a>
-      </Link>
-    </span>
-));
+        <Link
+          href={"/rules/[routerValues.year]/[routerValues.version]"}
+          as={`/rules/${routerValues.year}/${routerValues.version}#${chapterValue}`}
+          scroll={false}
+        >
+          <a>
+            <span onClick={() => onLinkClick(chapterValue, "rules")}>
+              {match}
+            </span>
+          </a>
+        </Link>
+      </span>
+    ));
+  });
+  return updatedText;
+};
 
-const parseLink = (
-  obj: Rule | Subrule,
-  routerValues: RouterValues,
-  exampleText = "",
-): string | JSX.element => {
-  let linkText: string = exampleText || obj.text;
+const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
+  const { routerValues, onLinkClick, example, rule, subrule } = args;
+  let linkText: string;
+  if (example) {
+    linkText = example;
+  } else if (rule) {
+    linkText = rule.text;
+  } else if (subrule) {
+    linkText = subrule.text;
+  }
 
   // Regex
   const regexSection = /section\s+(\d)/gim;
   // Include extra characters to avoid creating links on erroneous numbers, ex: 2011
-  const regexChapter = /\s+(\d{3}[\s,.;])/gim;
+  const regexChapter = /\s+(\d{3})[\s,.;]/gim;
   const regexRule = /(\d{3})\.(\d+)/gim;
   const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
   const findMatches = (
-    regex: RegExp,
-    text: string | JSX.Element,
-  ): string | JSX.Element => {
-    let updatedText = text;
+    regexArray: RegExp[],
+    text: string,
+  ): string | ReactNodeArray => {
+    const matchArray: RegExpMatchArray[] = [];
+    let ruleNumberArray: string[];
 
-    // Get string matches
-    const matchArray: string[] = (exampleText)
-      ? exampleText.match(regex)
-      : obj.text.match(regex);
+    // Push all matched ruleNumber strings to matchArray
+    regexArray.forEach((regex) => {
+      // Find all matches for a particular regex
+      matchArray.push(text.match(regex));
+    })
+
+    // Flatten matchArray
+    ruleNumberArray = matchArray.flat();
 
     // Remove extra characters from matchArray
-    matchArray.forEach((ruleNumber, i) => {
+    ruleNumberArray.forEach((ruleNumber, i) => {
       // Remove /section\s+/ from matchArray
       if (ruleNumber.includes("section")) {
-        matchArray[i] = ruleNumber.replace(/section\s+/, "");
+        ruleNumberArray[i] = ruleNumber.replace(/section\s+/, "");
       }
 
+      // TODO: Prevent invalid chapter values like 999
       // Remove extra characters from chapter ruleNumbers
       if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
-        matchArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");
+        ruleNumberArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");
       }
     });
 
-    // Cycle through text for each rule number string, replacing number with jsx
-    matchArray.forEach((ruleNumber) => {
-      updatedText = element(updatedText, ruleNumber, routerValues, obj);
-    });
-    return updatedText;
+    const args: ReplaceRuleNumbers = (rule) 
+      ? {text, ruleNumberArray, routerValues, onLinkClick, rule}
+      : {text, ruleNumberArray, routerValues, onLinkClick, subrule}
+    return replaceRuleNumbers(args);
   };
 
   // Test if subrule, rule, chapter, and section numbers appear in text
+  const regexArray: RegExp[] = [];
   regexes.forEach((regex) => {
     if (regex.test(linkText)) {
-      linkText = findMatches(regex, linkText);
+      regexArray.push(regex);
     }
   });
+  
+  // If there are no linkable ruleNumbers, use linkText, else process matches
+  const result: string | ReactNodeArray = (!regexArray.length)
+    ? linkText
+    : findMatches(regexArray, linkText);
 
   // Return original string or string with links
-  return linkText;
+  return result;
 };
 
 export default parseLink;

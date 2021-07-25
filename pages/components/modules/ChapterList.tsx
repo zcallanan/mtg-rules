@@ -1,5 +1,6 @@
+import { LegacyRef, RefObject } from "react";
 import RuleGroup from "./RuleGroup";
-import { Chapter, Rule, Subrule } from "../../../app/types";
+import { Section, Chapter, Rule, Subrule } from "../../../app/types";
 import styles from "../../../styles/ChapterList.module.scss";
 
 interface Props {
@@ -7,7 +8,8 @@ interface Props {
   chapters: Chapter[];
   rules?: Rule[];
   subrules?: Subrule[];
-  elRef: HTMLDivElement | null;
+  elRef: (node: LegacyRef<HTMLDivElement>) => void | null;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const ChapterList = (props: Props): JSX.Element => {
@@ -17,6 +19,7 @@ const ChapterList = (props: Props): JSX.Element => {
     rules,
     subrules,
     elRef,
+    onLinkClick,
   } = props;
 
   let chapterSubset: Chapter[];
@@ -37,6 +40,7 @@ const ChapterList = (props: Props): JSX.Element => {
             rules={rules}
             subrules={subrules}
             elRef={elRef}
+            onLinkClick={onLinkClick}
           />
         </div>
       ))}

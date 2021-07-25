@@ -1,3 +1,4 @@
+import { RefObject, LegacyRef } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
@@ -13,8 +14,9 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
-  elRef: HTMLDivElement | null;
-  root: HTMLDivElement | null;
+  elRef: (node: LegacyRef<HTMLDivElement>) => void | null;
+  root: RefObject<HTMLDivElement> | null;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -25,6 +27,7 @@ const SectionList = (props: Props): JSX.Element => {
     subrules,
     elRef,
     root,
+    onLinkClick,
   } = props;
 
   return (
@@ -32,14 +35,13 @@ const SectionList = (props: Props): JSX.Element => {
       {sections.length
         ? (sections.map((section, index) => (
           <div key={`${section.sectionNumber}-${index}`}>
-            <section id={`${section.sectionNumber}`}>
-            </section>
             <ChapterList
               section={section}
               chapters={chapters}
               rules={rules}
               subrules={subrules}
               elRef={elRef}
+              onLinkClick={onLinkClick}
             />
           </div>
         )))

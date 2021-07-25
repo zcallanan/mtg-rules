@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import parseLink from "../../../app/parse-link";
 import { Rule, Subrule, RouterValues } from "../../../app/types";
 import styles from "../../../styles/Example.module.scss";
@@ -6,17 +6,21 @@ import styles from "../../../styles/Example.module.scss";
 interface Props {
   rule?: Rule;
   subrule?: Subrule;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const Example = (props: Props): JSX.Element => {
-  const { rule, subrule } = props;
+  const { rule, subrule, onLinkClick } = props;
   const data: Rule | Subrule = rule || subrule;
 
-  const router = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const router: NextRouter = useRouter();
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
 
   return (
     <div>
@@ -26,7 +30,11 @@ const Example = (props: Props): JSX.Element => {
             key={rule ? `rule-e${index}` : `subrule-e${index}`}
             className={`${styles.example} list-group-item`}
           >
-            {parseLink(data, routerValues, example)}
+            {parseLink(
+              (rule)
+              ? {routerValues, onLinkClick, example, rule }
+              : {routerValues, onLinkClick, example, subrule }
+            )}
           </li>
         ),
       )}

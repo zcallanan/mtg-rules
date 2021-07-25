@@ -1,4 +1,5 @@
-import { useRouter } from "next/router";
+import { MutableRefObject, useState } from "react";
+import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
 import parseLink from "../../../app/parse-link";
@@ -7,33 +8,46 @@ import styles from "../../../styles/RuleList.module.scss";
 
 interface Props {
   ruleSubset: Rule[];
+  rules: Rule[];
   subrules: Subrule[];
-  elRef: HTMLDivElement | null;
+  elRef: MutableRefObject<HTMLDivElement[]>;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
 const RuleList = (props: Props): JSX.Element => {
-  const { ruleSubset, subrules, elRef } = props;
+  const {
+    ruleSubset,
+    rules,
+    subrules,
+    elRef,
+    onLinkClick,
+  } = props;
 
-  const router = useRouter();
-  const routerValues: RouterValues = {
-    year: router.query.year,
-    version: router.query.version,
-  };
+  const router: NextRouter = useRouter();
+  const year: string = (Array.isArray(router.query.year))
+    ? router.query.year[0]
+    : router.query.year;
+  const version: string = (Array.isArray(router.query.version))
+    ? router.query.version[0]
+    : router.query.version;
+  const routerValues: RouterValues = { year, version };
 
   return (
     <div>
       {ruleSubset.map((rule, index) => (
-        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={elRef}>
+        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={el => elRef.current[
+          rules.findIndex((r) => r.ruleNumber === rule.ruleNumber && r.chapterNumber === rule.chapterNumber)
+        ] = el}>
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
               key={`r${rule.ruleNumber}`}
               className={`${styles.ruleText} list-group-item`}
             >
-              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {parseLink(rule, routerValues)}
+              {rule.chapterNumber}.{rule.ruleNumber} &nbsp; {parseLink({routerValues, onLinkClick, rule})}
             </li>
           </section>
-          <Example rule={rule} />
-          <SubruleGroup rule={rule} subrules={subrules} />
+          <Example rule={rule} onLinkClick={onLinkClick} />
+          <SubruleGroup rule={rule} subrules={subrules} onLinkClick={onLinkClick} />
         </div>
       ))}
     </div>

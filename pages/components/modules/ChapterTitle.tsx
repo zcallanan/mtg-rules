@@ -1,31 +1,44 @@
+import { MutableRefObject, useEffect, useState } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
-import { useRouter } from "next/router";
-import { Chapter } from "../../../app/types";
+import { useRouter, NextRouter } from "next/router";
+import { Section, Chapter } from "../../../app/types";
 import styles from "../../../styles/ChapterTitle.module.scss";
 
 interface Props {
   chapter: Chapter;
+  i?: number;
   toc: number;
-  tocOnClick?: (chapterNumber: number) => number;
-  tocTitleRef?: HTMLElement | null;
+  onLinkClick?: (chapterNumber: number, dataSource: string) => void;
+  tocTitleRef?: MutableRefObject<HTMLDivElement[]>;
   effectiveDate?: string;
+  sections?: Section[];
 }
 
 const ChapterTitle = (props: Props): JSX.Element => {
   const {
     chapter,
+    i,
     toc,
-    tocOnClick,
+    onLinkClick,
     tocTitleRef,
     effectiveDate,
+    sections,
   } = props;
+  
+  console.log(i)
   const key = toc ? "toc" : "chapter";
 
-  const router = useRouter();
+  const router: NextRouter = useRouter();
 
   // Chapter prop or PH zero chapter if unavailable
-  const chapterObj = chapter || { chapterNumber: 0, text: "" };
+  const chapterObj = chapter || { chapterNumber: 0, text: "", sectionNumber: 0, type: "chapter" };
+
+  let sectionObj: Section;
+  if (chapterObj.chapterNumber && !toc) {
+    sectionObj = (sections
+      .find((section) => section.sectionNumber === chapterObj.sectionNumber));
+  }
 
   // If url has no chapter, #100 is added. Display spinner until ready
   const handleZeroChapter = (chapterNumber: number) => (
@@ -41,16 +54,22 @@ const ChapterTitle = (props: Props): JSX.Element => {
           </Spinner>
         </div>)
         : (
-          <div className={styles.chapterText}>
-            {<span
-                key={`${key}${chapterObj.chapterNumber}`}
-              >
-                {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
-              </span>
+          <div >
+            {
+              <div className={styles.chapterText}>
+                <span
+                  key={`${key}${chapterObj.chapterNumber}`}
+                >
+                  {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
+                </span>
+                <span className={styles.effectiveDate}>
+                  Effective: &nbsp; {effectiveDate}
+                </span>
+              </div>
             }
             {
-              <span className={styles.effectiveDate}>
-                Effective: &nbsp; {effectiveDate}
+              <span className={styles.sectionSpan}>
+                • &nbsp; {chapterObj.sectionNumber}. &nbsp; {sectionObj.text}
               </span>
             }
           </div>
@@ -63,7 +82,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       { toc ? (
-        <div ref={tocTitleRef}>
+        <div ref={el => tocTitleRef.current[i] = el}>
           <li
             key={`${key}${chapterObj.chapterNumber}`}
             className={styles.chapterList}
@@ -76,13 +95,13 @@ const ChapterTitle = (props: Props): JSX.Element => {
               <a>
                 <span
                   className={styles.chapterNum}
-                  onClick={() => tocOnClick(chapterObj.chapterNumber)}
+                  onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >
                   {chapterObj.chapterNumber}.
                 </span>
                 <span
                   className={styles.chapterTextToc}
-                  onClick={() => tocOnClick(chapterObj.chapterNumber)}
+                  onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >{chapterObj.text}</span>
               </a>
             </Link>
