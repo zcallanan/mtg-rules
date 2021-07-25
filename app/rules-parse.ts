@@ -1,7 +1,14 @@
 import { Parser, Node } from "simple-text-parser";
 import sortBy from "lodash/sortBy";
 import parseExamples from "./parse-examples";
-import { ParseExample, RulesParse, Section, Chapter, Rule, Subrule } from "./types";
+import {
+  ParseExample,
+  RulesParse,
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+} from "./types";
 
 const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
   // Retry 3 times
@@ -75,7 +82,7 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
         },
       );
 
-      // Remove all not matched nodes
+      // Remove all non-matched nodes
       const tree = parser.toTree(text).filter((node) => node.type !== "text");
 
       // Filter nodes
@@ -92,11 +99,11 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
 
       // Return
       return {
-        sections: (sectionNodes as any) as Section[],
-        chapters: (chapterNodes as any) as Chapter[],
-        rules: (rules as any) as Rule[],
-        subrules: (subrules as any) as Subrule[],
-      }
+        sections: (sectionNodes as unknown) as Section[],
+        chapters: (chapterNodes as unknown) as Chapter[],
+        rules: (rules as unknown) as Rule[],
+        subrules: (subrules as unknown) as Subrule[],
+      };
     } catch (err) {
       console.error(err);
 

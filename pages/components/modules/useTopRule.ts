@@ -40,8 +40,6 @@ const useTopRule = (
     refArray.forEach((r) => {
       observerRef.current.observe(r);
     });
-    
-    
   }, [refArray]);
 
   // Cleanup

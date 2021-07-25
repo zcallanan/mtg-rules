@@ -45,24 +45,24 @@ const RulesetForm = (props: Props): JSX.Element => {
       return 0;
     }
 
-    // Get version and year from rulsetUrl link
+    // Get version and year from rulesetUrl link
     const reVersion = /\d{10}/;
-    const version: string = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : "";
+    const versionUrl: string = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : "";
     const reYear = /\d{4}/;
-    const year: string = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : "";
+    const yearUrl: string = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : "";
 
     // That ruleset is already displayed
-    if (routerValues.version === version && routerValues.year === year) {
+    if (routerValues.version === versionUrl && routerValues.year === yearUrl) {
       return 3;
     }
 
     // Offload validation to util fn
-    const result = await formValidation(rulesetUrl, version, year);
+    const result = await formValidation(rulesetUrl, versionUrl, yearUrl);
     // Change the displayed ruleset
     if (result === 200) {
       // Link validated, update router
-      router.query.version = version;
-      router.query.year = year;
+      router.query.version = versionUrl;
+      router.query.year = yearUrl;
       // Trigger ISR page update
       // TODO: Unknown key error in dev, although update works
       router.push(router);

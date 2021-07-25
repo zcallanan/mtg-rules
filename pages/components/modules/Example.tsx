@@ -32,8 +32,18 @@ const Example = (props: Props): JSX.Element => {
           >
             {parseLink(
               (rule)
-              ? {routerValues, onLinkClick, example, rule }
-              : {routerValues, onLinkClick, example, subrule }
+                ? {
+                  routerValues,
+                  onLinkClick,
+                  example,
+                  rule,
+                }
+                : {
+                  routerValues,
+                  onLinkClick,
+                  example,
+                  subrule,
+                },
             )}
           </li>
         ),

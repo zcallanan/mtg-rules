@@ -1,10 +1,7 @@
 import React, {
   useState,
-  useCallback,
   useRef,
   useEffect,
-  RefObject,
-  LegacyRef,
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
@@ -26,12 +23,17 @@ import {
   ValidateChapter,
   DynamicProps,
   RulesParse,
+  GetStaticPropsParams,
+  GetStaticPathsResult,
 } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
-export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> => {
+export const getStaticProps = async (
+  context: GetStaticPropsParams,
+): Promise<GetStaticPropsResult> => {
+  const { year, version } = context.params;
   // Fetch rule set
-  const url = `https://media.wizards.com/${params.year}/downloads/MagicCompRules%${params.version}.txt`;
+  const url = `https://media.wizards.com/${year}/downloads/MagicCompRules%${version}.txt`;
   const res = await fetch(url);
   const rawRuleSetText: string = await res.text();
   // Parse rules text to an array of rule nodes
@@ -56,7 +58,7 @@ export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> 
   return result;
 };
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async (): Promise<GetStaticPathsResult> => {
   const values = [["2021", "2020210419"]];
   const paths = values.map((value) => ({
     params: { year: value[0], version: value[1] },
@@ -196,7 +198,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Scroll ToC to chapterTitle corresponding to url hash value
   const scrollToc = (chapterNumber: number) => {
     const re = new RegExp(`(${chapterNumber})`);
-    console.log(tocRefs)
     const element = tocRefs.current.find((elem) => re.test(elem.innerText));
     element.scrollIntoView();
   };
@@ -303,7 +304,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     );
   }
 
-  const errorResult = (obj: ValidateChapter ): boolean => Object.values(obj).every(Boolean);
+  const errorResult = (obj: ValidateChapter): boolean => Object.values(obj).every(Boolean);
 
   return (
     <div>

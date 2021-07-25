@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useState } from "react";
+import { MutableRefObject } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
@@ -25,14 +25,18 @@ const ChapterTitle = (props: Props): JSX.Element => {
     effectiveDate,
     sections,
   } = props;
-  
-  console.log(i)
+
   const key = toc ? "toc" : "chapter";
 
   const router: NextRouter = useRouter();
 
   // Chapter prop or PH zero chapter if unavailable
-  const chapterObj = chapter || { chapterNumber: 0, text: "", sectionNumber: 0, type: "chapter" };
+  const chapterObj = chapter || {
+    chapterNumber: 0,
+    text: "",
+    sectionNumber: 0,
+    type: "chapter",
+  };
 
   let sectionObj: Section;
   if (chapterObj.chapterNumber && !toc) {
@@ -82,7 +86,8 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       { toc ? (
-        <div ref={el => tocTitleRef.current[i] = el}>
+        // eslint-disable-next-line no-return-assign
+        <div ref={(el) => (tocTitleRef.current[i] = el)}>
           <li
             key={`${key}${chapterObj.chapterNumber}`}
             className={styles.chapterList}
