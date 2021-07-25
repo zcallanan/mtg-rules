@@ -1,8 +1,9 @@
-import { Parser } from "simple-text-parser";
+import { Parser, Node } from "simple-text-parser";
+import sortBy from "lodash/sortBy";
 import parseExamples from "./parse-examples";
-import { Nodes, ParseExample } from "./types";
+import { ParseExample, RulesParse, Section, Chapter, Rule, Subrule } from "./types";
 
-const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
+const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
   // Retry 3 times
   if (i < 4) {
     try {
@@ -77,8 +78,25 @@ const rulesParse = async (rawText: string, i = 0): Promise<void | Nodes> => {
       // Remove all not matched nodes
       const tree = parser.toTree(text).filter((node) => node.type !== "text");
 
+      // Filter nodes
+      const sectionNodes: Node[] = sortBy(
+        tree.filter((node) => node.type === "section"),
+        ["sectionNumber"],
+      );
+      const chapterNodes: Node[] = sortBy(
+        tree.filter((node) => node.type === "chapter"),
+        ["sectionNumber", "chapterNumber"],
+      );
+      const rules: Node[] = tree.filter((node) => node.type === "rule");
+      const subrules: Node[] = tree.filter((node) => node.type === "subrule");
+
       // Return
-      return tree;
+      return {
+        sections: (sectionNodes as any) as Section[],
+        chapters: (chapterNodes as any) as Chapter[],
+        rules: (rules as any) as Rule[],
+        subrules: (subrules as any) as Subrule[],
+      }
     } catch (err) {
       console.error(err);
 

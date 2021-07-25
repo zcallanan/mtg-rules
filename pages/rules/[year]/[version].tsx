@@ -5,8 +5,6 @@ import React, {
   useEffect,
   RefObject,
 } from "react";
-import { Node } from "simple-text-parser";
-import sortBy from "lodash/sortBy";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/rules-parse";
@@ -18,7 +16,6 @@ import RulesetForm from "../../components/modules/RulesetForm";
 import SearchForm from "../../components/modules/SearchForm";
 import CustomErrors from "../../components/modules/CustomErrors";
 import {
-  Nodes,
   ChapterValues,
   Section,
   Chapter,
@@ -26,6 +23,8 @@ import {
   Subrule,
   GetStaticPropsResult,
   ValidateChapter,
+  DynamicProps,
+  RulesParse,
 } from "../../../app/types";
 import styles from "../../../styles/[version].module.scss";
 
@@ -35,7 +34,7 @@ export const getStaticProps = async ({ params }): Promise<GetStaticPropsResult> 
   const res = await fetch(url);
   const rawRuleSetText: string = await res.text();
   // Parse rules text to an array of rule nodes
-  const nodes: Node[] = await rulesParse(rawRuleSetText);
+  const nodes: RulesParse = await rulesParse(rawRuleSetText);
 
   // Parse rules text for effective date
   const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
@@ -65,11 +64,15 @@ export const getStaticPaths = async () => {
   // return { paths, fallback: "blocking" };
 };
 
-const RuleSetPage = (props: Props): JSX.Element => {
+const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const { nodes, effectiveDate } = props;
-  const array: (Section | Chapter | Rule | Subrule)[] = [];
   const [errorData, setErrorData] = useState<ValidateChapter>({
-    nodes: array,
+    nodes: {
+      sections: [],
+      chapters: [],
+      rules: [],
+      subrules: [],
+    },
     validChapter: true,
   });
 
@@ -79,29 +82,31 @@ const RuleSetPage = (props: Props): JSX.Element => {
   const [refRuleArray, setRefRuleArray] = useState<RefObject<HTMLDivElement>[]>([]);
   const [refTocArray, setRefTocArray] = useState<RefObject<HTMLDivElement>[]>([]);
   const [pause, setPause] = useState<boolean>(false);
-  const [chapterValues, setChapterValues] = useState<ChapterValues>({});
+  const [chapterValues, setChapterValues] = useState<ChapterValues>({
+    currentCallback: 0,
+    chapterNumber: 0,
+    anchorValue: 0,
+    init: 0,
+    source: "",
+    propValue: 0,
+  });
   const [sections, setSections] = useState<Section[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
-  // Collect and sort rule set categories into node arrays
-  if (nodes && nodes.length
-    && !sections.length
-    && !chapters.length
-    && !rules.length
-    && !subrules.length
-  ) {
-    setSections(sortBy(
-      nodes.filter((node) => node.type === "section"),
-      ["sectionNumber"],
-    ));
-    setChapters(sortBy(
-      nodes.filter((node) => node.type === "chapter"),
-      ["sectionNumber", "chapterNumber"],
-    ));
-    setRules(nodes.filter((node) => node.type === "rule"));
-    setSubrules(nodes.filter((node) => node.type === "subrule"));
+  // Save parsed node data to state
+  if (nodes.sections && nodes.sections.length && !sections.length) {
+    setSections(nodes.sections);
+  }
+  if (nodes.chapters && nodes.chapters.length && !chapters.length) {
+    setChapters(nodes.chapters);
+  }
+  if (nodes.rules && nodes.rules.length && !rules.length) {
+    setRules(nodes.rules);
+  }
+  if (nodes.subrules && nodes.subrules.length && !subrules.length) {
+    setSubrules(nodes.subrules);
   }
 
   // Add a hash to url if none provided
@@ -132,7 +137,7 @@ const RuleSetPage = (props: Props): JSX.Element => {
 
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
-    if (nodes && nodes.length) {
+    if (nodes.chapters && nodes.chapters.length) {
       setErrorData((prevValue) => ({
         ...prevValue,
         nodes,

@@ -1,20 +1,10 @@
 import { useState, useEffect } from "react";
+import { Node } from "simple-text-parser";
 import Custom404 from "../../404";
-import {
-  Section,
-  Chapter,
-  Rule,
-  Subrule,
-  ErrorData
-} from "../../../app/types";
-
-interface Errors {
-  nodes?: (Section | Chapter | Rule | Subrule)[];
-  validChapter?: Chapter | undefined;
-}
+import { ErrorData, ValidateChapter } from "../../../app/types";
 
 interface Props {
-  data: Errors;
+  data: ValidateChapter;
   chapterNumber?: number;
 }
 

@@ -30,10 +30,6 @@ export interface Subrule {
   example: string[];
 }
 
-export interface Nodes {
-  nodes: (Section | Chapter | Rule | Subrule)[];
-}
-
 export interface RouterValues {
   year: string;
   version: string;
@@ -73,4 +69,27 @@ export interface ReplaceRuleNumbers {
 export interface ParseExample {
   mainText: string;
   exampleTextArray: string[];
+}
+
+export interface DynamicProps {
+  nodes: RulesParse;
+  effectiveDate: string;
+}
+
+export interface GetStaticPropsResult {
+  props: DynamicProps | {};
+  revalidate?: number;
+  notFound?: boolean;
+}
+
+export interface ValidateChapter {
+  nodes: RulesParse;
+  validChapter: Chapter | undefined | boolean;
+}
+
+export interface RulesParse {
+  sections: Section[],
+  chapters: Chapter[],
+  rules: Rule[],
+  subrules: Subrule[],
 }
