@@ -21,7 +21,6 @@ const useTopRule = (
   }, []);
 
   useEffect(() => {
-    console.log("root", root)
     // IntersectionRect set to top of .scrollableDiv viewport
     const options = {
       rootMargin: "0px 0px -99% 0px",
