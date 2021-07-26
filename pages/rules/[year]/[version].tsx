@@ -6,13 +6,13 @@ import React, {
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/utils/rules-parse";
-import useTopRule from "../../../app/hooks/useTopRule";
 import TocSections from "../../../app/components/TocSections";
 import SectionList from "../../../app/components/SectionList";
 import ChapterTitle from "../../../app/components/ChapterTitle";
 import RulesetForm from "../../../app/components/RulesetForm";
 import SearchForm from "../../../app/components/SearchForm";
 import CustomErrors from "../../../app/components/CustomErrors";
+import CallbackWrapper from "../../../app/components/CallbackWrapper";
 import {
   ChapterValues,
   Section,
@@ -82,6 +82,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
+  const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
   const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({
     currentCallback: 0,
@@ -167,8 +168,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // SectionList viewport ref
   const rootRef = useRef<HTMLDivElement>();
 
-  const tocRefs = useRef<HTMLDivElement[]>([]);
-
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
     This value is overriden by the callback on render, unless the update is
@@ -188,14 +187,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Collect mutable refs in [] for useTopRule to iterate over and observe
   const rulesRef = useRef<HTMLDivElement[]>([]);
 
-  // Callback that observes rule divs for intersection with the top of viewport
-  const callbackChapterNumber = useTopRule(rulesRef.current, rootRef) || chapterValues.init;
-
   let callbackNumber: number;
 
   if (!pause && callbackChapterNumber) {
     callbackNumber = callbackChapterNumber;
   }
+
+  // Collect mutable refs in [] for toc scrolling
+  const tocRefs = useRef<HTMLDivElement[]>([]);
 
   // Scroll ToC to chapterTitle corresponding to url hash value
   const scrollToc = (chapterNumber: number) => {
@@ -203,6 +202,13 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     const element = tocRefs.current.find((elem) => re.test(elem.innerText));
     element.scrollIntoView();
   };
+
+  // Prop used by CallbackWrapper to save useTopRule callback value
+  const wrapperProp = (chapterN: number): void => {
+    if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
+      setCallbackValue(chapterN);
+    }
+  }
 
   // Prop used by ToC links and section list viewport links
   const onLinkClick = (chapterN: number, dataSource: string): void => {
@@ -290,6 +296,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath, callbackNumber, pause]);
 
+  // Check if there is an error on the page
+  const errorResult = (obj: ValidateChapter): boolean => Object.values(obj).every(Boolean);
+
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
     return (
@@ -305,10 +314,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     );
   }
 
-  const errorResult = (obj: ValidateChapter): boolean => Object.values(obj).every(Boolean);
-
   return (
     <div>
+      {rootRef 
+        && <CallbackWrapper 
+          rootRef={rootRef}
+          wrapperProp={wrapperProp}
+          rulesRef={rulesRef}
+          init={chapterValues.init}
+        />}
       { (!errorResult(errorData))
         ? (<div>
           <CustomErrors data={errorData} chapterNumber={chapterValues.chapterNumber} />
