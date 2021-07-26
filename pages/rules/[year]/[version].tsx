@@ -206,7 +206,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Prop used by CallbackWrapper to save useTopRule callback value
   const wrapperProp = (chapterN: number): void => {
     if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
-      setCallbackValue(chapterN);
+      // Delay to prevent CallbackWrapper updating dynamic page while rendering
+      setTimeout(() => setCallbackValue(chapterN), 200);
     }
   }
 
