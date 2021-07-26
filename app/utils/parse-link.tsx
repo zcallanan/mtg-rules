@@ -19,7 +19,7 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
       : Number(ruleNumber) * 100;
 
     updatedText = reactStringReplace(
-      ((index === 0) ? text : updatedText),
+      ((!index) ? text : updatedText),
       ruleNumber,
       (match: string, i: number) => (
         <span
