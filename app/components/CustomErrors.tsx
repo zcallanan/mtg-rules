@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Custom404 from "../../404";
-import { ErrorData, ValidateChapter } from "../../../app/types";
+import Custom404 from "./Custom404";
+import { ErrorData, ValidateChapter } from "../typing/types";
 
 interface Props {
   data: ValidateChapter;

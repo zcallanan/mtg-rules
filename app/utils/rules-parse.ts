@@ -8,7 +8,7 @@ import {
   Chapter,
   Rule,
   Subrule,
-} from "./types";
+} from "../typing/types";
 
 const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
   // Retry 3 times

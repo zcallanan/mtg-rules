@@ -2,9 +2,9 @@ import { MutableRefObject } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import Example from "./Example";
-import parseLink from "../../../app/parse-link";
-import { Rule, Subrule, RouterValues } from "../../../app/types";
-import styles from "../../../styles/RuleList.module.scss";
+import parseLink from "../utils/parse-link";
+import { Rule, Subrule, RouterValues } from "../typing/types";
+import styles from "../styles/RuleList.module.scss";
 
 interface Props {
   ruleSubset: Rule[];

@@ -1,7 +1,7 @@
 import { useRouter, NextRouter } from "next/router";
-import parseLink from "../../../app/parse-link";
-import { Rule, Subrule, RouterValues } from "../../../app/types";
-import styles from "../../../styles/Example.module.scss";
+import parseLink from "../utils/parse-link";
+import { Rule, Subrule, RouterValues } from "../typing/types";
+import styles from "../styles/Example.module.scss";
 
 interface Props {
   rule?: Rule;

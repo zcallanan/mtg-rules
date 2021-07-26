@@ -6,8 +6,8 @@ import {
   Chapter,
   Rule,
   Subrule,
-} from "../../../app/types";
-import styles from "../../../styles/SectionList.module.scss";
+} from "../typing/types";
+import styles from "../styles/SectionList.module.scss";
 
 interface Props {
   sections: Section[];

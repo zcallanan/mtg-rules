@@ -2,8 +2,8 @@ import { MutableRefObject } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
-import { Section, Chapter } from "../../../app/types";
-import styles from "../../../styles/ChapterTitle.module.scss";
+import { Section, Chapter } from "../typing/types";
+import styles from "../styles/ChapterTitle.module.scss";
 
 interface Props {
   chapter: Chapter;

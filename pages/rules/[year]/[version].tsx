@@ -5,14 +5,14 @@ import React, {
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
-import rulesParse from "../../../app/rules-parse";
-import useTopRule from "../../components/modules/useTopRule";
-import TocSections from "../../components/modules/TocSections";
-import SectionList from "../../components/modules/SectionList";
-import ChapterTitle from "../../components/modules/ChapterTitle";
-import RulesetForm from "../../components/modules/RulesetForm";
-import SearchForm from "../../components/modules/SearchForm";
-import CustomErrors from "../../components/modules/CustomErrors";
+import rulesParse from "../../../app/utils/rules-parse";
+import useTopRule from "../../../app/hooks/useTopRule";
+import TocSections from "../../../app/components/TocSections";
+import SectionList from "../../../app/components/SectionList";
+import ChapterTitle from "../../../app/components/ChapterTitle";
+import RulesetForm from "../../../app/components/RulesetForm";
+import SearchForm from "../../../app/components/SearchForm";
+import CustomErrors from "../../../app/components/CustomErrors";
 import {
   ChapterValues,
   Section,
@@ -25,8 +25,8 @@ import {
   RulesParse,
   GetStaticPropsParams,
   GetStaticPathsResult,
-} from "../../../app/types";
-import styles from "../../../styles/[version].module.scss";
+} from "../../../app/typing/types";
+import styles from "../../../app/styles/[version].module.scss";
 
 export const getStaticProps = async (
   context: GetStaticPropsParams,

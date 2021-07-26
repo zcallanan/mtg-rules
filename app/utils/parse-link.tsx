@@ -1,7 +1,7 @@
 import { ReactNodeArray } from "react";
 import Link from "next/link";
 import reactStringReplace from "react-string-replace";
-import { ParseLinkArgs, ReplaceRuleNumbers } from "./types";
+import { ParseLinkArgs, ReplaceRuleNumbers } from "../typing/types";
 
 const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
   const {

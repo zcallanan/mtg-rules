@@ -77,9 +77,18 @@ export interface DynamicProps {
 }
 
 export interface GetStaticPropsResult {
-  props: DynamicProps | {};
+  props: DynamicProps | Record<string, never>;
   revalidate?: number;
   notFound?: boolean;
+}
+
+export interface GetStaticPropsParams {
+  params: RouterValues;
+}
+
+export interface GetStaticPathsResult {
+  paths: GetStaticPropsParams[];
+  fallback: boolean;
 }
 
 export interface ValidateChapter {
