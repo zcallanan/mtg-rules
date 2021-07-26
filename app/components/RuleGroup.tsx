@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { Chapter, Rule, Subrule } from "../../../app/types";
+import { Chapter, Rule, Subrule } from "../typing/types";
 import RuleList from "./RuleList";
 
 interface Props {

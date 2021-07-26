@@ -1,4 +1,4 @@
-import { ParseExample } from "./types";
+import { ParseExample } from "../typing/types";
 
 const parseExamples = (text: string): ParseExample => {
   // Split example text
@@ -16,7 +16,7 @@ const parseExamples = (text: string): ParseExample => {
   return {
     mainText,
     exampleTextArray,
-  }
+  };
 };
 
 export default parseExamples;

@@ -1,4 +1,4 @@
-import { Rule, Subrule } from "../../../app/types";
+import { Rule, Subrule } from "../typing/types";
 import SubruleList from "./SubruleList";
 
 interface Props {

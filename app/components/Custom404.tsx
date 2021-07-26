@@ -1,5 +1,5 @@
 import styles from "../styles/Custom404.module.scss";
-import { ErrorData } from "../app/types";
+import { ErrorData } from "../typing/types";
 
 const Custom404 = (props: ErrorData): JSX.Element => {
   const { reason, value } = props;

@@ -1,7 +1,7 @@
 import { MutableRefObject } from "react";
 import TocChapterList from "./TocChapterList";
-import { Section, Chapter } from "../../../app/types";
-import styles from "../../../styles/TocSections.module.scss";
+import { Section, Chapter } from "../typing/types";
+import styles from "../styles/TocSections.module.scss";
 
 interface Props {
   sections: Section[];

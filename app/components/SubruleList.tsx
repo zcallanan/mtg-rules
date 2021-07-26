@@ -1,8 +1,8 @@
 import { useRouter, NextRouter } from "next/router";
 import Example from "./Example";
-import parseLink from "../../../app/parse-link";
-import { Subrule, RouterValues } from "../../../app/types";
-import styles from "../../../styles/SubruleList.module.scss";
+import parseLink from "../utils/parse-link";
+import { Subrule, RouterValues } from "../typing/types";
+import styles from "../styles/SubruleList.module.scss";
 
 interface Props {
   subruleSubset: Subrule[];

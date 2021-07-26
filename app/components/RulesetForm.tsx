@@ -6,9 +6,9 @@ import {
   ChangeEvent,
 } from "react";
 import { useRouter, NextRouter } from "next/router";
-import formValidation from "../../../app/form-validation";
-import { RouterValues } from "../../../app/types";
-import styles from "../../../styles/RulesetForm.module.scss";
+import formValidation from "../utils/form-validation";
+import { RouterValues } from "../typing/types";
+import styles from "../styles/RulesetForm.module.scss";
 
 interface Props {
   smallText: string;
