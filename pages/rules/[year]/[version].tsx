@@ -97,17 +97,19 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
   // Save parsed node data to state
-  if (nodes.sections && nodes.sections.length && !sections.length) {
-    setSections(nodes.sections);
-  }
-  if (nodes.chapters && nodes.chapters.length && !chapters.length) {
-    setChapters(nodes.chapters);
-  }
-  if (nodes.rules && nodes.rules.length && !rules.length) {
-    setRules(nodes.rules);
-  }
-  if (nodes.subrules && nodes.subrules.length && !subrules.length) {
-    setSubrules(nodes.subrules);
+  if (nodes) {
+    if (nodes.sections && nodes.sections.length && !sections.length) {
+      setSections(nodes.sections);
+    }
+    if (nodes.chapters && nodes.chapters.length && !chapters.length) {
+      setChapters(nodes.chapters);
+    }
+    if (nodes.rules && nodes.rules.length && !rules.length) {
+      setRules(nodes.rules);
+    }
+    if (nodes.subrules && nodes.subrules.length && !subrules.length) {
+      setSubrules(nodes.subrules);
+    }
   }
 
   // Add a hash to url if none provided
@@ -138,7 +140,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
-    if (nodes.chapters && nodes.chapters.length) {
+    if (nodes && nodes.chapters && nodes.chapters.length) {
       setErrorData((prevValue) => ({
         ...prevValue,
         nodes,
@@ -298,7 +300,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           variant="dark"
           className={styles.spinnerComponent}
         >
-          <span className={styles.loadingText}>Loading...</span>
         </Spinner>
       </div>
     );
