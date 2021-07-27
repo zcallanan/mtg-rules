@@ -86,6 +86,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
+  const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResults>({
     searchTerm: "",
     searchSections: [],
@@ -196,6 +197,25 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   // Collect mutable refs in [] for useTopRule to iterate over and observe
   const rulesRef = useRef<HTMLDivElement[]>([]);
+
+  // Track what rules are rendered
+  useEffect(() => {
+    // Either the search result else default
+    const result = (searchResults.searchRules.length) 
+      ? searchResults.searchRules
+      : rules;    
+    // Save the rules in use to state
+    if (rulesInUse !== result) {
+      setRulesInUse(result);
+    }
+  }, [rules, rulesInUse, searchResults.searchRules]);
+
+  useEffect(() => {
+    // Adjust the size of rulesRef to trigger observation of rules by useTopRule
+    if (rulesInUse.length) {
+      rulesRef.current = rulesRef.current.slice(0, rulesInUse.length);
+    }
+ }, [rulesInUse]);
 
   let callbackNumber: number;
 
@@ -417,6 +437,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           wrapperProp={wrapperProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
+          rulesInUse={rulesInUse}
         />}
       { (!errorResult(errorData))
         ? (<div>
