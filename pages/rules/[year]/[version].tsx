@@ -3,6 +3,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+import uniqBy from "lodash/uniqBy";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/utils/rules-parse";
@@ -27,6 +28,7 @@ import {
   GetStaticPathsResult,
   SearchValue,
   SearchResults,
+  RulesResult,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
 
@@ -86,7 +88,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   const [searchResults, setSearchResults] = useState<SearchResults>({
     searchTerm: "",
-    rules: [],
+    searchSections: [],
+    searchChapters: [],
+    searchRules: [],
   });
   const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
   const [pause, setPause] = useState<boolean>(false);
@@ -211,12 +215,23 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   // Prop for search
   const onSearch = (searchValue: SearchValue) => {
-    // If searchTerm changed, save searchTerm to state and reset rules array
-    if (searchResults.searchTerm !== searchValue.searchTerm) {
+    if (searchValue.reset || (!searchValue.searchTerm && searchResults.searchTerm)) {
+      // If search form cancel button is clicked OR an empty form is submitted, reset values
+      setSearchResults((prevValue) => ({
+        ...prevValue,
+        searchTerm: "",
+        searchSections: [],
+        searchChapters: [],
+        searchRules: [],
+      }));
+    } else if (searchResults.searchTerm !== searchValue.searchTerm) {
+      // If searchTerm changed, save searchTerm to state and reset rules array
       setSearchResults((prevValue) => ({
         ...prevValue,
         searchTerm: searchValue.searchTerm,
-        rules: [],
+        searchSections: [],
+        searchChapters: [],
+        searchRules: [],
       }));
 
       /* 
@@ -237,7 +252,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       };
 
       // Get rule nodes subset where rule, child subrules, or child example text returns true for termRegex
-      const testRules = (): Rule[] => {
+      const testRules = (): RulesResult => {
         const subrulesResult = subrules.filter((subruleNode) => termRegex.test(subruleNode.text) || ((subruleNode.example.length) 
           ? checkExamples(subruleNode.example)
           : 0
@@ -255,13 +270,29 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
             ? checkExamples(node.example)
             : 0
           ) || (subruleRules.some((val) => val[0] === node.chapterNumber && val[1] === node.ruleNumber)
-          ))
-        return rulesResult;
+        ));
+
+        const ruleValues = rulesResult.map((rule) => ([rule.sectionNumber, rule.chapterNumber]));
+        const ruleSections = uniqBy(ruleValues
+          .map((val) => sections
+          .find((section) => section.sectionNumber === val[0])), "sectionNumber");
+        const ruleChapters = uniqBy(ruleValues
+          .map((val) => chapters
+          .find((chapter) => chapter.chapterNumber === val[1])), "chapterNumber");
+        return {
+          searchSections: ruleSections,
+          searchChapters: ruleChapters,
+          searchRules: rulesResult,
+        };
       };
+
+      const results: RulesResult = testRules();
       
       setSearchResults((prevValue) => ({
         ...prevValue,
-        rules: testRules(),
+        searchSections: results.searchSections,
+        searchChapters: results.searchChapters,
+        searchRules: results.searchRules,
       }))
     }
   };
@@ -395,8 +426,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       <div className={styles.bodyContainer}>
         <div className={styles.leftContainer}>
           <TocSections
-            sections={sections}
-            chapters={chapters}
+            sections={(searchResults.searchSections.length) ? searchResults.searchSections : sections}
+            chapters={(searchResults.searchChapters.length) ? searchResults.searchChapters : chapters}
             onLinkClick={onLinkClick}
             tocTitleRef={tocRefs}
           />
@@ -407,7 +438,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               <Tabs defaultActiveKey="search">
                 <Tab eventKey="search" title="Search Ruleset">
                   <div>
-                    <SearchForm onSearch={onSearch}/>
+                    <SearchForm onSearch={onSearch} searchedTerm={searchResults.searchTerm}/>
                   </div>
                 </Tab>
                 <Tab eventKey="ruleset" title="Load Another Ruleset">
@@ -430,7 +461,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               <SectionList
                 sections={sections}
                 chapters={chapters}
-                rules={rules}
+                rules={(searchResults.searchRules.length) ? searchResults.searchRules : rules}
                 subrules={subrules}
                 elRef={rulesRef}
                 root={rootRef}

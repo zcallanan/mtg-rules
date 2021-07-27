@@ -5,48 +5,66 @@ import {
   useEffect,
   FormEvent,
   ChangeEvent,
+  MouseEvent,
 } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons"
 import { SearchValue } from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
 
+
 interface Props {
   onSearch: (obj: SearchValue) => void;
+  searchedTerm: string;
 }
 
 const SearchForm = (props: Props): JSX.Element => {
-  const { onSearch } = props;
+  const { onSearch, searchedTerm } = props;
 
   // Input ref
   const input = useRef<HTMLInputElement>();
+
+  // Cancel ref
+  const cancel = useRef<HTMLButtonElement>();
 
   // Create local state
   const [searchValue, setSearch] = useState<SearchValue>({
     searchTerm: "",
     submitted: 0,
     validated: 0,
+    reset: 0,
   });
 
   // Deconstruct searchValue
-  const { searchTerm, submitted, validated } = searchValue;
+  const { searchTerm, submitted, validated, reset } = searchValue;
 
   // Create searchValue fn for memoization
-  const createSearchValue = (a: string, b: number, c: number) => ({
+  const createSearchValue = (a: string, b: number, c: number, d: number) => ({
     searchTerm: a,
     submitted: b,
-    validated: c
+    validated: c,
+    reset: d,
   });
  
   // Cache searchValue
   const memoizedSearchValue = useMemo(() => createSearchValue(
-    searchTerm, submitted, validated), [searchTerm, submitted, validated]);
+    searchTerm, submitted, validated, reset), [searchTerm, submitted, validated, reset]);
 
   // Pass memoized searchValue to dynamic page
   useEffect(() => {
-    // If a search term is validated, pass it to parent and mark submitted
+    /* 
+      If a search term is validated, pass it to parent and mark submitted
+      OR
+      The form was reset, tell the dynamic page to clear search state
+    */
     if (
-      memoizedSearchValue.searchTerm
-      && memoizedSearchValue.validated
-      && !memoizedSearchValue.submitted
+      (
+        memoizedSearchValue.validated
+        && !memoizedSearchValue.submitted 
+        || (
+          memoizedSearchValue.reset && memoizedSearchValue.validated && !memoizedSearchValue.submitted
+        )
+      )
     ) {
       onSearch(memoizedSearchValue);
       setSearch((prevValue) => ({
@@ -56,13 +74,16 @@ const SearchForm = (props: Props): JSX.Element => {
     }
   }, [onSearch, memoizedSearchValue])
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
+  const validateSearchInput = () => {
     // Reset to default or validation is wrong after going invalid > valid input
     input.current.setCustomValidity("");
 
-    if (!searchValue.searchTerm) {
+    // If dynamic page has no search values and an empty search is made, fail validation
+    if (
+      !searchValue.searchTerm 
+      && searchValue.searchTerm === searchedTerm
+      && !searchValue.reset
+    ) {
       input.current.setCustomValidity(
         "Field empty! Please enter a value to search for.",
       );
@@ -77,29 +98,61 @@ const SearchForm = (props: Props): JSX.Element => {
         validated: 1,
       }))
     }
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    validateSearchInput();
   };
 
+  const handleCancel = (e: MouseEvent<HTMLButtonElement>): void => {
+    e.preventDefault();
+
+    // Clear the input
+    input.current.value = "";
+
+    // Trigger submitting reset to dynamic page - this prompts clearing of search results
+    setSearch({
+      searchTerm: "",
+      submitted: 0,
+      validated: 1,
+      reset: 1,
+    })
+  }
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    // Set searchValue to state
+    // onChange, save input searchTerm to state
     setSearch({
       searchTerm: e.target.value,
       submitted: 0,
       validated: 0,
+      reset: 0,
     })
   };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
       <div className={styles.inputContainer}>
-        <input
-          ref={input}
-          onChange={handleChange}
-          id={styles.input}
-          type="text"
-          className="form-control"
-        />
+        <div className={styles.searchField}>
+          <input
+            ref={input}
+            onChange={handleChange}
+            id={styles.input}
+            type="text"
+            className="form-control"
+          />
+          <button 
+            type="button"
+            className="btn btn-outline-primary"
+            id={styles.timesCircle}
+            ref={cancel}
+            onClick={handleCancel}
+          >
+            <FontAwesomeIcon icon={faTimesCircle} />
+          </button>
+        </div>
         <button className="btn btn-primary" id={styles.button} type="submit">
-          Search
+          <FontAwesomeIcon icon={faSearch} />
         </button>
       </div>
     </form>

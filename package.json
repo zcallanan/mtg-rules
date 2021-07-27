@@ -9,6 +9,9 @@
     "lint": "next lint . --ext .ts,.tsx,.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "bootstrap": "^5.0.2",
     "cors": "^2.8.5",
     "lodash": "^4.17.21",

@@ -107,9 +107,18 @@ export interface SearchValue {
   searchTerm: string;
   submitted: number;
   validated: number;
+  reset: number;
 }
 
 export interface SearchResults {
   searchTerm: string;
-  rules: Rule[];
+  searchSections: Section[];
+  searchChapters: Chapter[];
+  searchRules: Rule[];
+}
+
+export interface RulesResult {
+  searchRules: Rule[];
+  searchSections: Section[];
+  searchChapters: Chapter[];
 }
