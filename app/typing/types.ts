@@ -97,13 +97,19 @@ export interface ValidateChapter {
 }
 
 export interface RulesParse {
-  sections: Section[],
-  chapters: Chapter[],
-  rules: Rule[],
-  subrules: Subrule[],
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
 }
 
 export interface SearchValue {
-  searchTerm: string,
-  submitted: number
+  searchTerm: string;
+  submitted: number;
+  validated: number;
+}
+
+export interface SearchResults {
+  searchTerm: string;
+  rules: Rule[];
 }

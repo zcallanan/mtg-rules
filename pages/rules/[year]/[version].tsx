@@ -26,6 +26,7 @@ import {
   GetStaticPropsParams,
   GetStaticPathsResult,
   SearchValue,
+  SearchResults,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
 
@@ -83,6 +84,10 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    searchTerm: "",
+    rules: [],
+  });
   const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
   const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({
@@ -206,7 +211,59 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   // Prop for search
   const onSearch = (searchValue: SearchValue) => {
-    console.log("hi", searchValue.searchTerm);
+    // If searchTerm changed, save searchTerm to state and reset rules array
+    if (searchResults.searchTerm !== searchValue.searchTerm) {
+      setSearchResults((prevValue) => ({
+        ...prevValue,
+        searchTerm: searchValue.searchTerm,
+        rules: [],
+      }));
+
+      /* 
+        - Filter rules and subrules node arrays
+        - Subrules & example text are not displayed without context of what rule it belongs to,
+          whether rule has the searchTerm or not
+        - If a subrule &/or exampleText has a match, and its rule text does not, then that rule should be included
+          in searchResults rules array
+      */
+
+      // Create regex
+      const termRegex = new RegExp(searchValue.searchTerm, "gim");
+
+      // Checks whether a rule or subrule's exampleArray contains searchTerm
+      const checkExamples = (exampleArray: string[]): number => {
+        const result = exampleArray.filter((exampleText) => termRegex.test(exampleText))
+        return (result.length) ? 1 : 0;
+      };
+
+      // Get rule nodes subset where rule, child subrules, or child example text returns true for termRegex
+      const testRules = (): Rule[] => {
+        const subrulesResult = subrules.filter((subruleNode) => termRegex.test(subruleNode.text) || ((subruleNode.example.length) 
+          ? checkExamples(subruleNode.example)
+          : 0
+        ))
+        const subruleRules: number[][] = subrulesResult.map((subrule) => ([subrule.chapterNumber, subrule.ruleNumber]));
+
+        /*
+          1. Rule has searchTerm OR
+          2. Rule's example text has searchTerm (checkExamples) OR
+          3. Rule's subrule or subrule example text has searchTerm (subrulesRules)
+        */
+
+        const rulesResult = rules.filter((node) => termRegex.test(node.text) 
+          || ((node.example.length) 
+            ? checkExamples(node.example)
+            : 0
+          ) || (subruleRules.some((val) => val[0] === node.chapterNumber && val[1] === node.ruleNumber)
+          ))
+        return rulesResult;
+      };
+      
+      setSearchResults((prevValue) => ({
+        ...prevValue,
+        rules: testRules(),
+      }))
+    }
   };
 
   // Prop used by CallbackWrapper to save useTopRule callback value

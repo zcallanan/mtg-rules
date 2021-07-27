@@ -1,7 +1,7 @@
 import { MutableRefObject } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
-import Example from "./Example";
+import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
 import { Rule, Subrule, RouterValues } from "../typing/types";
 import styles from "../styles/RuleList.module.scss";
@@ -49,7 +49,7 @@ const RuleList = (props: Props): JSX.Element => {
                 {parseLink({ routerValues, onLinkClick, rule })}
             </li>
           </section>
-          <Example rule={rule} onLinkClick={onLinkClick} />
+          <ExampleText rule={rule} onLinkClick={onLinkClick} />
           <SubruleGroup rule={rule} subrules={subrules} onLinkClick={onLinkClick} />
         </div>
       ))}

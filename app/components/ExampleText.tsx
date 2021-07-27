@@ -1,7 +1,7 @@
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
 import { Rule, Subrule, RouterValues } from "../typing/types";
-import styles from "../styles/Example.module.scss";
+import styles from "../styles/ExampleText.module.scss";
 
 interface Props {
   rule?: Rule;
@@ -9,7 +9,7 @@ interface Props {
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
 }
 
-const Example = (props: Props): JSX.Element => {
+const ExampleText = (props: Props): JSX.Element => {
   const { rule, subrule, onLinkClick } = props;
   const data: Rule | Subrule = rule || subrule;
 
@@ -52,4 +52,4 @@ const Example = (props: Props): JSX.Element => {
   );
 };
 
-export default Example;
+export default ExampleText;

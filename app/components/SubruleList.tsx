@@ -1,5 +1,5 @@
 import { useRouter, NextRouter } from "next/router";
-import Example from "./Example";
+import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
 import { Subrule, RouterValues } from "../typing/types";
 import styles from "../styles/SubruleList.module.scss";
@@ -36,7 +36,7 @@ const SubruleList = (props: Props): JSX.Element => {
               {subrule.subruleLetter} &nbsp; {parseLink({ routerValues, onLinkClick, subrule })}
             </li>
           </section>
-          <Example subrule={subrule} onLinkClick={onLinkClick}/>
+          <ExampleText subrule={subrule} onLinkClick={onLinkClick}/>
         </div>
       ))}
     </div>
