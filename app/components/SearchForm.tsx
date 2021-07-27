@@ -1,63 +1,98 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import {
+  useState,
+  useRef,
+  useMemo,
+  useEffect,
+  FormEvent,
+  ChangeEvent,
+} from "react";
+import { SearchValue } from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
 
 interface Props {
-
+  onSearch: (obj: SearchValue) => void;
 }
 
 const SearchForm = (props: Props): JSX.Element => {
-  // const {
+  const { onSearch } = props;
 
-  // } = props;
+  // Input ref
+  const input = useRef<HTMLInputElement>();
 
-  // Create local state to validate a submission
-  const [query, setQuery] = useState();
+  // Create local state
+  const [searchValue, setSearch] = useState<SearchValue>({
+    searchTerm: "",
+    submitted: 0,
+    validated: 0,
+  });
+
+  // Deconstruct searchValue
+  const { searchTerm, submitted, validated } = searchValue;
+
+  // Create searchValue fn for memoization
+  const createSearchValue = (a: string, b: number, c: number) => ({
+    searchTerm: a,
+    submitted: b,
+    validated: c
+  });
+ 
+  // Cache searchValue
+  const memoizedSearchValue = useMemo(() => createSearchValue(
+    searchTerm, submitted, validated), [searchTerm, submitted, validated]);
+
+  // Pass memoized searchValue to dynamic page
+  useEffect(() => {
+    // If a search term is validated, pass it to parent and mark submitted
+    if (
+      memoizedSearchValue.searchTerm
+      && memoizedSearchValue.validated
+      && !memoizedSearchValue.submitted
+    ) {
+      onSearch(memoizedSearchValue);
+      setSearch((prevValue) => ({
+        ...prevValue,
+        submitted: 1,
+      }))
+    }
+  }, [onSearch, memoizedSearchValue])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    // Select element to return a custom validation message
-    const input = document.getElementById(`${styles.search}`);
 
     // Reset to default or validation is wrong after going invalid > valid input
-    input.setCustomValidity("");
+    input.current.setCustomValidity("");
 
-  //   // Validate url
-  //   const result = await validateUrl(url);
-  //   // Set custom validation messages
-  //   if (result === 0) {
-  //     input.setCustomValidity(
-  //       "Field empty! Please enter a valid ruleset link.",
-  //     );
-  //   } else if (result === 2) {
-  //     input.setCustomValidity(
-  //       "Invalid ruleset link! Please enter a valid link.",
-  //     );
-  //   } else if (result === 3) {
-  //     input.setCustomValidity(
-  //       "The rules found at this link are displayed below.",
-  //     );
-  //   } else if (result === 4) {
-  //     input.setCustomValidity(
-  //       "Alas, no ruleset was found at that link. Please try another.",
-  //     );
-  //   } else if (result === 1) {
-  //     input.setCustomValidity("");
-  //   }
-  //   // Display custom validation message
-  //   if (!input.checkValidity()) {
-  //     input.reportValidity();
-  //   }
+    if (!searchValue.searchTerm) {
+      input.current.setCustomValidity(
+        "Field empty! Please enter a value to search for.",
+      );
+      // Display error message
+      if (!input.current.checkValidity()) {
+        input.current.reportValidity();
+      }
+    } else {
+      // There is a search value, mark validated
+      setSearch((prevValue) => ({
+        ...prevValue,
+        validated: 1,
+      }))
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    // Set value to state
-    setSearch(e.target.value);
+    // Set searchValue to state
+    setSearch({
+      searchTerm: e.target.value,
+      submitted: 0,
+      validated: 0,
+    })
   };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
       <div className={styles.inputContainer}>
         <input
+          ref={input}
           onChange={handleChange}
           id={styles.input}
           type="text"

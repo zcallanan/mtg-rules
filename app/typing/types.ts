@@ -102,3 +102,8 @@ export interface RulesParse {
   rules: Rule[],
   subrules: Subrule[],
 }
+
+export interface SearchValue {
+  searchTerm: string,
+  submitted: number
+}

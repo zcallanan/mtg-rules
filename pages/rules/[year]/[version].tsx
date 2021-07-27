@@ -25,6 +25,7 @@ import {
   RulesParse,
   GetStaticPropsParams,
   GetStaticPathsResult,
+  SearchValue,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
 
@@ -203,6 +204,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     element.scrollIntoView();
   };
 
+  // Prop for search
+  const onSearch = (searchValue: SearchValue) => {
+    console.log("hi", searchValue.searchTerm);
+  };
+
   // Prop used by CallbackWrapper to save useTopRule callback value
   const wrapperProp = (chapterN: number): void => {
     if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
@@ -344,7 +350,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               <Tabs defaultActiveKey="search">
                 <Tab eventKey="search" title="Search Ruleset">
                   <div>
-                    <SearchForm />
+                    <SearchForm onSearch={onSearch}/>
                   </div>
                 </Tab>
                 <Tab eventKey="ruleset" title="Load Another Ruleset">

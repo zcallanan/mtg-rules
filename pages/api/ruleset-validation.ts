@@ -1,7 +1,6 @@
 import Cors from "cors";
 import type { NextApiRequest, NextApiResponse } from "next"
 
-
 const cors = Cors({
   methods: ["GET"],
 });
