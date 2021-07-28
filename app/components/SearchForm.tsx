@@ -9,17 +9,38 @@ import {
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons"
-import { SearchValue } from "../typing/types";
+import {
+  SearchData,
+  SearchResults,
+  SearchValue,
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+} from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
 
 
 interface Props {
-  onSearch: (obj: SearchValue) => void;
+  setSearchData: (obj: SearchData) => void;
+  setSearchResults: (obj: SearchResults) => void;
   searchedTerm: string;
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
 }
 
 const SearchForm = (props: Props): JSX.Element => {
-  const { onSearch, searchedTerm } = props;
+  const {
+    setSearchData,
+    setSearchResults,
+    searchedTerm,
+    sections,
+    chapters,
+    rules,
+    subrules,
+  } = props;
 
   // Input ref
   const input = useRef<HTMLInputElement>();
@@ -47,7 +68,7 @@ const SearchForm = (props: Props): JSX.Element => {
   });
  
   // Cache searchValue
-  const memoizedSearchValue = useMemo(() => createSearchValue(
+  const memoSearchValue = useMemo(() => createSearchValue(
     searchTerm, submitted, validated, reset), [searchTerm, submitted, validated, reset]);
 
   // Pass memoized searchValue to dynamic page
@@ -59,20 +80,60 @@ const SearchForm = (props: Props): JSX.Element => {
     */
     if (
       (
-        memoizedSearchValue.validated
-        && !memoizedSearchValue.submitted 
+        memoSearchValue.validated
+        && !memoSearchValue.submitted 
         || (
-          memoizedSearchValue.reset && memoizedSearchValue.validated && !memoizedSearchValue.submitted
+            memoSearchValue.reset && memoSearchValue.validated && !memoSearchValue.submitted
         )
       )
     ) {
-      onSearch(memoizedSearchValue);
+    if (memoSearchValue.reset || (!memoSearchValue.searchTerm && searchedTerm)) {
+        // If search form cancel button is clicked OR an empty form is submitted:
+        // Clear dynamic page search data
+        setSearchData({
+          searchTerm: "",
+          sections: [],
+          chapters: [],
+          rules: [],
+          subrules: [],
+        })
+      } else if (searchedTerm !== memoSearchValue.searchTerm) {
+        // Save search data
+        setSearchData({
+          searchTerm: memoSearchValue.searchTerm,
+          sections,
+          chapters,
+          rules,
+          subrules,
+        })
+      }
+
+      // The user may have searched previously. Clear dynamic page search results
+      setSearchResults({
+        searchTerm: "",
+        searchSections: [],
+        searchChapters: [],
+        searchRules: [],
+        searchResult: 0,
+      });
+
+
+      // Mark local searchValue as submitted
       setSearch((prevValue) => ({
         ...prevValue,
         submitted: 1,
       }))
     }
-  }, [onSearch, memoizedSearchValue])
+  }, [
+    memoSearchValue,
+    searchedTerm,
+    setSearchData,
+    setSearchResults,
+    sections,
+    chapters,
+    rules,
+    subrules
+  ])
 
   const validateSearchInput = () => {
     // Reset to default or validation is wrong after going invalid > valid input

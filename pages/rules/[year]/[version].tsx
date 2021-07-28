@@ -3,7 +3,6 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import uniqBy from "lodash/uniqBy";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import rulesParse from "../../../app/utils/rules-parse";
@@ -14,7 +13,9 @@ import RulesetForm from "../../../app/components/RulesetForm";
 import SearchForm from "../../../app/components/SearchForm";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
+import SearchWrapper from "../../../app/components/SearchWrapper"
 import NoSearchResults from "../../../app/components/NoSearchResults";
+import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
   ChapterValues,
   Section,
@@ -27,9 +28,8 @@ import {
   RulesParse,
   GetStaticPropsParams,
   GetStaticPathsResult,
-  SearchValue,
+  SearchData,
   SearchResults,
-  RulesResult,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
 
@@ -88,6 +88,13 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const path = router.asPath.split("#");
 
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
+  const [searchData, setSearchData] = useState<SearchData>({
+    searchTerm: "",
+    sections: [],
+    chapters: [],
+    rules: [],
+    subrules: [],
+  });
   const [searchResults, setSearchResults] = useState<SearchResults>({
     searchTerm: "",
     searchSections: [],
@@ -207,7 +214,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       ? searchResults.searchRules
       : rules;    
     // Save the rules in use to state
-    if (rulesInUse !== result) {
+    if (!objectArrayComparison(result, rulesInUse)) {
       setRulesInUse(result);
     }
   }, [rules, rulesInUse, searchResults.searchRules]);
@@ -235,93 +242,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     element.scrollIntoView();
   };
 
-  // Prop for search
-  const onSearch = (searchValue: SearchValue) => {
-    if (searchValue.reset || (!searchValue.searchTerm && searchResults.searchTerm)) {
-      // If search form cancel button is clicked OR an empty form is submitted, reset values
-      setSearchResults((prevValue) => ({
-        ...prevValue,
-        searchTerm: "",
-        searchSections: [],
-        searchChapters: [],
-        searchRules: [],
-      }));
-    } else if (searchResults.searchTerm !== searchValue.searchTerm) {
-      // If searchTerm changed, save searchTerm to state and reset rules array
-      setSearchResults((prevValue) => ({
-        ...prevValue,
-        searchTerm: searchValue.searchTerm,
-        searchSections: [],
-        searchChapters: [],
-        searchRules: [],
-      }));
-
-      /* 
-        - Filter rules and subrules node arrays
-        - Subrules & example text are not displayed without context of what rule it belongs to,
-          whether rule has the searchTerm or not
-        - If a subrule &/or exampleText has a match, and its rule text does not, then that rule should be included
-          in searchResults rules array
-      */
-
-      // Create regex
-      const termRegex = new RegExp(searchValue.searchTerm, "gim");
-
-      // Checks whether a rule or subrule's exampleArray contains searchTerm
-      const checkExamples = (exampleArray: string[]): number => {
-        const result = exampleArray.filter((exampleText) => termRegex.test(exampleText))
-        return (result.length) ? 1 : 0;
-      };
-
-      // Get rule nodes subset where rule, child subrules, or child example text returns true for termRegex
-      const testRules = (): RulesResult => {
-        const subrulesResult = subrules.filter((subruleNode) => termRegex.test(subruleNode.text) || ((subruleNode.example.length) 
-          ? checkExamples(subruleNode.example)
-          : 0
-        ))
-        const subruleRules: number[][] = subrulesResult.map((subrule) => ([subrule.chapterNumber, subrule.ruleNumber]));
-
-        /*
-          1. Rule has searchTerm OR
-          2. Rule's example text has searchTerm (checkExamples) OR
-          3. Rule's subrule or subrule example text has searchTerm (subrulesRules)
-        */
-
-        const rulesResult = rules.filter((node) => termRegex.test(node.text) 
-          || ((node.example.length) 
-            ? checkExamples(node.example)
-            : 0
-          ) || (subruleRules.some((val) => val[0] === node.chapterNumber && val[1] === node.ruleNumber)
-        ));
-
-        const ruleValues = rulesResult.map((rule) => ([rule.sectionNumber, rule.chapterNumber]));
-        const ruleSections = uniqBy(ruleValues
-          .map((val) => sections
-          .find((section) => section.sectionNumber === val[0])), "sectionNumber");
-        const ruleChapters = uniqBy(ruleValues
-          .map((val) => chapters
-          .find((chapter) => chapter.chapterNumber === val[1])), "chapterNumber");
-        return {
-          searchSections: ruleSections,
-          searchChapters: ruleChapters,
-          searchRules: rulesResult,
-        };
-      };
-
-      const results: RulesResult = testRules();
-      
-      setSearchResults((prevValue) => ({
-        ...prevValue,
-        searchSections: results.searchSections,
-        searchChapters: results.searchChapters,
-        searchRules: results.searchRules,
-        searchResult: (results.searchRules.length) ? 1 : 0,
-      }))
-    }
-  };
-
   // Prop used by TopRuleWrapper to save useTopRule callback value
-  const wrapperProp = (chapterN: number): void => {
+  const topRuleProp = (chapterN: number): void => {
     if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
       // Delay to prevent TopRuleWrapper updating dynamic page while rendering
       setTimeout(() => setCallbackValue(chapterN), 200);
@@ -434,10 +356,17 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   return (
     <div>
+      {
+        searchData.searchTerm
+        && <SearchWrapper 
+          setSearchResults={setSearchResults}
+          searchResults={searchResults}
+          searchData={searchData}/>
+      }
       {rootRef 
         && <TopRuleWrapper 
           rootRef={rootRef}
-          wrapperProp={wrapperProp}
+          topRuleProp={topRuleProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
           rulesInUse={rulesInUse}
@@ -462,7 +391,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               <Tabs defaultActiveKey="search">
                 <Tab eventKey="search" title="Search Ruleset">
                   <div>
-                    <SearchForm onSearch={onSearch} searchedTerm={searchResults.searchTerm}/>
+                    <SearchForm
+                      setSearchData={setSearchData}
+                      setSearchResults={setSearchResults}
+                      searchedTerm={searchResults.searchTerm}
+                      sections={sections}
+                      chapters={chapters}
+                      rules={rules}
+                      subrules={subrules}
+                    />
                   </div>
                 </Tab>
                 <Tab eventKey="ruleset" title="Load Another Ruleset">

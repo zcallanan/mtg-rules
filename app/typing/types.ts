@@ -118,8 +118,10 @@ export interface SearchResults {
   searchResult: number;
 }
 
-export interface RulesResult {
-  searchRules: Rule[];
-  searchSections: Section[];
-  searchChapters: Chapter[];
+export interface SearchData {
+  searchTerm: string;
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
 }
