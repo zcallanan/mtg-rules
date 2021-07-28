@@ -13,7 +13,8 @@ import ChapterTitle from "../../../app/components/ChapterTitle";
 import RulesetForm from "../../../app/components/RulesetForm";
 import SearchForm from "../../../app/components/SearchForm";
 import CustomErrors from "../../../app/components/CustomErrors";
-import CallbackWrapper from "../../../app/components/CallbackWrapper";
+import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
+import NoSearchResults from "../../../app/components/NoSearchResults";
 import {
   ChapterValues,
   Section,
@@ -92,6 +93,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     searchSections: [],
     searchChapters: [],
     searchRules: [],
+    searchResult: 0,
   });
   const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
   const [pause, setPause] = useState<boolean>(false);
@@ -313,14 +315,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         searchSections: results.searchSections,
         searchChapters: results.searchChapters,
         searchRules: results.searchRules,
+        searchResult: (results.searchRules.length) ? 1 : 0,
       }))
     }
   };
 
-  // Prop used by CallbackWrapper to save useTopRule callback value
+  // Prop used by TopRuleWrapper to save useTopRule callback value
   const wrapperProp = (chapterN: number): void => {
     if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
-      // Delay to prevent CallbackWrapper updating dynamic page while rendering
+      // Delay to prevent TopRuleWrapper updating dynamic page while rendering
       setTimeout(() => setCallbackValue(chapterN), 200);
     }
   }
@@ -432,7 +435,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   return (
     <div>
       {rootRef 
-        && <CallbackWrapper 
+        && <TopRuleWrapper 
           rootRef={rootRef}
           wrapperProp={wrapperProp}
           rulesRef={rulesRef}
@@ -470,24 +473,40 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               </Tabs>
             </div>
             <div className={styles.chapterTitleContainer}>
-              <ChapterTitle
-                chapter={chapters.find((chapter) => chapter
-                  .chapterNumber === chapterValues.chapterNumber)}
-                toc={0}
-                effectiveDate={effectiveDate}
-                sections={sections}
-              />
+              {
+                ((searchResults.searchResult && searchResults.searchTerm) 
+                || !searchResults.searchTerm)
+                  ? (
+                    <ChapterTitle
+                      chapter={chapters.find((chapter) => chapter
+                        .chapterNumber === chapterValues.chapterNumber)}
+                      toc={0}
+                      effectiveDate={effectiveDate}
+                      sections={sections}
+                    />
+                  ) : (
+                    <NoSearchResults title={1}/>
+                  )
+              }
             </div>
             <div className={styles.rulesContainer}>
-              <SectionList
-                sections={sections}
-                chapters={chapters}
-                rules={(searchResults.searchRules.length) ? searchResults.searchRules : rules}
-                subrules={subrules}
-                elRef={rulesRef}
-                root={rootRef}
-                onLinkClick={onLinkClick}
-              />
+              {
+                ((searchResults.searchResult && searchResults.searchTerm) 
+                || !searchResults.searchTerm)
+                ? (
+                  <SectionList
+                    sections={sections}
+                    chapters={chapters}
+                    rules={(searchResults.searchRules.length) ? searchResults.searchRules : rules}
+                    subrules={subrules}
+                    elRef={rulesRef}
+                    root={rootRef}
+                    onLinkClick={onLinkClick}
+                  />
+                ) : (
+                  <NoSearchResults title={0}/>
+                )
+              }
             </div>
           </div>
         </div>

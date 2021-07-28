@@ -115,6 +115,7 @@ export interface SearchResults {
   searchSections: Section[];
   searchChapters: Chapter[];
   searchRules: Rule[];
+  searchResult: number;
 }
 
 export interface RulesResult {
