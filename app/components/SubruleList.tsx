@@ -1,16 +1,18 @@
 import { useRouter, NextRouter } from "next/router";
 import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
+import modifySearchRules from "../utils/modify-search-rules";
 import { Subrule, RouterValues } from "../typing/types";
 import styles from "../styles/SubruleList.module.scss";
 
 interface Props {
   subruleSubset: Subrule[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const SubruleList = (props: Props): JSX.Element => {
-  const { subruleSubset, onLinkClick } = props;
+  const { subruleSubset, onLinkClick, searchTerm } = props;
 
   const router: NextRouter = useRouter();
   const year: string = (Array.isArray(router.query.year))
@@ -33,10 +35,18 @@ const SubruleList = (props: Props): JSX.Element => {
               className={`${styles.subruleText} list-group-item`}
             >
               {subrule.chapterNumber}.{subrule.ruleNumber}
-              {subrule.subruleLetter} &nbsp; {parseLink({ routerValues, onLinkClick, subrule })}
+              {subrule.subruleLetter} &nbsp;
+              {(!searchTerm)
+                ? parseLink({ routerValues, onLinkClick, subrule })
+                : modifySearchRules({
+                  searchTerm,
+                  subrule,
+                  toModify: parseLink({ routerValues, onLinkClick, subrule }),
+                })
+              } 
             </li>
           </section>
-          <ExampleText subrule={subrule} onLinkClick={onLinkClick}/>
+          <ExampleText subrule={subrule} onLinkClick={onLinkClick} searchTerm={searchTerm}/>
         </div>
       ))}
     </div>

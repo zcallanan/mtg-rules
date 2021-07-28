@@ -3,6 +3,7 @@ import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
+import modifySearchRules from "../utils/modify-search-rules";
 import { Rule, Subrule, RouterValues } from "../typing/types";
 import styles from "../styles/RuleList.module.scss";
 
@@ -12,6 +13,7 @@ interface Props {
   subrules: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const RuleList = (props: Props): JSX.Element => {
@@ -21,6 +23,7 @@ const RuleList = (props: Props): JSX.Element => {
     subrules,
     elRef,
     onLinkClick,
+    searchTerm,
   } = props;
 
   const router: NextRouter = useRouter();
@@ -46,11 +49,23 @@ const RuleList = (props: Props): JSX.Element => {
               className={`${styles.ruleText} list-group-item`}
             >
               {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
-                {parseLink({ routerValues, onLinkClick, rule })}
+                {(!searchTerm)
+                  ? parseLink({ routerValues, onLinkClick, rule })
+                  : modifySearchRules({
+                      searchTerm,
+                      rule,
+                      toModify: parseLink({ routerValues, onLinkClick, rule }),
+                  }) 
+                }
             </li>
           </section>
-          <ExampleText rule={rule} onLinkClick={onLinkClick} />
-          <SubruleGroup rule={rule} subrules={subrules} onLinkClick={onLinkClick} />
+          <ExampleText rule={rule} onLinkClick={onLinkClick} searchTerm={searchTerm} />
+          <SubruleGroup
+            rule={rule}
+            subrules={subrules}
+            onLinkClick={onLinkClick}
+            searchTerm={searchTerm}
+          />
         </div>
       ))}
     </div>

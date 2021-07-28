@@ -10,7 +10,7 @@ import {
   Subrule,
 } from "../typing/types";
 
-const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
+const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
   // Retry 3 times
   if (i < 4) {
     try {
@@ -109,10 +109,10 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
 
       let val = i;
       val += 1;
-      rulesParse(rawText, val);
+      parseNodes(rawText, val);
     }
   }
   return null;
 };
 
-export default rulesParse;
+export default parseNodes;

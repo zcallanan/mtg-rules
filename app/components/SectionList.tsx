@@ -17,6 +17,7 @@ interface Props {
   elRef: MutableRefObject<HTMLDivElement[]>;
   root: RefObject<HTMLDivElement> | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -28,7 +29,10 @@ const SectionList = (props: Props): JSX.Element => {
     elRef,
     root,
     onLinkClick,
+    searchTerm,
   } = props;
+
+  console.log(searchTerm)
 
   return (
     <div className={styles.scrollableDiv} ref={root}>
@@ -42,6 +46,7 @@ const SectionList = (props: Props): JSX.Element => {
               subrules={subrules}
               elRef={elRef}
               onLinkClick={onLinkClick}
+              searchTerm={searchTerm}
             />
           </div>
         )))

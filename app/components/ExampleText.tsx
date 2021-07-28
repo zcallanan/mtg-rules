@@ -1,5 +1,6 @@
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
+import modifySearchRules from "../utils/modify-search-rules";
 import { Rule, Subrule, RouterValues } from "../typing/types";
 import styles from "../styles/ExampleText.module.scss";
 
@@ -7,10 +8,11 @@ interface Props {
   rule?: Rule;
   subrule?: Subrule;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const ExampleText = (props: Props): JSX.Element => {
-  const { rule, subrule, onLinkClick } = props;
+  const { rule, subrule, onLinkClick, searchTerm } = props;
   const data: Rule | Subrule = rule || subrule;
 
   const router: NextRouter = useRouter();
@@ -30,7 +32,8 @@ const ExampleText = (props: Props): JSX.Element => {
             key={rule ? `rule-e${index}` : `subrule-e${index}`}
             className={`${styles.example} list-group-item`}
           >
-            {parseLink(
+            {(!searchTerm) 
+            ? parseLink(
               (rule)
                 ? {
                   routerValues,
@@ -44,7 +47,30 @@ const ExampleText = (props: Props): JSX.Element => {
                   example,
                   subrule,
                 },
-            )}
+            ) : (
+                modifySearchRules(
+                  (rule) ? {
+                    searchTerm,
+                    rule, 
+                    toModify: parseLink({
+                      routerValues,
+                      onLinkClick,
+                      example,
+                      rule,
+                    })
+                  } : {
+                    searchTerm,
+                    subrule, 
+                    toModify: parseLink({
+                      routerValues,
+                      onLinkClick,
+                      example,
+                      subrule,
+                    })
+                  }
+                )
+            )
+          }
           </li>
         ),
       )}

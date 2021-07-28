@@ -8,6 +8,7 @@ interface Props {
   subrules: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
@@ -17,6 +18,7 @@ const RuleGroup = (props: Props): JSX.Element => {
     subrules,
     elRef,
     onLinkClick,
+    searchTerm,
   } = props;
 
   const ruleSubset = rules.filter(
@@ -33,6 +35,7 @@ const RuleGroup = (props: Props): JSX.Element => {
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}
+            searchTerm={searchTerm}
           />
         </ul>
       )}

@@ -15,6 +15,7 @@ interface Props {
   subrules?: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchTerm: string;
 }
 
 const ChapterList = (props: Props): JSX.Element => {
@@ -25,6 +26,7 @@ const ChapterList = (props: Props): JSX.Element => {
     subrules,
     elRef,
     onLinkClick,
+    searchTerm,
   } = props;
 
   let chapterSubset: Chapter[];
@@ -46,6 +48,7 @@ const ChapterList = (props: Props): JSX.Element => {
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}
+            searchTerm={searchTerm}
           />
         </div>
       ))}

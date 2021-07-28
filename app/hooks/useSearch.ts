@@ -1,5 +1,5 @@
 import uniqBy from "lodash/uniqBy";
-import { SearchData, SearchResults } from "../typing/types";
+import { SearchData, SearchResults, Section, Chapter, Rule, Subrule } from "../typing/types";
 
 const useSearch = ((props: SearchData): SearchResults =>{
   const { searchTerm, sections, chapters, rules, subrules } = props;
@@ -23,7 +23,7 @@ const useSearch = ((props: SearchData): SearchResults =>{
 
     // Get rule nodes subset where rule, child subrules, or child example text returns true for termRegex
     const testRules = (): SearchResults => {
-      const subrulesResult = subrules.filter((subruleNode) => termRegex.test(subruleNode.text) || ((subruleNode.example.length) 
+      const subrulesResult: Subrule[] = subrules.filter((subruleNode) => termRegex.test(subruleNode.text) || ((subruleNode.example.length) 
         ? checkExamples(subruleNode.example)
         : 0
       ))
@@ -34,7 +34,7 @@ const useSearch = ((props: SearchData): SearchResults =>{
         2. Rule's example text has searchTerm (checkExamples) OR
         3. Rule's subrule or subrule example text has searchTerm (subrulesRules)
       */
-      const rulesResult = rules.filter((node) => termRegex.test(node.text) 
+      const rulesResult: Rule[] = rules.filter((node) => termRegex.test(node.text) 
         || ((node.example.length) 
           ? checkExamples(node.example)
           : 0
@@ -42,13 +42,13 @@ const useSearch = ((props: SearchData): SearchResults =>{
       ));
 
       // Sections & chapters found in rulesResult
-      const ruleValues = rulesResult.map((rule) => ([rule.sectionNumber, rule.chapterNumber]));
+      const ruleValues: number[][] = rulesResult.map((rule) => ([rule.sectionNumber, rule.chapterNumber]));
 
       // Make sections and chapters unique, else toc has duplicates
-      const ruleSections = uniqBy(ruleValues
+      const ruleSections: Section[] = uniqBy(ruleValues
         .map((val) => sections
         .find((section) => section.sectionNumber === val[0])), "sectionNumber");
-      const ruleChapters = uniqBy(ruleValues
+      const ruleChapters: Chapter[] = uniqBy(ruleValues
         .map((val) => chapters
         .find((chapter) => chapter.chapterNumber === val[1])), "chapterNumber");
 
@@ -58,6 +58,7 @@ const useSearch = ((props: SearchData): SearchResults =>{
         searchSections: ruleSections,
         searchChapters: ruleChapters,
         searchRules: rulesResult,
+        searchSubrules: subrulesResult,
         searchResult: (rulesResult.length) ? 1 : 0
       };
     };

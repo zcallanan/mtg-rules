@@ -114,6 +114,7 @@ const SearchForm = (props: Props): JSX.Element => {
         searchSections: [],
         searchChapters: [],
         searchRules: [],
+        searchSubrules: [],
         searchResult: 0,
       });
 
@@ -161,11 +162,13 @@ const SearchForm = (props: Props): JSX.Element => {
     }
   }
 
+  // The form was submitted
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     validateSearchInput();
   };
 
+  // The X was clicked
   const handleCancel = (e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
 
@@ -181,6 +184,7 @@ const SearchForm = (props: Props): JSX.Element => {
     })
   }
 
+  // The form input value changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     // onChange, save input searchTerm to state
     setSearch({

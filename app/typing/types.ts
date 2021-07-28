@@ -115,6 +115,7 @@ export interface SearchResults {
   searchSections: Section[];
   searchChapters: Chapter[];
   searchRules: Rule[];
+  searchSubrules: Subrule[];
   searchResult: number;
 }
 
@@ -124,4 +125,10 @@ export interface SearchData {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
+}
+
+export interface ModifyArgs {
+  searchTerm: string;
+  rule?: Rule;
+  subrule?: Subrule;
 }

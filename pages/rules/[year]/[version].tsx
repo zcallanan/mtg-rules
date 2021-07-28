@@ -5,7 +5,7 @@ import React, {
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
-import rulesParse from "../../../app/utils/rules-parse";
+import parseNodes from "../../../app/utils/parse-nodes";
 import TocSections from "../../../app/components/TocSections";
 import SectionList from "../../../app/components/SectionList";
 import ChapterTitle from "../../../app/components/ChapterTitle";
@@ -42,7 +42,7 @@ export const getStaticProps = async (
   const res = await fetch(url);
   const rawRuleSetText: string = await res.text();
   // Parse rules text to an array of rule nodes
-  const nodes: RulesParse = await rulesParse(rawRuleSetText);
+  const nodes: RulesParse = await parseNodes(rawRuleSetText);
 
   // Parse rules text for effective date
   const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
@@ -100,6 +100,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     searchSections: [],
     searchChapters: [],
     searchRules: [],
+    searchSubrules: [],
     searchResult: 0,
   });
   const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
@@ -435,10 +436,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                     sections={sections}
                     chapters={chapters}
                     rules={(searchResults.searchRules.length) ? searchResults.searchRules : rules}
-                    subrules={subrules}
+                    subrules={(searchResults.searchRules.length) ? searchResults.searchSubrules : subrules}
                     elRef={rulesRef}
                     root={rootRef}
                     onLinkClick={onLinkClick}
+                    searchTerm={searchResults.searchTerm}
                   />
                 ) : (
                   <NoSearchResults title={0}/>
