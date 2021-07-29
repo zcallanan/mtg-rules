@@ -88,6 +88,15 @@ const SearchForm = (props: Props): JSX.Element => {
           rules: [],
           subrules: [],
         });
+        // The user may have searched previously. Clear dynamic page search results
+        setSearchResults({
+          searchTerm: "",
+          searchSections: [],
+          searchChapters: [],
+          searchRules: [],
+          searchSubrules: [],
+          searchResult: 0,
+        });
       } else if (searchedTerm !== memoSearchValue.searchTerm) {
         // Save search data
         setSearchData({
@@ -98,16 +107,6 @@ const SearchForm = (props: Props): JSX.Element => {
           subrules,
         });
       }
-
-      // The user may have searched previously. Clear dynamic page search results
-      setSearchResults({
-        searchTerm: "",
-        searchSections: [],
-        searchChapters: [],
-        searchRules: [],
-        searchSubrules: [],
-        searchResult: 0,
-      });
 
       // Mark local searchValue as submitted
       setSearch((prevValue) => ({

@@ -426,7 +426,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               </div>
               <div className={styles.chapterTitleContainer}>
                 {(searchResults.searchResult && searchResults.searchTerm) ||
-                !searchResults.searchTerm ? (
+                (!searchResults.searchTerm && !searchResults.searchResult) ? (
                   <ChapterTitle
                     chapter={chapters.find(
                       (chapter) =>
@@ -442,7 +442,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               </div>
               <div className={styles.rulesContainer}>
                 {(searchResults.searchResult && searchResults.searchTerm) ||
-                !searchResults.searchTerm ? (
+                (!searchResults.searchTerm && !searchResults.searchResult) ? (
                   <SectionList
                     sections={sections}
                     chapters={chapters}
@@ -459,7 +459,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                     elRef={rulesRef}
                     root={rootRef}
                     onLinkClick={onLinkClick}
-                    searchTerm={searchResults.searchTerm}
+                    searchTerm={
+                      searchData.searchTerm === searchResults.searchTerm
+                        ? searchResults.searchTerm
+                        : ""
+                    }
                   />
                 ) : (
                   <NoSearchResults title={0} />

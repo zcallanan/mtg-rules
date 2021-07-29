@@ -4,15 +4,16 @@ import { ModifyArgs } from "../typing/types";
 
 const wrapSearchTerm = (args: ModifyArgs): string | ReactNodeArray => {
   const { searchTerm, rule, subrule, toModify } = args;
+
   return reactStringReplace(
     toModify,
     searchTerm,
-    (match: string, i: number) => (
+    (match: string, i: number, offset: number) => (
       <span
         key={
           rule
-            ? `.${rule.ruleNumber}-${i}`
-            : `.${subrule.ruleNumber}${subrule.subruleLetter}-${i}`
+            ? `${searchTerm}.${rule.chapterNumber}-${rule.ruleNumber}-${i}${offset}`
+            : `${searchTerm}.${subrule.chapterNumber}-${subrule.ruleNumber}-${subrule.ruleNumber}${subrule.subruleLetter}-${i}${offset}`
         }
         className={"searchText"}
         style={{

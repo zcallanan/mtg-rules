@@ -20,6 +20,7 @@ export interface Rule {
   chapterNumber: number;
   ruleNumber: number;
   example: string[];
+  exampleSearch: string[];
 }
 
 export interface Subrule {
@@ -30,6 +31,7 @@ export interface Subrule {
   ruleNumber: number;
   subruleLetter: string;
   example: string[];
+  exampleSearch: string[];
 }
 
 export interface RouterValues {

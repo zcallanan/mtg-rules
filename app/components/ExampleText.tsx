@@ -14,6 +14,8 @@ interface Props {
 const ExampleText = (props: Props): JSX.Element => {
   const { rule, subrule, onLinkClick, searchTerm } = props;
   const data: Rule | Subrule = rule || subrule;
+  // Use regular array of example strings if no searchTerm
+  const exampleText = !searchTerm ? data.example : data.exampleSearch;
 
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
@@ -26,7 +28,7 @@ const ExampleText = (props: Props): JSX.Element => {
 
   return (
     <div>
-      {data.example.map(
+      {exampleText.map(
         (example, index) =>
           data.example && (
             <li

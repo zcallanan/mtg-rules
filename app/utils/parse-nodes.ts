@@ -49,6 +49,7 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
         const sectionNumber = Number(chapter[0]);
         const chapterNumber = Number(chapter);
         const ruleNumber = Number(rule);
+        const exampleSearch: string[] = [];
 
         // Handle text that has examples
         const textParse: ParseExample = parseExamples(txt);
@@ -60,6 +61,7 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
           chapterNumber,
           ruleNumber,
           example: textParse ? textParse.exampleTextArray : "",
+          exampleSearch,
         };
       });
       parser.addRule(
@@ -68,6 +70,7 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
           const sectionNumber = Number(chapter[2]);
           const chapterNumber = Number(chapter);
           const ruleNumber = Number(rule);
+          const exampleSearch: string[] = [];
 
           // Handle text that has examples
           const textParse: ParseExample = parseExamples(txt);
@@ -80,6 +83,7 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
             ruleNumber,
             subruleLetter,
             example: textParse ? textParse.exampleTextArray : "",
+            exampleSearch,
           };
         }
       );

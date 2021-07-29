@@ -56,6 +56,25 @@ const useSearch = (props: SearchData): SearchResults => {
         )
     );
 
+    const updateNodeExampleSearch = (nodes: Rule[] | Subrule[]): void => {
+      nodes.forEach((node) => {
+        // Find examples that have termRegex
+        const matchingExamples: string[] = node.example.filter((exampleText) =>
+          termRegex.test(exampleText)
+        );
+        // Clear exampleSearch, spread in matchingExamples
+        node.exampleSearch.splice(
+          0,
+          node.exampleSearch.length,
+          ...matchingExamples
+        );
+      });
+    };
+
+    // Update rules and subrules exampleSearch array
+    updateNodeExampleSearch(rulesResult);
+    updateNodeExampleSearch(subrulesResult);
+
     // Sections & chapters found in rulesResult
     const ruleValues: number[][] = rulesResult.map((rule) => [
       rule.sectionNumber,
