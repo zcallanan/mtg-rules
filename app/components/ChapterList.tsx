@@ -1,11 +1,6 @@
 import { MutableRefObject } from "react";
 import RuleGroup from "./RuleGroup";
-import {
-  Section,
-  Chapter,
-  Rule,
-  Subrule,
-} from "../typing/types";
+import { Section, Chapter, Rule, Subrule } from "../typing/types";
 // import styles from "../styles/ChapterList.module.scss";
 
 interface Props {
@@ -19,20 +14,13 @@ interface Props {
 }
 
 const ChapterList = (props: Props): JSX.Element => {
-  const {
-    section,
-    chapters,
-    rules,
-    subrules,
-    elRef,
-    onLinkClick,
-    searchTerm,
-  } = props;
+  const { section, chapters, rules, subrules, elRef, onLinkClick, searchTerm } =
+    props;
 
   let chapterSubset: Chapter[];
   if (section) {
     chapterSubset = chapters.filter(
-      (chapter) => chapter.sectionNumber === section.sectionNumber,
+      (chapter) => chapter.sectionNumber === section.sectionNumber
     );
   }
 
@@ -40,8 +28,7 @@ const ChapterList = (props: Props): JSX.Element => {
     <div>
       {chapterSubset.map((chapter, index) => (
         <div key={`chapter${chapter.chapterNumber}-${index}`}>
-          <section id={`${chapter.chapterNumber}`}>
-          </section>
+          <section id={`${chapter.chapterNumber}`}></section>
           <RuleGroup
             chapter={chapter}
             rules={rules}

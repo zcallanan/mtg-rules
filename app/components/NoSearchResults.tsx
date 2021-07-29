@@ -7,20 +7,15 @@ const NoSearchResults = (props: Props): JSX.Element => {
 
   return (
     <div>
-      {
-        title 
-          ? (
-            <span>
-              No Search Results
-            </span>
-          ) : (
-            <span>
-              There was nothing to display. Please search for another term!
-            </span>
-          )
-      }
+      {title ? (
+        <span>No Search Results</span>
+      ) : (
+        <span>
+          There was nothing to display. Please search for another term!
+        </span>
+      )}
     </div>
-    )
+  );
 };
 
 export default NoSearchResults;

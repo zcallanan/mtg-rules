@@ -1,5 +1,5 @@
 import Cors from "cors";
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from "next";
 
 const cors = Cors({
   methods: ["GET"],
@@ -17,11 +17,14 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn) {
 }
 
 interface Data {
-    status: string;
+  status: string;
 }
 
 // Fetch proxy for evaluation of new ruleset link
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>): Promise<void> {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+): Promise<void> {
   // Add CORS headers to response
   await runMiddleware(req, res, cors);
 

@@ -1,12 +1,7 @@
 import { RefObject, MutableRefObject } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
-import {
-  Section,
-  Chapter,
-  Rule,
-  Subrule,
-} from "../typing/types";
+import { Section, Chapter, Rule, Subrule } from "../typing/types";
 import styles from "../styles/SectionList.module.scss";
 
 interface Props {
@@ -34,8 +29,8 @@ const SectionList = (props: Props): JSX.Element => {
 
   return (
     <div className={styles.scrollableDiv} ref={root}>
-      {sections.length
-        ? (sections.map((section, index) => (
+      {sections.length ? (
+        sections.map((section, index) => (
           <div key={`${section.sectionNumber}-${index}`}>
             <ChapterList
               section={section}
@@ -47,20 +42,19 @@ const SectionList = (props: Props): JSX.Element => {
               searchTerm={searchTerm}
             />
           </div>
-        )))
-        : (
-          <div className={styles.spinnerDiv}>
-            <Spinner
-              animation="border"
-              role="status"
-              variant="dark"
-              className={styles.spinnerComponent}
-            >
-              <span className={styles.loadingText}>Loading</span>
-            </Spinner>
-          </div>
-        )
-      }
+        ))
+      ) : (
+        <div className={styles.spinnerDiv}>
+          <Spinner
+            animation="border"
+            role="status"
+            variant="dark"
+            className={styles.spinnerComponent}
+          >
+            <span className={styles.loadingText}>Loading</span>
+          </Spinner>
+        </div>
+      )}
     </div>
   );
 };

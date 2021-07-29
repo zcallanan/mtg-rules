@@ -10,12 +10,8 @@ interface Props {
 }
 
 const SearchWrapper = (props: Props): JSX.Element => {
-  const {
-    setSearchResults,
-    searchResults,
-    searchData,
-  } = props;
-  
+  const { setSearchResults, searchResults, searchData } = props;
+
   // Get new search results from useSearch hook
   const newResults: SearchResults = useSearch(searchData);
   // Memoize results
@@ -24,14 +20,22 @@ const SearchWrapper = (props: Props): JSX.Element => {
   // Update dynamic page state if new results are different from dynamic page's search results
   useEffect(() => {
     if (
-      searchData.searchTerm === memoNewResults.searchTerm 
-      && !objectArrayComparison(memoNewResults.searchRules, searchResults.searchRules)
+      searchData.searchTerm === memoNewResults.searchTerm &&
+      !objectArrayComparison(
+        memoNewResults.searchRules,
+        searchResults.searchRules
+      )
     ) {
       setSearchResults(memoNewResults);
     }
-  }, [setSearchResults, searchData.searchTerm, memoNewResults, searchResults.searchRules]);
+  }, [
+    setSearchResults,
+    searchData.searchTerm,
+    memoNewResults,
+    searchResults.searchRules,
+  ]);
 
-  return (null);
-}
+  return null;
+};
 
 export default SearchWrapper;

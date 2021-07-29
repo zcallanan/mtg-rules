@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner, Tabs, Tab } from "react-bootstrap";
 import parseNodes from "../../../app/utils/parse-nodes";
@@ -13,7 +9,7 @@ import RulesetForm from "../../../app/components/RulesetForm";
 import SearchForm from "../../../app/components/SearchForm";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
-import SearchWrapper from "../../../app/components/SearchWrapper"
+import SearchWrapper from "../../../app/components/SearchWrapper";
 import NoSearchResults from "../../../app/components/NoSearchResults";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
@@ -34,7 +30,7 @@ import {
 import styles from "../../../app/styles/[version].module.scss";
 
 export const getStaticProps = async (
-  context: GetStaticPropsParams,
+  context: GetStaticPropsParams
 ): Promise<GetStaticPropsResult> => {
   const { year, version } = context.params;
   // Fetch rule set
@@ -45,21 +41,22 @@ export const getStaticProps = async (
   const nodes: RulesParse = await parseNodes(rawRuleSetText);
 
   // Parse rules text for effective date
-  const effectiveDateRegex = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
+  const effectiveDateRegex =
+    /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{2}),\s+(\d{4})/gm;
   let effectiveDate: string;
   if (effectiveDateRegex.test(rawRuleSetText)) {
     [effectiveDate] = rawRuleSetText.match(effectiveDateRegex);
   }
 
-  const result: GetStaticPropsResult = (nodes)
+  const result: GetStaticPropsResult = nodes
     ? {
-      props: { nodes, effectiveDate },
-      revalidate: 1,
-    }
+        props: { nodes, effectiveDate },
+        revalidate: 1,
+      }
     : {
-      props: {},
-      notFound: true,
-    };
+        props: {},
+        notFound: true,
+      };
   return result;
 };
 
@@ -173,8 +170,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Error Detection: Add anchorValue to errorData
   useEffect(() => {
     // Confirm anchor value is found in chapters array
-    const validateChapter = (chapterN: number): Chapter | undefined => chapters
-      .find((chapter) => chapter.chapterNumber === chapterN);
+    const validateChapter = (chapterN: number): Chapter | undefined =>
+      chapters.find((chapter) => chapter.chapterNumber === chapterN);
 
     if (chapterValues.anchorValue && chapters.length) {
       setErrorData((prevValue: ValidateChapter) => ({
@@ -182,8 +179,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         validChapter: validateChapter(chapterValues.anchorValue),
       }));
     }
-  // eslint complains chapters not included, but need this set only once
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint complains chapters not included, but need this set only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterValues.anchorValue]);
 
   // SectionList viewport ref
@@ -211,9 +208,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Track what rules are rendered
   useEffect(() => {
     // Either the search result else default
-    const result = (searchResults.searchRules.length) 
+    const result = searchResults.searchRules.length
       ? searchResults.searchRules
-      : rules;    
+      : rules;
     // Save the rules in use to state
     if (!objectArrayComparison(result, rulesInUse)) {
       setRulesInUse(result);
@@ -225,7 +222,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     if (rulesInUse.length) {
       rulesRef.current = rulesRef.current.slice(0, rulesInUse.length);
     }
- }, [rulesInUse]);
+  }, [rulesInUse]);
 
   let callbackNumber: number;
 
@@ -249,7 +246,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       // Delay to prevent TopRuleWrapper updating dynamic page while rendering
       setTimeout(() => setCallbackValue(chapterN), 200);
     }
-  }
+  };
 
   // Prop used by ToC links and section list viewport links
   const onLinkClick = (chapterN: number, dataSource: string): void => {
@@ -289,10 +286,10 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   useEffect(() => {
     const anchorNumber = chapterValues.anchorValue;
     if (
-      anchorNumber
-      && chapterValues.source === "init"
-      && tocRefs.current.length
-      && chapters.length
+      anchorNumber &&
+      chapterValues.source === "init" &&
+      tocRefs.current.length &&
+      chapters.length
     ) {
       setChapterValues((prevValue) => ({
         ...prevValue,
@@ -302,10 +299,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
       // Scroll ToC viewport to anchor tag's chapter title
       scrollToc(chapterValues.chapterNumber);
-    } else if (callbackNumber
-      && !pause
-      && chapterValues.chapterNumber !== callbackNumber
-      && chapterValues.currentCallback !== callbackNumber
+    } else if (
+      callbackNumber &&
+      !pause &&
+      chapterValues.chapterNumber !== callbackNumber &&
+      chapterValues.currentCallback !== callbackNumber
     ) {
       const { source, propValue } = chapterValues;
 
@@ -327,9 +325,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         In this case use propValue instead.
       */
 
-      if ((source === "prop decrease" || source === "prop increase") && propValue) {
+      if (
+        (source === "prop decrease" || source === "prop increase") &&
+        propValue
+      ) {
         updateState(propValue);
-      } else if (callbackNumber && callbackNumber !== chapterValues.chapterNumber) {
+      } else if (
+        callbackNumber &&
+        callbackNumber !== chapterValues.chapterNumber
+      ) {
         updateState(callbackNumber);
       }
     }
@@ -338,7 +342,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   }, [router.asPath, callbackNumber, pause]);
 
   // Check if there is an error on the page
-  const errorResult = (obj: ValidateChapter): boolean => Object.values(obj).every(Boolean);
+  const errorResult = (obj: ValidateChapter): boolean =>
+    Object.values(obj).every(Boolean);
 
   // Display a fallback page if waiting to transition to another page
   if (router.isFallback) {
@@ -349,108 +354,121 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           role="status"
           variant="dark"
           className={styles.spinnerComponent}
-        >
-        </Spinner>
+        ></Spinner>
       </div>
     );
   }
 
   return (
     <div>
-      {
-        searchData.searchTerm
-        && <SearchWrapper 
+      {searchData.searchTerm && (
+        <SearchWrapper
           setSearchResults={setSearchResults}
           searchResults={searchResults}
-          searchData={searchData}/>
-      }
-      {rootRef 
-        && <TopRuleWrapper 
+          searchData={searchData}
+        />
+      )}
+      {rootRef && (
+        <TopRuleWrapper
           rootRef={rootRef}
           topRuleProp={topRuleProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
           rulesInUse={rulesInUse}
-        />}
-      { (!errorResult(errorData))
-        ? (<div>
-          <CustomErrors data={errorData} chapterNumber={chapterValues.chapterNumber} />
-        </div>
-        ) : (
-      <div className={styles.bodyContainer}>
-        <div className={styles.leftContainer}>
-          <TocSections
-            sections={(searchResults.searchSections.length) ? searchResults.searchSections : sections}
-            chapters={(searchResults.searchChapters.length) ? searchResults.searchChapters : chapters}
-            onLinkClick={onLinkClick}
-            tocTitleRef={tocRefs}
+        />
+      )}
+      {!errorResult(errorData) ? (
+        <div>
+          <CustomErrors
+            data={errorData}
+            chapterNumber={chapterValues.chapterNumber}
           />
         </div>
-        <div className={styles.rightContainer}>
-          <div className={styles.rightRelative}>
-            <div className={styles.tabsContainer}>
-              <Tabs defaultActiveKey="search">
-                <Tab eventKey="search" title="Search Ruleset">
-                  <div>
-                    <SearchForm
-                      setSearchData={setSearchData}
-                      setSearchResults={setSearchResults}
-                      searchedTerm={searchResults.searchTerm}
-                      sections={sections}
-                      chapters={chapters}
-                      rules={rules}
-                      subrules={subrules}
-                    />
-                  </div>
-                </Tab>
-                <Tab eventKey="ruleset" title="Load Another Ruleset">
-                  <RulesetForm
-                    smallText="Change and submit a link to view a different ruleset."
-                  />
-                </Tab>
-              </Tabs>
-            </div>
-            <div className={styles.chapterTitleContainer}>
-              {
-                ((searchResults.searchResult && searchResults.searchTerm) 
-                || !searchResults.searchTerm)
-                  ? (
-                    <ChapterTitle
-                      chapter={chapters.find((chapter) => chapter
-                        .chapterNumber === chapterValues.chapterNumber)}
-                      toc={0}
-                      effectiveDate={effectiveDate}
-                      sections={sections}
-                    />
-                  ) : (
-                    <NoSearchResults title={1}/>
-                  )
+      ) : (
+        <div className={styles.bodyContainer}>
+          <div className={styles.leftContainer}>
+            <TocSections
+              sections={
+                searchResults.searchSections.length
+                  ? searchResults.searchSections
+                  : sections
               }
-            </div>
-            <div className={styles.rulesContainer}>
-              {
-                ((searchResults.searchResult && searchResults.searchTerm) 
-                || !searchResults.searchTerm)
-                ? (
+              chapters={
+                searchResults.searchChapters.length
+                  ? searchResults.searchChapters
+                  : chapters
+              }
+              onLinkClick={onLinkClick}
+              tocTitleRef={tocRefs}
+            />
+          </div>
+          <div className={styles.rightContainer}>
+            <div className={styles.rightRelative}>
+              <div className={styles.tabsContainer}>
+                <Tabs defaultActiveKey="search">
+                  <Tab eventKey="search" title="Search Ruleset">
+                    <div>
+                      <SearchForm
+                        setSearchData={setSearchData}
+                        setSearchResults={setSearchResults}
+                        searchedTerm={searchResults.searchTerm}
+                        sections={sections}
+                        chapters={chapters}
+                        rules={rules}
+                        subrules={subrules}
+                      />
+                    </div>
+                  </Tab>
+                  <Tab eventKey="ruleset" title="Load Another Ruleset">
+                    <RulesetForm smallText="Change and submit a link to view a different ruleset." />
+                  </Tab>
+                </Tabs>
+              </div>
+              <div className={styles.chapterTitleContainer}>
+                {(searchResults.searchResult && searchResults.searchTerm) ||
+                !searchResults.searchTerm ? (
+                  <ChapterTitle
+                    chapter={chapters.find(
+                      (chapter) =>
+                        chapter.chapterNumber === chapterValues.chapterNumber
+                    )}
+                    toc={0}
+                    effectiveDate={effectiveDate}
+                    sections={sections}
+                  />
+                ) : (
+                  <NoSearchResults title={1} />
+                )}
+              </div>
+              <div className={styles.rulesContainer}>
+                {(searchResults.searchResult && searchResults.searchTerm) ||
+                !searchResults.searchTerm ? (
                   <SectionList
                     sections={sections}
                     chapters={chapters}
-                    rules={(searchResults.searchRules.length) ? searchResults.searchRules : rules}
-                    subrules={(searchResults.searchRules.length) ? searchResults.searchSubrules : subrules}
+                    rules={
+                      searchResults.searchRules.length
+                        ? searchResults.searchRules
+                        : rules
+                    }
+                    subrules={
+                      searchResults.searchRules.length
+                        ? searchResults.searchSubrules
+                        : subrules
+                    }
                     elRef={rulesRef}
                     root={rootRef}
                     onLinkClick={onLinkClick}
                     searchTerm={searchResults.searchTerm}
                   />
                 ) : (
-                  <NoSearchResults title={0}/>
-                )
-              }
+                  <NoSearchResults title={0} />
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-        )}
+      )}
     </div>
   );
 };

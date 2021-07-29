@@ -1,6 +1,10 @@
 const dev = process.env.NODE_ENV !== "production";
 
-const formValidation = async (url: string, version: string, year: string): Promise<number> => {
+const formValidation = async (
+  url: string,
+  version: string,
+  year: string
+): Promise<number> => {
   // Remove host
   const noHost: string = url.replace(/http(s|):\/\//i, "");
   const split: string[] = noHost.replace(`${version}`, "").split("/");
@@ -24,16 +28,13 @@ const formValidation = async (url: string, version: string, year: string): Promi
   const yearString = `${year}`;
 
   const result = await (dev
-    ? fetch("/api/ruleset-validation",
-      {
-        headers:
-          {
-            version: versionString,
-            year: yearString,
-          },
+    ? fetch("/api/ruleset-validation", {
+        headers: {
+          version: versionString,
+          year: yearString,
+        },
       })
-    : fetch(url)
-  );
+    : fetch(url));
   console.log(result);
   console.log(result.status);
   return result.status;

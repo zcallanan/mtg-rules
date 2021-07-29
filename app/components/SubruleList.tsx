@@ -15,10 +15,10 @@ const SubruleList = (props: Props): JSX.Element => {
   const { subruleSubset, onLinkClick, searchTerm } = props;
 
   const router: NextRouter = useRouter();
-  const year: string = (Array.isArray(router.query.year))
+  const year: string = Array.isArray(router.query.year)
     ? router.query.year[0]
     : router.query.year;
-  const version: string = (Array.isArray(router.query.version))
+  const version: string = Array.isArray(router.query.version)
     ? router.query.version[0]
     : router.query.version;
   const routerValues: RouterValues = { year, version };
@@ -36,17 +36,20 @@ const SubruleList = (props: Props): JSX.Element => {
             >
               {subrule.chapterNumber}.{subrule.ruleNumber}
               {subrule.subruleLetter} &nbsp;
-              {(!searchTerm)
+              {!searchTerm
                 ? parseLink({ routerValues, onLinkClick, subrule })
                 : modifySearchRules({
-                  searchTerm,
-                  subrule,
-                  toModify: parseLink({ routerValues, onLinkClick, subrule }),
-                })
-              } 
+                    searchTerm,
+                    subrule,
+                    toModify: parseLink({ routerValues, onLinkClick, subrule }),
+                  })}
             </li>
           </section>
-          <ExampleText subrule={subrule} onLinkClick={onLinkClick} searchTerm={searchTerm}/>
+          <ExampleText
+            subrule={subrule}
+            onLinkClick={onLinkClick}
+            searchTerm={searchTerm}
+          />
         </div>
       ))}
     </div>

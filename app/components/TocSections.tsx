@@ -11,12 +11,7 @@ interface Props {
 }
 
 const TocSections = (props: Props): JSX.Element => {
-  const {
-    sections,
-    chapters,
-    onLinkClick,
-    tocTitleRef,
-  } = props;
+  const { sections, chapters, onLinkClick, tocTitleRef } = props;
 
   return (
     <div>

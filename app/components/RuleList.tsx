@@ -17,20 +17,13 @@ interface Props {
 }
 
 const RuleList = (props: Props): JSX.Element => {
-  const {
-    ruleSubset,
-    rules,
-    subrules,
-    elRef,
-    onLinkClick,
-    searchTerm,
-  } = props;
+  const { ruleSubset, rules, subrules, elRef, onLinkClick, searchTerm } = props;
 
   const router: NextRouter = useRouter();
-  const year: string = (Array.isArray(router.query.year))
+  const year: string = Array.isArray(router.query.year)
     ? router.query.year[0]
     : router.query.year;
-  const version: string = (Array.isArray(router.query.version))
+  const version: string = Array.isArray(router.query.version)
     ? router.query.version[0]
     : router.query.version;
   const routerValues: RouterValues = { year, version };
@@ -38,28 +31,40 @@ const RuleList = (props: Props): JSX.Element => {
   return (
     <div>
       {ruleSubset.map((rule, index) => (
-        // eslint-disable-next-line no-return-assign
-        <div key={`ruleListDiv-${index}`} className={styles.ruleDiv} ref={(el) => elRef.current[
-          rules.findIndex((r) => r.ruleNumber === rule.ruleNumber
-            && r.chapterNumber === rule.chapterNumber)
-        ] = el}>
+        <div
+          key={`ruleListDiv-${index}`}
+          className={styles.ruleDiv}
+          // eslint-disable-next-line no-return-assign
+          ref={(el) =>
+            (elRef.current[
+              rules.findIndex(
+                (r) =>
+                  r.ruleNumber === rule.ruleNumber &&
+                  r.chapterNumber === rule.chapterNumber
+              )
+            ] = el)
+          }
+        >
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
               key={`r${rule.ruleNumber}`}
               className={`${styles.ruleText} list-group-item`}
             >
               {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
-                {(!searchTerm)
-                  ? parseLink({ routerValues, onLinkClick, rule })
-                  : modifySearchRules({
-                      searchTerm,
-                      rule,
-                      toModify: parseLink({ routerValues, onLinkClick, rule }),
-                  }) 
-                }
+              {!searchTerm
+                ? parseLink({ routerValues, onLinkClick, rule })
+                : modifySearchRules({
+                    searchTerm,
+                    rule,
+                    toModify: parseLink({ routerValues, onLinkClick, rule }),
+                  })}
             </li>
           </section>
-          <ExampleText rule={rule} onLinkClick={onLinkClick} searchTerm={searchTerm} />
+          <ExampleText
+            rule={rule}
+            onLinkClick={onLinkClick}
+            searchTerm={searchTerm}
+          />
           <SubruleGroup
             rule={rule}
             subrules={subrules}

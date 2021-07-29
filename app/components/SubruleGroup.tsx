@@ -12,15 +12,16 @@ const SubruleGroup = (props: Props): JSX.Element => {
   const { rule, subrules, onLinkClick, searchTerm } = props;
 
   const subruleSubset = subrules.filter(
-    (subrule) => rule.ruleNumber === subrule.ruleNumber
-      && rule.chapterNumber === subrule.chapterNumber,
+    (subrule) =>
+      rule.ruleNumber === subrule.ruleNumber &&
+      rule.chapterNumber === subrule.chapterNumber
   );
 
   return (
     <div>
       {subruleSubset && (
         <ul className={"list-group"}>
-          <SubruleList 
+          <SubruleList
             subruleSubset={subruleSubset}
             onLinkClick={onLinkClick}
             searchTerm={searchTerm}

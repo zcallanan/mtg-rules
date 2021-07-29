@@ -22,7 +22,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   */
   topRuleProp(useTopRule(rulesRef.current, rootRef, rulesInUse) || init);
 
-  return (null);
-}
+  return null;
+};
 
 export default TopRuleWrapper;

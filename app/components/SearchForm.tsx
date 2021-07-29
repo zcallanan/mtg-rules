@@ -7,8 +7,8 @@ import {
   ChangeEvent,
   MouseEvent,
 } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import {
   SearchData,
   SearchResults,
@@ -19,7 +19,6 @@ import {
   Subrule,
 } from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
-
 
 interface Props {
   setSearchData: (obj: SearchData) => void;
@@ -64,10 +63,12 @@ const SearchForm = (props: Props): JSX.Element => {
     submitted: b,
     validated: c,
   });
- 
+
   // Cache searchValue
-  const memoSearchValue = useMemo(() => createSearchValue(
-    searchTerm, submitted, validated), [searchTerm, submitted, validated]);
+  const memoSearchValue = useMemo(
+    () => createSearchValue(searchTerm, submitted, validated),
+    [searchTerm, submitted, validated]
+  );
 
   // Pass memoized searchValue to dynamic page
   useEffect(() => {
@@ -76,13 +77,8 @@ const SearchForm = (props: Props): JSX.Element => {
       OR
       The form was reset, tell the dynamic page to clear search state
     */
-    if (
-      (
-        memoSearchValue.validated
-        && !memoSearchValue.submitted 
-      )
-    ) {
-    if (!memoSearchValue.searchTerm && searchedTerm) {
+    if (memoSearchValue.validated && !memoSearchValue.submitted) {
+      if (!memoSearchValue.searchTerm && searchedTerm) {
         // If search form cancel button is clicked OR an empty form is submitted:
         // Clear dynamic page search data
         setSearchData({
@@ -91,7 +87,7 @@ const SearchForm = (props: Props): JSX.Element => {
           chapters: [],
           rules: [],
           subrules: [],
-        })
+        });
       } else if (searchedTerm !== memoSearchValue.searchTerm) {
         // Save search data
         setSearchData({
@@ -100,7 +96,7 @@ const SearchForm = (props: Props): JSX.Element => {
           chapters,
           rules,
           subrules,
-        })
+        });
       }
 
       // The user may have searched previously. Clear dynamic page search results
@@ -113,12 +109,11 @@ const SearchForm = (props: Props): JSX.Element => {
         searchResult: 0,
       });
 
-
       // Mark local searchValue as submitted
       setSearch((prevValue) => ({
         ...prevValue,
         submitted: 1,
-      }))
+      }));
     }
   }, [
     memoSearchValue,
@@ -128,20 +123,17 @@ const SearchForm = (props: Props): JSX.Element => {
     sections,
     chapters,
     rules,
-    subrules
-  ])
+    subrules,
+  ]);
 
   const validateSearchInput = () => {
     // Reset to default or validation is wrong after going invalid > valid input
     input.current.setCustomValidity("");
 
     // If dynamic page has no search values and an empty search is made, fail validation
-    if (
-      !searchValue.searchTerm 
-      && searchValue.searchTerm === searchedTerm
-    ) {
+    if (!searchValue.searchTerm && searchValue.searchTerm === searchedTerm) {
       input.current.setCustomValidity(
-        "Field empty! Please enter a value to search for.",
+        "Field empty! Please enter a value to search for."
       );
       // Display error message
       if (!input.current.checkValidity()) {
@@ -152,9 +144,9 @@ const SearchForm = (props: Props): JSX.Element => {
       setSearch((prevValue) => ({
         ...prevValue,
         validated: 1,
-      }))
+      }));
     }
-  }
+  };
 
   // The form was submitted
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -174,8 +166,8 @@ const SearchForm = (props: Props): JSX.Element => {
       searchTerm: "",
       submitted: 0,
       validated: 1,
-    })
-  }
+    });
+  };
 
   // The form input value changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -184,7 +176,7 @@ const SearchForm = (props: Props): JSX.Element => {
       searchTerm: e.target.value,
       submitted: 0,
       validated: 0,
-    })
+    });
   };
 
   return (
@@ -198,7 +190,7 @@ const SearchForm = (props: Props): JSX.Element => {
             type="text"
             className="form-control"
           />
-          <button 
+          <button
             type="button"
             className="btn btn-outline-primary"
             id={styles.timesCircle}

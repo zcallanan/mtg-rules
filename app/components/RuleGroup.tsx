@@ -12,17 +12,10 @@ interface Props {
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
-  const {
-    chapter,
-    rules,
-    subrules,
-    elRef,
-    onLinkClick,
-    searchTerm,
-  } = props;
+  const { chapter, rules, subrules, elRef, onLinkClick, searchTerm } = props;
 
   const ruleSubset = rules.filter(
-    (rule) => rule.chapterNumber === chapter.chapterNumber,
+    (rule) => rule.chapterNumber === chapter.chapterNumber
   );
 
   return (

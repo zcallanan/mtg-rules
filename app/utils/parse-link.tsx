@@ -4,22 +4,16 @@ import reactStringReplace from "react-string-replace";
 import { ParseLinkArgs, ReplaceRuleNumbers } from "../typing/types";
 
 const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
-  const {
-    text,
-    ruleNumberArray,
-    routerValues,
-    onLinkClick,
-    rule,
-    subrule,
-  } = args;
+  const { text, ruleNumberArray, routerValues, onLinkClick, rule, subrule } =
+    args;
   let updatedText: ReactNodeArray;
   ruleNumberArray.forEach((ruleNumber, index) => {
-    const chapterValue = (/\d{3}/.test(ruleNumber))
+    const chapterValue = /\d{3}/.test(ruleNumber)
       ? Number(ruleNumber.match(/\d{3}/)[0])
       : Number(ruleNumber) * 100;
 
     updatedText = reactStringReplace(
-      ((!index) ? text : updatedText),
+      !index ? text : updatedText,
       ruleNumber,
       (match: string, i: number) => (
         <span
@@ -41,20 +35,14 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
             </a>
           </Link>
         </span>
-      ),
+      )
     );
   });
   return updatedText;
 };
 
 const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
-  const {
-    routerValues,
-    onLinkClick,
-    example,
-    rule,
-    subrule,
-  } = args;
+  const { routerValues, onLinkClick, example, rule, subrule } = args;
   let linkText: string;
   if (example) {
     linkText = example;
@@ -74,7 +62,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
 
   const findMatches = (
     regexArray: RegExp[],
-    text: string,
+    text: string
   ): string | ReactNodeArray => {
     const matchArray: RegExpMatchArray[] = [];
 
@@ -96,26 +84,26 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
 
       // TODO: Prevent invalid chapter values like 999
       // Remove extra characters from chapter ruleNumbers
-      if (/\s|\.|,|;|-|:/.test(ruleNumber) && (regexChapter).test(ruleNumber)) {
+      if (/\s|\.|,|;|-|:/.test(ruleNumber) && regexChapter.test(ruleNumber)) {
         ruleNumberArray[i] = ruleNumber.replace(/\s|\.|,|;|-|:/g, "");
       }
     });
 
-    const argObject: ReplaceRuleNumbers = (rule)
+    const argObject: ReplaceRuleNumbers = rule
       ? {
-        text,
-        ruleNumberArray,
-        routerValues,
-        onLinkClick,
-        rule,
-      }
+          text,
+          ruleNumberArray,
+          routerValues,
+          onLinkClick,
+          rule,
+        }
       : {
-        text,
-        ruleNumberArray,
-        routerValues,
-        onLinkClick,
-        subrule,
-      };
+          text,
+          ruleNumberArray,
+          routerValues,
+          onLinkClick,
+          subrule,
+        };
     return replaceRuleNumbers(argObject);
   };
 
@@ -128,7 +116,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   });
 
   // If there are no linkable ruleNumbers, use linkText, else process matches
-  const result: string | ReactNodeArray = (!regexArray.length)
+  const result: string | ReactNodeArray = !regexArray.length
     ? linkText
     : findMatches(regexArray, linkText);
 

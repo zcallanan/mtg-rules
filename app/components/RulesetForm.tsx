@@ -1,10 +1,4 @@
-import {
-  useRef,
-  useState,
-  useEffect,
-  FormEvent,
-  ChangeEvent,
-} from "react";
+import { useRef, useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter, NextRouter } from "next/router";
 import formValidation from "../utils/form-validation";
 import { RouterValues } from "../typing/types";
@@ -22,10 +16,10 @@ const RulesetForm = (props: Props): JSX.Element => {
 
   // Get url query values
   const router: NextRouter = useRouter();
-  const year: string = (Array.isArray(router.query.year))
+  const year: string = Array.isArray(router.query.year)
     ? router.query.year[0]
     : router.query.year;
-  const version: string = (Array.isArray(router.query.version))
+  const version: string = Array.isArray(router.query.version)
     ? router.query.version[0]
     : router.query.version;
   const routerValues: RouterValues = { year, version };
@@ -47,9 +41,13 @@ const RulesetForm = (props: Props): JSX.Element => {
 
     // Get version and year from rulesetUrl link
     const reVersion = /\d{10}/;
-    const versionUrl: string = reVersion.test(rulesetUrl) ? rulesetUrl.match(reVersion)[0] : "";
+    const versionUrl: string = reVersion.test(rulesetUrl)
+      ? rulesetUrl.match(reVersion)[0]
+      : "";
     const reYear = /\d{4}/;
-    const yearUrl: string = reYear.test(rulesetUrl) ? rulesetUrl.match(reYear)[0] : "";
+    const yearUrl: string = reYear.test(rulesetUrl)
+      ? rulesetUrl.match(reYear)[0]
+      : "";
 
     // That ruleset is already displayed
     if (routerValues.version === versionUrl && routerValues.year === yearUrl) {
@@ -84,19 +82,19 @@ const RulesetForm = (props: Props): JSX.Element => {
     // Set custom validation messages
     if (result === 0) {
       input.current.setCustomValidity(
-        "Field empty! Please enter a valid ruleset link.",
+        "Field empty! Please enter a valid ruleset link."
       );
     } else if (result === 2) {
       input.current.setCustomValidity(
-        "Invalid ruleset link! Please enter a valid link.",
+        "Invalid ruleset link! Please enter a valid link."
       );
     } else if (result === 3) {
       input.current.setCustomValidity(
-        "The rules found at this link are displayed below.",
+        "The rules found at this link are displayed below."
       );
     } else if (result === 4) {
       input.current.setCustomValidity(
-        "Alas, no ruleset was found at that link. Please try another.",
+        "Alas, no ruleset was found at that link. Please try another."
       );
     } else if (result === 1) {
       input.current.setCustomValidity("");
@@ -113,7 +111,6 @@ const RulesetForm = (props: Props): JSX.Element => {
   };
 
   return (
-
     <form onSubmit={handleSubmit} noValidate>
       <div className={styles.inputContainer}>
         <input
