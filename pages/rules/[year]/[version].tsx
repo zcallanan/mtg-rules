@@ -459,11 +459,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                     elRef={rulesRef}
                     root={rootRef}
                     onLinkClick={onLinkClick}
-                    searchTerm={
-                      searchData.searchTerm === searchResults.searchTerm
-                        ? searchResults.searchTerm
-                        : ""
-                    }
+                    searchResults={searchResults}
                   />
                 ) : (
                   <NoSearchResults title={0} />

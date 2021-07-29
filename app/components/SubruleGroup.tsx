@@ -1,15 +1,15 @@
-import { Rule, Subrule } from "../typing/types";
+import { Rule, SearchResults, Subrule } from "../typing/types";
 import SubruleList from "./SubruleList";
 
 interface Props {
   rule: Rule;
   subrules: Subrule[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const SubruleGroup = (props: Props): JSX.Element => {
-  const { rule, subrules, onLinkClick, searchTerm } = props;
+  const { rule, subrules, onLinkClick, searchResults } = props;
 
   const subruleSubset = subrules.filter(
     (subrule) =>
@@ -24,7 +24,7 @@ const SubruleGroup = (props: Props): JSX.Element => {
           <SubruleList
             subruleSubset={subruleSubset}
             onLinkClick={onLinkClick}
-            searchTerm={searchTerm}
+            searchResults={searchResults}
           />
         </ul>
       )}

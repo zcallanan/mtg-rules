@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { Chapter, Rule, Subrule } from "../typing/types";
+import { Chapter, Rule, SearchResults, Subrule } from "../typing/types";
 import RuleList from "./RuleList";
 
 interface Props {
@@ -8,11 +8,11 @@ interface Props {
   subrules: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
-  const { chapter, rules, subrules, elRef, onLinkClick, searchTerm } = props;
+  const { chapter, rules, subrules, elRef, onLinkClick, searchResults } = props;
 
   const ruleSubset = rules.filter(
     (rule) => rule.chapterNumber === chapter.chapterNumber
@@ -28,7 +28,7 @@ const RuleGroup = (props: Props): JSX.Element => {
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}
-            searchTerm={searchTerm}
+            searchResults={searchResults}
           />
         </ul>
       )}

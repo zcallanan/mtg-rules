@@ -1,6 +1,12 @@
 import { MutableRefObject } from "react";
 import RuleGroup from "./RuleGroup";
-import { Section, Chapter, Rule, Subrule } from "../typing/types";
+import {
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+  SearchResults,
+} from "../typing/types";
 // import styles from "../styles/ChapterList.module.scss";
 
 interface Props {
@@ -10,12 +16,19 @@ interface Props {
   subrules?: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const ChapterList = (props: Props): JSX.Element => {
-  const { section, chapters, rules, subrules, elRef, onLinkClick, searchTerm } =
-    props;
+  const {
+    section,
+    chapters,
+    rules,
+    subrules,
+    elRef,
+    onLinkClick,
+    searchResults,
+  } = props;
 
   let chapterSubset: Chapter[];
   if (section) {
@@ -35,7 +48,7 @@ const ChapterList = (props: Props): JSX.Element => {
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}
-            searchTerm={searchTerm}
+            searchResults={searchResults}
           />
         </div>
       ))}

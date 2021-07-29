@@ -4,7 +4,7 @@ import SubruleGroup from "./SubruleGroup";
 import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
 import modifySearchRules from "../utils/modify-search-rules";
-import { Rule, Subrule, RouterValues } from "../typing/types";
+import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/RuleList.module.scss";
 
 interface Props {
@@ -13,11 +13,12 @@ interface Props {
   subrules: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const RuleList = (props: Props): JSX.Element => {
-  const { ruleSubset, rules, subrules, elRef, onLinkClick, searchTerm } = props;
+  const { ruleSubset, rules, subrules, elRef, onLinkClick, searchResults } =
+    props;
 
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
@@ -51,10 +52,10 @@ const RuleList = (props: Props): JSX.Element => {
               className={`${styles.ruleText} list-group-item`}
             >
               {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
-              {!searchTerm
+              {!searchResults.searchTerm
                 ? parseLink({ routerValues, onLinkClick, rule })
                 : modifySearchRules({
-                    searchTerm,
+                    searchTerm: searchResults.searchTerm,
                     rule,
                     toModify: parseLink({ routerValues, onLinkClick, rule }),
                   })}
@@ -63,13 +64,13 @@ const RuleList = (props: Props): JSX.Element => {
           <ExampleText
             rule={rule}
             onLinkClick={onLinkClick}
-            searchTerm={searchTerm}
+            searchResults={searchResults}
           />
           <SubruleGroup
             rule={rule}
             subrules={subrules}
             onLinkClick={onLinkClick}
-            searchTerm={searchTerm}
+            searchResults={searchResults}
           />
         </div>
       ))}

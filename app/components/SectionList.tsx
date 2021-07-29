@@ -1,7 +1,13 @@
 import { RefObject, MutableRefObject } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
-import { Section, Chapter, Rule, Subrule } from "../typing/types";
+import {
+  Section,
+  Chapter,
+  Rule,
+  Subrule,
+  SearchResults,
+} from "../typing/types";
 import styles from "../styles/SectionList.module.scss";
 
 interface Props {
@@ -12,7 +18,7 @@ interface Props {
   elRef: MutableRefObject<HTMLDivElement[]>;
   root: RefObject<HTMLDivElement> | null;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const SectionList = (props: Props): JSX.Element => {
@@ -24,7 +30,7 @@ const SectionList = (props: Props): JSX.Element => {
     elRef,
     root,
     onLinkClick,
-    searchTerm,
+    searchResults,
   } = props;
 
   return (
@@ -39,7 +45,7 @@ const SectionList = (props: Props): JSX.Element => {
               subrules={subrules}
               elRef={elRef}
               onLinkClick={onLinkClick}
-              searchTerm={searchTerm}
+              searchResults={searchResults}
             />
           </div>
         ))

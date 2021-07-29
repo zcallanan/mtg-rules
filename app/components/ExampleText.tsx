@@ -1,21 +1,24 @@
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
 import modifySearchRules from "../utils/modify-search-rules";
-import { Rule, Subrule, RouterValues } from "../typing/types";
+import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/ExampleText.module.scss";
 
 interface Props {
   rule?: Rule;
   subrule?: Subrule;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  searchTerm: string;
+  searchResults: SearchResults;
 }
 
 const ExampleText = (props: Props): JSX.Element => {
-  const { rule, subrule, onLinkClick, searchTerm } = props;
+  const { rule, subrule, onLinkClick, searchResults } = props;
   const data: Rule | Subrule = rule || subrule;
   // Use regular array of example strings if no searchTerm
-  const exampleText = !searchTerm ? data.example : data.exampleSearch;
+  const exampleText =
+    searchResults && !searchResults.searchTerm
+      ? data.example
+      : data.exampleSearch;
 
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
@@ -35,7 +38,7 @@ const ExampleText = (props: Props): JSX.Element => {
               key={rule ? `rule-e${index}` : `subrule-e${index}`}
               className={`${styles.example} list-group-item`}
             >
-              {!searchTerm
+              {!searchResults.searchTerm
                 ? parseLink(
                     rule
                       ? {
@@ -54,7 +57,7 @@ const ExampleText = (props: Props): JSX.Element => {
                 : modifySearchRules(
                     rule
                       ? {
-                          searchTerm,
+                          searchTerm: searchResults.searchTerm,
                           rule,
                           toModify: parseLink({
                             routerValues,
@@ -64,7 +67,7 @@ const ExampleText = (props: Props): JSX.Element => {
                           }),
                         }
                       : {
-                          searchTerm,
+                          searchTerm: searchResults.searchTerm,
                           subrule,
                           toModify: parseLink({
                             routerValues,
