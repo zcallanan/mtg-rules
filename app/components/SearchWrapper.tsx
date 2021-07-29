@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { useEffect, useMemo } from "react";
 import useSearch from "../hooks/useSearch";
 import objectArrayComparison from "../utils/object-array-comparison";
@@ -30,8 +29,7 @@ const SearchWrapper = (props: Props): JSX.Element => {
     ) {
       setSearchResults(memoNewResults);
     }
-  }, [setSearchResults, searchData.searchTerm, memoNewResults, searchResults.searchRules])
-    
+  }, [setSearchResults, searchData.searchTerm, memoNewResults, searchResults.searchRules]);
 
   return (null);
 }

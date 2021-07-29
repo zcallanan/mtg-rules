@@ -32,8 +32,6 @@ const SectionList = (props: Props): JSX.Element => {
     searchTerm,
   } = props;
 
-  console.log(searchTerm)
-
   return (
     <div className={styles.scrollableDiv} ref={root}>
       {sections.length

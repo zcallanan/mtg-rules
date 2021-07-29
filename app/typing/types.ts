@@ -1,3 +1,5 @@
+import { ReactNodeArray } from "react";
+
 export interface Section {
   type: string;
   text: string;
@@ -107,7 +109,6 @@ export interface SearchValue {
   searchTerm: string;
   submitted: number;
   validated: number;
-  reset: number;
 }
 
 export interface SearchResults {
@@ -131,4 +132,5 @@ export interface ModifyArgs {
   searchTerm: string;
   rule?: Rule;
   subrule?: Subrule;
+  toModify: string | ReactNodeArray;
 }

@@ -53,23 +53,21 @@ const SearchForm = (props: Props): JSX.Element => {
     searchTerm: "",
     submitted: 0,
     validated: 0,
-    reset: 0,
   });
 
   // Deconstruct searchValue
-  const { searchTerm, submitted, validated, reset } = searchValue;
+  const { searchTerm, submitted, validated } = searchValue;
 
   // Create searchValue fn for memoization
-  const createSearchValue = (a: string, b: number, c: number, d: number) => ({
+  const createSearchValue = (a: string, b: number, c: number) => ({
     searchTerm: a,
     submitted: b,
     validated: c,
-    reset: d,
   });
  
   // Cache searchValue
   const memoSearchValue = useMemo(() => createSearchValue(
-    searchTerm, submitted, validated, reset), [searchTerm, submitted, validated, reset]);
+    searchTerm, submitted, validated), [searchTerm, submitted, validated]);
 
   // Pass memoized searchValue to dynamic page
   useEffect(() => {
@@ -82,12 +80,9 @@ const SearchForm = (props: Props): JSX.Element => {
       (
         memoSearchValue.validated
         && !memoSearchValue.submitted 
-        || (
-            memoSearchValue.reset && memoSearchValue.validated && !memoSearchValue.submitted
-        )
       )
     ) {
-    if (memoSearchValue.reset || (!memoSearchValue.searchTerm && searchedTerm)) {
+    if (!memoSearchValue.searchTerm && searchedTerm) {
         // If search form cancel button is clicked OR an empty form is submitted:
         // Clear dynamic page search data
         setSearchData({
@@ -144,7 +139,6 @@ const SearchForm = (props: Props): JSX.Element => {
     if (
       !searchValue.searchTerm 
       && searchValue.searchTerm === searchedTerm
-      && !searchValue.reset
     ) {
       input.current.setCustomValidity(
         "Field empty! Please enter a value to search for.",
@@ -180,7 +174,6 @@ const SearchForm = (props: Props): JSX.Element => {
       searchTerm: "",
       submitted: 0,
       validated: 1,
-      reset: 1,
     })
   }
 
@@ -191,7 +184,6 @@ const SearchForm = (props: Props): JSX.Element => {
       searchTerm: e.target.value,
       submitted: 0,
       validated: 0,
-      reset: 0,
     })
   };
 
