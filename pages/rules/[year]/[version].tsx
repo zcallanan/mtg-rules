@@ -249,7 +249,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   };
 
-  // Prop used by ToC links and section list viewport links
+  // Prop used by ToC links and rule & subrule viewport links
   const onLinkClick = (chapterN: number, dataSource: string): void => {
     // If chapterN comes from a sectionList viewport link, scroll Toc
     if (dataSource === "rules") {

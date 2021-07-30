@@ -54,7 +54,6 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
 
       // Remove extra characters
       matchArray[matchArray.length - 1].forEach((match, ind) => {
-        // console.log(match, ind)
         if (match.includes("section")) {
           matchArray[matchArray.length - 1][ind] = match.replace(
             /section\s+/,

@@ -14,6 +14,7 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
     if (/(?<!\S)\d(?!\S)/.test(ruleNumber)) {
       chapterValue = Number(ruleNumber) * 100;
     }
+    const chapterNumber = Number(ruleNumber.match(/(\d{3})/));
 
     // Replace a string with a ReactNodeArray
     updatedText = reactStringReplace(
@@ -35,7 +36,11 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
             scroll={false}
           >
             <a>
-              <span onClick={() => onLinkClick(chapterValue, "rules")}>
+              <span
+                onClick={() =>
+                  onLinkClick(chapterValue || chapterNumber[0], "rules")
+                }
+              >
                 {match}
               </span>
             </a>
