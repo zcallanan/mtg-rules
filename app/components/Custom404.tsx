@@ -6,18 +6,17 @@ const Custom404 = (props: ErrorData): JSX.Element => {
 
   return (
     <div className={styles.errorContent}>
-      {reason === "invalid-hash"
-        && <div>
+      {reason === "invalid-hash" && (
+        <div>
           <h1>{`404 - Chapter ${value} was not found.`}</h1>
           <h4>{`Please update "#${value}" in the url to a valid number, such as "#100".`}</h4>
         </div>
-
-      }
-      {reason === "ruleset-fetch-failed"
-        && <div>
+      )}
+      {reason === "ruleset-fetch-failed" && (
+        <div>
           <h1>{"404 - The rule set data was not found."}</h1>
         </div>
-      }
+      )}
     </div>
   );
 };

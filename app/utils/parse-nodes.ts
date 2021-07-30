@@ -10,7 +10,7 @@ import {
   Subrule,
 } from "../typing/types";
 
-const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
+const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
   // Retry 3 times
   if (i < 4) {
     try {
@@ -23,8 +23,10 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
       // Regex
       const sectionRegex = /^(\d).\s+(.+)[\r\n][\r\n]/gm;
       const chapterRegex = /^(\d{3}).\s+(.+)[\r\n][\r\n]/gm;
-      const ruleRegex = /^(\d{3})\.(\d+)\.\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
-      const subruleRegex = /^(\d{3}).(\d+)([a-z]+)\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
+      const ruleRegex =
+        /^(\d{3})\.(\d+)\.\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
+      const subruleRegex =
+        /^(\d{3}).(\d+)([a-z]+)\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
 
       // Add rules
       parser.addRule(sectionRegex, (match, section, txt) => {
@@ -47,17 +49,19 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
         const sectionNumber = Number(chapter[0]);
         const chapterNumber = Number(chapter);
         const ruleNumber = Number(rule);
+        const exampleSearch: string[] = [];
 
         // Handle text that has examples
         const textParse: ParseExample = parseExamples(txt);
 
         return {
           type: "rule",
-          text: (textParse) ? textParse.mainText : "",
+          text: textParse ? textParse.mainText : "",
           sectionNumber,
           chapterNumber,
           ruleNumber,
-          example: (textParse) ? textParse.exampleTextArray : "",
+          example: textParse ? textParse.exampleTextArray : "",
+          exampleSearch,
         };
       });
       parser.addRule(
@@ -66,20 +70,22 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
           const sectionNumber = Number(chapter[2]);
           const chapterNumber = Number(chapter);
           const ruleNumber = Number(rule);
+          const exampleSearch: string[] = [];
 
           // Handle text that has examples
           const textParse: ParseExample = parseExamples(txt);
 
           return {
             type: "subrule",
-            text: (textParse) ? textParse.mainText : "",
+            text: textParse ? textParse.mainText : "",
             sectionNumber,
             chapterNumber,
             ruleNumber,
             subruleLetter,
-            example: (textParse) ? textParse.exampleTextArray : "",
+            example: textParse ? textParse.exampleTextArray : "",
+            exampleSearch,
           };
-        },
+        }
       );
 
       // Remove all non-matched nodes
@@ -88,31 +94,31 @@ const rulesParse = async (rawText: string, i = 0): Promise<RulesParse> => {
       // Filter nodes
       const sectionNodes: Node[] = sortBy(
         tree.filter((node) => node.type === "section"),
-        ["sectionNumber"],
+        ["sectionNumber"]
       );
       const chapterNodes: Node[] = sortBy(
         tree.filter((node) => node.type === "chapter"),
-        ["sectionNumber", "chapterNumber"],
+        ["sectionNumber", "chapterNumber"]
       );
       const rules: Node[] = tree.filter((node) => node.type === "rule");
       const subrules: Node[] = tree.filter((node) => node.type === "subrule");
 
       // Return
       return {
-        sections: (sectionNodes as unknown) as Section[],
-        chapters: (chapterNodes as unknown) as Chapter[],
-        rules: (rules as unknown) as Rule[],
-        subrules: (subrules as unknown) as Subrule[],
+        sections: sectionNodes as unknown as Section[],
+        chapters: chapterNodes as unknown as Chapter[],
+        rules: rules as unknown as Rule[],
+        subrules: subrules as unknown as Subrule[],
       };
     } catch (err) {
       console.error(err);
 
       let val = i;
       val += 1;
-      rulesParse(rawText, val);
+      parseNodes(rawText, val);
     }
   }
   return null;
 };
 
-export default rulesParse;
+export default parseNodes;

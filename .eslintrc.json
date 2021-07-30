@@ -5,7 +5,8 @@
     "project": "./tsconfig.json"
   },
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "extends": [
     "next", "next/core-web-vitals",
@@ -16,12 +17,13 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
   "rules": {
     "quotes": [2, "double"],
     "@typescript-eslint/quotes": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "prettier/prettier": "error"
   },
   "ignorePatterns": [
     "/*.*",

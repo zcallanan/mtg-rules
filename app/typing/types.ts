@@ -1,3 +1,5 @@
+import { ReactNodeArray } from "react";
+
 export interface Section {
   type: string;
   text: string;
@@ -18,6 +20,7 @@ export interface Rule {
   chapterNumber: number;
   ruleNumber: number;
   example: string[];
+  exampleSearch: string[];
 }
 
 export interface Subrule {
@@ -28,6 +31,7 @@ export interface Subrule {
   ruleNumber: number;
   subruleLetter: string;
   example: string[];
+  exampleSearch: string[];
 }
 
 export interface RouterValues {
@@ -55,6 +59,7 @@ export interface ParseLinkArgs {
   example?: string;
   rule?: Rule;
   subrule?: Subrule;
+  searchResults: SearchResults;
 }
 
 export interface ReplaceRuleNumbers {
@@ -97,8 +102,39 @@ export interface ValidateChapter {
 }
 
 export interface RulesParse {
-  sections: Section[],
-  chapters: Chapter[],
-  rules: Rule[],
-  subrules: Subrule[],
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
+}
+
+export interface SearchValue {
+  searchTerm: string;
+  submitted: number;
+  validated: number;
+}
+
+export interface SearchResults {
+  searchTerm: string;
+  searchSections: Section[];
+  searchChapters: Chapter[];
+  searchRules: Rule[];
+  searchSubrules: Subrule[];
+  searchResult: number;
+}
+
+export interface SearchData {
+  searchTerm: string;
+  searchCompleted: number;
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
+}
+
+export interface ModifyArgs {
+  searchTerm: string;
+  rule?: Rule;
+  subrule?: Subrule;
+  toModify: string | ReactNodeArray;
 }

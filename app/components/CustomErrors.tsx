@@ -7,7 +7,7 @@ interface Props {
   chapterNumber?: number;
 }
 
-const CustomErrors = ((props: Props): JSX.Element => {
+const CustomErrors = (props: Props): JSX.Element => {
   const { data, chapterNumber } = props;
   const [values, setValues] = useState<ErrorData>({ reason: "", value: null });
 
@@ -24,11 +24,11 @@ const CustomErrors = ((props: Props): JSX.Element => {
 
   return (
     <div>
-      { values.reason
-        && <Custom404 reason={values.reason} value={values.value}/>
-      }
+      {values.reason && (
+        <Custom404 reason={values.reason} value={values.value} />
+      )}
     </div>
   );
-});
+};
 
 export default CustomErrors;

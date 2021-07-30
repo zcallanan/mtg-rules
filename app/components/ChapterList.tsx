@@ -5,6 +5,7 @@ import {
   Chapter,
   Rule,
   Subrule,
+  SearchResults,
 } from "../typing/types";
 // import styles from "../styles/ChapterList.module.scss";
 
@@ -15,6 +16,7 @@ interface Props {
   subrules?: Subrule[];
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchResults: SearchResults;
 }
 
 const ChapterList = (props: Props): JSX.Element => {
@@ -25,12 +27,13 @@ const ChapterList = (props: Props): JSX.Element => {
     subrules,
     elRef,
     onLinkClick,
+    searchResults,
   } = props;
 
   let chapterSubset: Chapter[];
   if (section) {
     chapterSubset = chapters.filter(
-      (chapter) => chapter.sectionNumber === section.sectionNumber,
+      (chapter) => chapter.sectionNumber === section.sectionNumber
     );
   }
 
@@ -38,14 +41,14 @@ const ChapterList = (props: Props): JSX.Element => {
     <div>
       {chapterSubset.map((chapter, index) => (
         <div key={`chapter${chapter.chapterNumber}-${index}`}>
-          <section id={`${chapter.chapterNumber}`}>
-          </section>
+          <section id={`${chapter.chapterNumber}`}></section>
           <RuleGroup
             chapter={chapter}
             rules={rules}
             subrules={subrules}
             elRef={elRef}
             onLinkClick={onLinkClick}
+            searchResults={searchResults}
           />
         </div>
       ))}

@@ -12,15 +12,11 @@ interface Props {
 }
 
 const TocChapterList = (props: Props): JSX.Element => {
-  const {
-    chapters,
-    sectionNumber,
-    toc,
-    onLinkClick,
-    tocTitleRef,
-  } = props;
+  const { chapters, sectionNumber, toc, onLinkClick, tocTitleRef } = props;
 
-  const chapterSubset = chapters.filter((chapter) => chapter.sectionNumber === sectionNumber);
+  const chapterSubset = chapters.filter(
+    (chapter) => chapter.sectionNumber === sectionNumber
+  );
 
   return (
     <div className={styles.tocChapters}>
@@ -31,7 +27,9 @@ const TocChapterList = (props: Props): JSX.Element => {
             toc={toc}
             onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
-            i={chapters.findIndex((ch) => ch.chapterNumber === chapter.chapterNumber)}
+            i={chapters.findIndex(
+              (ch) => ch.chapterNumber === chapter.chapterNumber
+            )}
           />
         </ul>
       ))}

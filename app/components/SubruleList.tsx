@@ -1,22 +1,24 @@
 import { useRouter, NextRouter } from "next/router";
-import Example from "./Example";
+import ExampleText from "./ExampleText";
 import parseLink from "../utils/parse-link";
-import { Subrule, RouterValues } from "../typing/types";
+import modifySearchRules from "../utils/modify-search-rules";
+import { Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/SubruleList.module.scss";
 
 interface Props {
   subruleSubset: Subrule[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  searchResults: SearchResults;
 }
 
 const SubruleList = (props: Props): JSX.Element => {
-  const { subruleSubset, onLinkClick } = props;
+  const { subruleSubset, onLinkClick, searchResults } = props;
 
   const router: NextRouter = useRouter();
-  const year: string = (Array.isArray(router.query.year))
+  const year: string = Array.isArray(router.query.year)
     ? router.query.year[0]
     : router.query.year;
-  const version: string = (Array.isArray(router.query.version))
+  const version: string = Array.isArray(router.query.version)
     ? router.query.version[0]
     : router.query.version;
   const routerValues: RouterValues = { year, version };
@@ -33,10 +35,31 @@ const SubruleList = (props: Props): JSX.Element => {
               className={`${styles.subruleText} list-group-item`}
             >
               {subrule.chapterNumber}.{subrule.ruleNumber}
-              {subrule.subruleLetter} &nbsp; {parseLink({ routerValues, onLinkClick, subrule })}
+              {subrule.subruleLetter} &nbsp;
+              {!searchResults.searchTerm
+                ? parseLink({
+                    routerValues,
+                    onLinkClick,
+                    subrule,
+                    searchResults,
+                  })
+                : modifySearchRules({
+                    searchTerm: searchResults.searchTerm,
+                    subrule,
+                    toModify: parseLink({
+                      routerValues,
+                      onLinkClick,
+                      subrule,
+                      searchResults,
+                    }),
+                  })}
             </li>
           </section>
-          <Example subrule={subrule} onLinkClick={onLinkClick}/>
+          <ExampleText
+            subrule={subrule}
+            onLinkClick={onLinkClick}
+            searchResults={searchResults}
+          />
         </div>
       ))}
     </div>

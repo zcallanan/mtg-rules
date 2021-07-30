@@ -1,14 +1,10 @@
-import {
-  useEffect,
-  useRef,
-  useCallback,
-  useState,
-  RefObject,
-} from "react";
+import { useEffect, useRef, useCallback, useState, RefObject } from "react";
+import { Rule } from "../typing/types";
 
 const useTopRule = (
   refArray: HTMLDivElement[] = null,
   root: RefObject<HTMLDivElement> | null = null,
+  rulesInUse: Rule[]
 ): number | void => {
   const observerRef = useRef<IntersectionObserver>(null);
   const [ruleNumber, setRuleNumber] = useState<number>();
@@ -36,16 +32,25 @@ const useTopRule = (
       observerRef.current.disconnect();
     }
 
-    // Observe all rule ref contents
+    /* 
+      Observe all rule ref contents. Force observation when rulesInUse changes
+      else refArray's size change occurs after value is passed to callback,
+      resulting in no rule observation after a search and observation ceasing
+    */
     refArray.forEach((r) => {
-      observerRef.current.observe(r);
+      if (r && rulesInUse) {
+        observerRef.current.observe(r);
+      }
     });
-  }, [refArray]);
+  }, [refArray, rulesInUse]);
 
   // Cleanup
-  useEffect(() => () => {
-    observerRef.current.disconnect();
-  }, []);
+  useEffect(
+    () => () => {
+      observerRef.current.disconnect();
+    },
+    []
+  );
 
   // Return
   return ruleNumber;
