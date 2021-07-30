@@ -7,14 +7,13 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
   // In list of rules and subrules, wraps section, chapter, rule, and subrule #'s with a link component
   const { text, ruleNumberArray, routerValues, onLinkClick, rule, subrule } =
     args;
+
   let updatedText: ReactNodeArray;
-  let chapterValue: number;
   ruleNumberArray.forEach((ruleNumber, index) => {
-    // If it is a single digit, assign a chapter value
-    if (/(?<!\S)\d(?!\S)/.test(ruleNumber)) {
-      chapterValue = Number(ruleNumber) * 100;
-    }
-    const chapterNumber = Number(ruleNumber.match(/(\d{3})/));
+    // Single digit is a section, so multiply by 100, else match chapterNumber
+    const chapterValue: number | string = /(?<!\S)\d(?!\S)/.test(ruleNumber)
+      ? Number(ruleNumber) * 100
+      : ruleNumber;
 
     // Replace a string with a ReactNodeArray
     updatedText = reactStringReplace(
@@ -30,15 +29,18 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
         >
           <Link
             href={"/rules/[routerValues.year]/[routerValues.version]"}
-            as={`/rules/${routerValues.year}/${routerValues.version}#${
-              chapterValue || ruleNumber
-            }`}
+            as={`/rules/${routerValues.year}/${routerValues.version}#${chapterValue}`}
             scroll={false}
           >
             <a>
               <span
                 onClick={() =>
-                  onLinkClick(chapterValue || chapterNumber[0], "rules")
+                  onLinkClick(
+                    typeof chapterValue === "string"
+                      ? Number(chapterValue.match(/\d{3}/)[0])
+                      : chapterValue,
+                    "rules"
+                  )
                 }
               >
                 {match}

@@ -35,7 +35,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   // Regex
   const regexSection = /section\s+(\d)/gim;
   // Include extra characters to avoid creating links on erroneous numbers, ex: 2011
-  const regexChapter = /\s+(\d{3})[\s,.;]/gim;
+  const regexChapter = /\s+(\d{3})[\s,.;()]/gim;
   const regexRule = /(\d{3})\.(\d+)/gim;
   const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
@@ -60,9 +60,9 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
             ""
           );
         }
-        if (/\s|\.|,|;|-|:/g.test(match) && regexChapter.test(match)) {
+        if (/\s|\.|,|;|-|:|\)/g.test(match) && regexChapter.test(match)) {
           matchArray[matchArray.length - 1][ind] = match.replace(
-            /\s|\.|,|;|-|:/g,
+            /\s|\.|,|;|-|:|\)/g,
             ""
           );
         }
@@ -108,7 +108,14 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
           onLinkClick,
           subrule,
         };
-    return replaceRuleNumbers(argObject);
+
+    // If there are values to replace, pass to replaceRuleNumbers
+    const replaceResult: string | ReactNodeArray = linkValues.length
+      ? replaceRuleNumbers(argObject)
+      : text;
+
+    // Return ReactNodeArray with links or original text
+    return replaceResult;
   };
 
   // Test if subrule, rule, chapter, and section numbers appear in text
