@@ -61,10 +61,8 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
           );
         }
         if (/\s|\.|,|;|-|:|\)/g.test(match) && regexChapter.test(match)) {
-          matchArray[matchArray.length - 1][ind] = match.replace(
-            /\s|\.|,|;|-|:|\)/g,
-            ""
-          );
+          // eslint-disable-next-line prefer-destructuring
+          matchArray[matchArray.length - 1][ind] = match.match(/\d{3}/)[0];
         }
       });
 

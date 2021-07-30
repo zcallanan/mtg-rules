@@ -99,7 +99,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     searchChapters: [],
     searchRules: [],
     searchSubrules: [],
-    searchResult: 0,
+    searchResult: 1,
   });
   const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
   const [pause, setPause] = useState<boolean>(false);
@@ -366,7 +366,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         <SearchWrapper
           setSearchData={setSearchData}
           setSearchResults={setSearchResults}
-          searchResults={searchResults}
+          previousSearchResults={searchResults}
           searchData={searchData}
         />
       )}
@@ -427,8 +427,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                 </Tabs>
               </div>
               <div className={styles.chapterTitleContainer}>
-                {(searchResults.searchResult && searchResults.searchTerm) ||
-                (!searchResults.searchTerm && !searchResults.searchResult) ? (
+                {!searchData.searchTerm && searchResults.searchResult ? (
                   <ChapterTitle
                     chapter={chapters.find(
                       (chapter) =>
@@ -443,8 +442,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                 )}
               </div>
               <div className={styles.rulesContainer}>
-                {(searchResults.searchResult && searchResults.searchTerm) ||
-                (!searchResults.searchTerm && !searchResults.searchResult) ? (
+                {!searchData.searchTerm && searchResults.searchResult ? (
                   <SectionList
                     sections={sections}
                     chapters={chapters}

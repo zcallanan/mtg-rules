@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Dispatch, SetStateAction } from "react";
 import useSearch from "../hooks/useSearch";
 import objectArrayComparison from "../utils/object-array-comparison";
 import { SearchData, SearchResults } from "../typing/types";
 
 interface Props {
-  setSearchData: (obj: SearchData) => void;
-  setSearchResults: (obj: SearchResults) => void;
-  searchResults: SearchResults;
+  setSearchData: Dispatch<SetStateAction<SearchData>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResults>>;
+  previousSearchResults: SearchResults;
   searchData: SearchData;
 }
 
 const SearchWrapper = (props: Props): JSX.Element => {
-  const { setSearchData, setSearchResults, searchResults, searchData } = props;
+  const { setSearchData, setSearchResults, previousSearchResults, searchData } =
+    props;
 
   // Local state to track searchTerm
   const [resultTerm, setResultTerm] = useState<string>("");
@@ -30,31 +31,33 @@ const SearchWrapper = (props: Props): JSX.Element => {
       searchData.searchTerm === memoNewResults.searchTerm &&
       !objectArrayComparison(
         memoNewResults.searchRules,
-        searchResults.searchRules
+        previousSearchResults.searchRules
       )
     ) {
       // Prevent results for the same search term to be saved consecutively
       setResultTerm(memoNewResults.searchTerm);
-
       // Save search results to dynamic page
       setSearchResults(memoNewResults);
-
-      // Mark search as completed
-      setSearchData({
-        searchTerm: searchData.searchTerm,
-        searchCompleted: 1,
-        sections: searchData.sections,
-        chapters: searchData.chapters,
-        rules: searchData.rules,
-        subrules: searchData.subrules,
-      });
+    } else if (!memoNewResults.searchResult) {
+      // The search returned nothing, so result is null
+      setSearchResults((prevValue) => ({
+        ...prevValue,
+        searchTerm: memoNewResults.searchTerm,
+        searchResult: 0,
+      }));
     }
+    // Mark search as completed
+    setSearchData((prevValue) => ({
+      ...prevValue,
+      searchCompleted: 1,
+    }));
   }, [
     setSearchResults,
     setSearchData,
     searchData.searchTerm,
     memoNewResults,
-    searchResults.searchRules,
+    previousSearchResults.searchRules,
+    previousSearchResults.searchResult,
     resultTerm,
     searchData,
   ]);

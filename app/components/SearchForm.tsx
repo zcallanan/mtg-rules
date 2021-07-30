@@ -6,6 +6,8 @@ import {
   FormEvent,
   ChangeEvent,
   MouseEvent,
+  Dispatch,
+  SetStateAction,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
@@ -21,8 +23,8 @@ import {
 import styles from "../styles/SearchForm.module.scss";
 
 interface Props {
-  setSearchData: (obj: SearchData) => void;
-  setSearchResults: (obj: SearchResults) => void;
+  setSearchData: Dispatch<SetStateAction<SearchData>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResults>>;
   searchedTerm: string;
   sections: Section[];
   chapters: Chapter[];
@@ -96,7 +98,7 @@ const SearchForm = (props: Props): JSX.Element => {
           searchChapters: [],
           searchRules: [],
           searchSubrules: [],
-          searchResult: 0,
+          searchResult: 1,
         });
       } else if (searchedTerm !== memoSearchValue.searchTerm) {
         // Save search data
