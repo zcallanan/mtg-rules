@@ -87,6 +87,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
   const [searchData, setSearchData] = useState<SearchData>({
     searchTerm: "",
+    searchCompleted: 0,
     sections: [],
     chapters: [],
     rules: [],
@@ -361,8 +362,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   return (
     <div>
-      {searchData.searchTerm && (
+      {!searchData.searchCompleted && searchData.searchTerm && (
         <SearchWrapper
+          setSearchData={setSearchData}
           setSearchResults={setSearchResults}
           searchResults={searchResults}
           searchData={searchData}

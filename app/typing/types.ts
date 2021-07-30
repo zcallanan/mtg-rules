@@ -59,6 +59,7 @@ export interface ParseLinkArgs {
   example?: string;
   rule?: Rule;
   subrule?: Subrule;
+  searchResults: SearchResults;
 }
 
 export interface ReplaceRuleNumbers {
@@ -124,6 +125,7 @@ export interface SearchResults {
 
 export interface SearchData {
   searchTerm: string;
+  searchCompleted: number;
   sections: Section[];
   chapters: Chapter[];
   rules: Rule[];

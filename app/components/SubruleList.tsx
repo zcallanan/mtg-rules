@@ -37,11 +37,21 @@ const SubruleList = (props: Props): JSX.Element => {
               {subrule.chapterNumber}.{subrule.ruleNumber}
               {subrule.subruleLetter} &nbsp;
               {!searchResults.searchTerm
-                ? parseLink({ routerValues, onLinkClick, subrule })
+                ? parseLink({
+                    routerValues,
+                    onLinkClick,
+                    subrule,
+                    searchResults,
+                  })
                 : modifySearchRules({
                     searchTerm: searchResults.searchTerm,
                     subrule,
-                    toModify: parseLink({ routerValues, onLinkClick, subrule }),
+                    toModify: parseLink({
+                      routerValues,
+                      onLinkClick,
+                      subrule,
+                      searchResults,
+                    }),
                   })}
             </li>
           </section>

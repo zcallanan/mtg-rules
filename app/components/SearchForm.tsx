@@ -83,6 +83,7 @@ const SearchForm = (props: Props): JSX.Element => {
         // Clear dynamic page search data
         setSearchData({
           searchTerm: "",
+          searchCompleted: 0,
           sections: [],
           chapters: [],
           rules: [],
@@ -101,6 +102,7 @@ const SearchForm = (props: Props): JSX.Element => {
         // Save search data
         setSearchData({
           searchTerm: memoSearchValue.searchTerm,
+          searchCompleted: 0,
           sections,
           chapters,
           rules,

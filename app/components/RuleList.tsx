@@ -53,11 +53,16 @@ const RuleList = (props: Props): JSX.Element => {
             >
               {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
               {!searchResults.searchTerm
-                ? parseLink({ routerValues, onLinkClick, rule })
+                ? parseLink({ routerValues, onLinkClick, rule, searchResults })
                 : modifySearchRules({
                     searchTerm: searchResults.searchTerm,
                     rule,
-                    toModify: parseLink({ routerValues, onLinkClick, rule }),
+                    toModify: parseLink({
+                      routerValues,
+                      onLinkClick,
+                      rule,
+                      searchResults,
+                    }),
                   })}
             </li>
           </section>

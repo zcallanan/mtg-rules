@@ -46,12 +46,14 @@ const ExampleText = (props: Props): JSX.Element => {
                           onLinkClick,
                           example,
                           rule,
+                          searchResults,
                         }
                       : {
                           routerValues,
                           onLinkClick,
                           example,
                           subrule,
+                          searchResults,
                         }
                   )
                 : modifySearchRules(
@@ -64,6 +66,7 @@ const ExampleText = (props: Props): JSX.Element => {
                             onLinkClick,
                             example,
                             rule,
+                            searchResults,
                           }),
                         }
                       : {
@@ -74,6 +77,7 @@ const ExampleText = (props: Props): JSX.Element => {
                             onLinkClick,
                             example,
                             subrule,
+                            searchResults,
                           }),
                         }
                   )}
