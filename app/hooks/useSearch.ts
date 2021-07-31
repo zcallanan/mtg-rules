@@ -101,6 +101,7 @@ const useSearch = (props: SearchData): SearchResults => {
     // Return SearchResults
     return {
       searchTerm,
+      searchType,
       searchSections: ruleSections,
       searchChapters: ruleChapters,
       searchRules: rulesResult,

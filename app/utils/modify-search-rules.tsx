@@ -3,7 +3,8 @@ import reactStringReplace from "react-string-replace";
 import { ModifyArgs } from "../typing/types";
 
 const wrapSearchTerm = (args: ModifyArgs): string | ReactNodeArray => {
-  const { searchTerm, rule, subrule, toModify } = args;
+  const { searchResults, rule, subrule, toModify } = args;
+  const { searchTerm, searchType } = searchResults;
 
   return reactStringReplace(
     toModify,
@@ -28,12 +29,12 @@ const wrapSearchTerm = (args: ModifyArgs): string | ReactNodeArray => {
 
 const modifySearchRules = (args: ModifyArgs): string | ReactNodeArray => {
   // Deconstruct args
-  const { searchTerm, rule, subrule, toModify } = args;
+  const { searchResults, rule, subrule, toModify } = args;
 
   // Modify
   return rule
-    ? wrapSearchTerm({ searchTerm, rule, toModify })
-    : wrapSearchTerm({ searchTerm, subrule, toModify });
+    ? wrapSearchTerm({ searchResults, rule, toModify })
+    : wrapSearchTerm({ searchResults, subrule, toModify });
 };
 
 export default modifySearchRules;

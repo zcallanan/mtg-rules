@@ -128,6 +128,7 @@ export interface SearchData {
 
 export interface SearchResults {
   searchTerm: string;
+  searchType: string;
   searchSections: Section[];
   searchChapters: Chapter[];
   searchRules: Rule[];
@@ -136,7 +137,7 @@ export interface SearchResults {
 }
 
 export interface ModifyArgs {
-  searchTerm: string;
+  searchResults: SearchResults;
   rule?: Rule;
   subrule?: Subrule;
   toModify: string | ReactNodeArray;

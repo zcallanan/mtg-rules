@@ -98,6 +98,7 @@ const SearchForm = (props: Props): JSX.Element => {
         // The user may have searched previously. Clear dynamic page search results
         setSearchResults({
           searchTerm: "",
+          searchType: "",
           searchSections: [],
           searchChapters: [],
           searchRules: [],
