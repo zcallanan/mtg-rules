@@ -69,7 +69,7 @@ const RuleList = (props: Props): JSX.Element => {
                     allChaptersN,
                   })
                 : modifySearchRules({
-                    searchTerm: searchResults.searchTerm,
+                    searchResults,
                     rule,
                     toModify: parseLink({
                       routerValues,

@@ -11,10 +11,11 @@ import {
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import SearchRadio from "./SearchRadio";
 import {
   SearchData,
   SearchResults,
-  SearchValue,
+  SearchFormValue,
   Section,
   Chapter,
   Rule,
@@ -50,26 +51,28 @@ const SearchForm = (props: Props): JSX.Element => {
   const cancel = useRef<HTMLButtonElement>();
 
   // Create local state
-  const [searchValue, setSearch] = useState<SearchValue>({
+  const [searchValue, setSearchValue] = useState<SearchFormValue>({
     searchTerm: "",
+    searchType: "partial",
     submitted: 0,
     validated: 0,
   });
 
-  // Deconstruct searchValue
-  const { searchTerm, submitted, validated } = searchValue;
+  // Deconstruct searchFormValue
+  const { searchTerm, searchType, submitted, validated } = searchValue;
 
   // Create searchValue fn for memoization
-  const createSearchValue = (a: string, b: number, c: number) => ({
+  const createSearchValue = (a: string, b: string, c: number, d: number) => ({
     searchTerm: a,
-    submitted: b,
-    validated: c,
+    searchType: b,
+    submitted: c,
+    validated: d,
   });
 
   // Cache searchValue
   const memoSearchValue = useMemo(
-    () => createSearchValue(searchTerm, submitted, validated),
-    [searchTerm, submitted, validated]
+    () => createSearchValue(searchTerm, searchType, submitted, validated),
+    [searchTerm, searchType, submitted, validated]
   );
 
   // Pass memoized searchValue to dynamic page
@@ -83,17 +86,19 @@ const SearchForm = (props: Props): JSX.Element => {
       if (!memoSearchValue.searchTerm && searchedTerm) {
         // If search form cancel button is clicked OR an empty form is submitted:
         // Clear dynamic page search data
-        setSearchData({
+        setSearchData((prevValue) => ({
+          ...prevValue,
           searchTerm: "",
           searchCompleted: 0,
           sections: [],
           chapters: [],
           rules: [],
           subrules: [],
-        });
+        }));
         // The user may have searched previously. Clear dynamic page search results
         setSearchResults({
           searchTerm: "",
+          searchType: "",
           searchSections: [],
           searchChapters: [],
           searchRules: [],
@@ -105,6 +110,7 @@ const SearchForm = (props: Props): JSX.Element => {
         setSearchData({
           searchTerm: memoSearchValue.searchTerm,
           searchCompleted: 0,
+          searchType: memoSearchValue.searchType,
           sections,
           chapters,
           rules,
@@ -113,7 +119,7 @@ const SearchForm = (props: Props): JSX.Element => {
       }
 
       // Mark local searchValue as submitted
-      setSearch((prevValue) => ({
+      setSearchValue((prevValue) => ({
         ...prevValue,
         submitted: 1,
       }));
@@ -144,7 +150,7 @@ const SearchForm = (props: Props): JSX.Element => {
       }
     } else {
       // There is a search value, mark validated
-      setSearch((prevValue) => ({
+      setSearchValue((prevValue) => ({
         ...prevValue,
         validated: 1,
       }));
@@ -165,22 +171,55 @@ const SearchForm = (props: Props): JSX.Element => {
     input.current.value = "";
 
     // Trigger submitting reset to dynamic page - this prompts clearing of search results
-    setSearch({
+    setSearchValue((prevValue) => ({
+      ...prevValue,
       searchTerm: "",
       submitted: 0,
       validated: 1,
-    });
+    }));
   };
 
   // The form input value changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     // onChange, save input searchTerm to state
-    setSearch({
-      searchTerm: e.target.value,
-      submitted: 0,
-      validated: 0,
-    });
+    if (searchValue.searchTerm !== e.target.value) {
+      setSearchValue((prevValue) => ({
+        ...prevValue,
+        searchTerm: e.target.value,
+        submitted: 0,
+        validated: 0,
+      }));
+    }
   };
+
+  // Store radio button toggle values in refs
+  const exactChecked = useRef<boolean>(false);
+  const partialChecked = useRef<boolean>(false);
+
+  const radioChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    // Save search type from radio button toggle
+    if (searchValue.searchType !== e.target.value) {
+      setSearchValue((prevValue) => ({
+        ...prevValue,
+        searchType: e.target.value,
+      }));
+    }
+    // Toggle radio button checked
+    if (e.target.value === "exact" && partialChecked.current) {
+      partialChecked.current = false;
+      exactChecked.current = true;
+    } else if (e.target.value === "partial" && exactChecked.current) {
+      partialChecked.current = true;
+      exactChecked.current = false;
+    }
+  };
+
+  // Check partial search radio button on first page load
+  useEffect(() => {
+    if (!partialChecked.current) {
+      partialChecked.current = true;
+    }
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -207,6 +246,11 @@ const SearchForm = (props: Props): JSX.Element => {
           <FontAwesomeIcon icon={faSearch} />
         </button>
       </div>
+      <SearchRadio
+        radioChange={radioChange}
+        partialChecked={partialChecked}
+        exactChecked={exactChecked}
+      />
     </form>
   );
 };

@@ -46,7 +46,7 @@ const SubruleList = (props: Props): JSX.Element => {
                     allChaptersN,
                   })
                 : modifySearchRules({
-                    searchTerm: searchResults.searchTerm,
+                    searchResults,
                     subrule,
                     toModify: parseLink({
                       routerValues,

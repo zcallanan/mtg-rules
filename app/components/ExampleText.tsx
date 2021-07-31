@@ -62,7 +62,7 @@ const ExampleText = (props: Props): JSX.Element => {
                 : modifySearchRules(
                     rule
                       ? {
-                          searchTerm: searchResults.searchTerm,
+                          searchResults,
                           rule,
                           toModify: parseLink({
                             routerValues,
@@ -74,7 +74,7 @@ const ExampleText = (props: Props): JSX.Element => {
                           }),
                         }
                       : {
-                          searchTerm: searchResults.searchTerm,
+                          searchResults,
                           subrule,
                           toModify: parseLink({
                             routerValues,

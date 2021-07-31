@@ -109,14 +109,26 @@ export interface RulesParse {
   subrules: Subrule[];
 }
 
-export interface SearchValue {
+export interface SearchFormValue {
   searchTerm: string;
+  searchType: string;
   submitted: number;
   validated: number;
 }
 
+export interface SearchData {
+  searchTerm: string;
+  searchCompleted: number;
+  searchType: string;
+  sections: Section[];
+  chapters: Chapter[];
+  rules: Rule[];
+  subrules: Subrule[];
+}
+
 export interface SearchResults {
   searchTerm: string;
+  searchType: string;
   searchSections: Section[];
   searchChapters: Chapter[];
   searchRules: Rule[];
@@ -124,17 +136,8 @@ export interface SearchResults {
   searchResult: number;
 }
 
-export interface SearchData {
-  searchTerm: string;
-  searchCompleted: number;
-  sections: Section[];
-  chapters: Chapter[];
-  rules: Rule[];
-  subrules: Subrule[];
-}
-
 export interface ModifyArgs {
-  searchTerm: string;
+  searchResults: SearchResults;
   rule?: Rule;
   subrule?: Subrule;
   toModify: string | ReactNodeArray;
