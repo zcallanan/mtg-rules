@@ -19,12 +19,12 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
     updatedText = reactStringReplace(
       !index ? text : updatedText,
       ruleNumber,
-      (match: string, i: number) => (
+      (match: string, i: number, offset: number) => (
         <span
           key={
             rule
-              ? `${rule.ruleNumber}-${ruleNumber}-${i}`
-              : `${subrule.ruleNumber}${subrule.subruleLetter}-${ruleNumber}-${i}`
+              ? `${rule.ruleNumber}-${ruleNumber}-${i}${offset}`
+              : `${subrule.ruleNumber}${subrule.subruleLetter}-${ruleNumber}-${i}${offset}`
           }
         >
           <Link

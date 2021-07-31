@@ -49,6 +49,7 @@ const ChapterList = (props: Props): JSX.Element => {
             elRef={elRef}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={chapters.map((chapter) => chapter.chapterNumber)}
           />
         </div>
       ))}

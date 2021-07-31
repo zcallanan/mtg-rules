@@ -9,10 +9,11 @@ interface Props {
   subruleSubset: Subrule[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 const SubruleList = (props: Props): JSX.Element => {
-  const { subruleSubset, onLinkClick, searchResults } = props;
+  const { subruleSubset, onLinkClick, searchResults, allChaptersN } = props;
 
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
@@ -42,6 +43,7 @@ const SubruleList = (props: Props): JSX.Element => {
                     onLinkClick,
                     subrule,
                     searchResults,
+                    allChaptersN,
                   })
                 : modifySearchRules({
                     searchTerm: searchResults.searchTerm,
@@ -51,6 +53,7 @@ const SubruleList = (props: Props): JSX.Element => {
                       onLinkClick,
                       subrule,
                       searchResults,
+                      allChaptersN,
                     }),
                   })}
             </li>
@@ -59,6 +62,7 @@ const SubruleList = (props: Props): JSX.Element => {
             subrule={subrule}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={allChaptersN}
           />
         </div>
       ))}

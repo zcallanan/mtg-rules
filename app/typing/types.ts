@@ -60,6 +60,7 @@ export interface ParseLinkArgs {
   rule?: Rule;
   subrule?: Subrule;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 export interface ReplaceRuleNumbers {

@@ -14,11 +14,19 @@ interface Props {
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 const RuleList = (props: Props): JSX.Element => {
-  const { ruleSubset, rules, subrules, elRef, onLinkClick, searchResults } =
-    props;
+  const {
+    ruleSubset,
+    rules,
+    subrules,
+    elRef,
+    onLinkClick,
+    searchResults,
+    allChaptersN,
+  } = props;
 
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
@@ -53,7 +61,13 @@ const RuleList = (props: Props): JSX.Element => {
             >
               {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
               {!searchResults.searchTerm
-                ? parseLink({ routerValues, onLinkClick, rule, searchResults })
+                ? parseLink({
+                    routerValues,
+                    onLinkClick,
+                    rule,
+                    searchResults,
+                    allChaptersN,
+                  })
                 : modifySearchRules({
                     searchTerm: searchResults.searchTerm,
                     rule,
@@ -62,6 +76,7 @@ const RuleList = (props: Props): JSX.Element => {
                       onLinkClick,
                       rule,
                       searchResults,
+                      allChaptersN,
                     }),
                   })}
             </li>
@@ -70,12 +85,14 @@ const RuleList = (props: Props): JSX.Element => {
             rule={rule}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={allChaptersN}
           />
           <SubruleGroup
             rule={rule}
             subrules={subrules}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={allChaptersN}
           />
         </div>
       ))}
