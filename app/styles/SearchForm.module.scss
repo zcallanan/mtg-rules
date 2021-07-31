@@ -2,9 +2,30 @@
   width: 95.5%;
 }
 
-// #button {
-//   width: 5%;
-// }
+.radioContainer {
+  display: flex;
+  margin-left: 12px;
+}
+
+.radiosContainer {
+  width: 70%;
+  display: flex;
+  justify-content: left;
+  margin-left: 12px;
+}
+
+.partialRadioContainer {
+  display: flex;
+}
+
+.exactRadioContainer {
+  margin-left: 24px;
+  display: flex;
+}
+
+.radioLabel, .radioIcon {
+  margin-left: 4px;
+}
 
 #timesCircle {
   position: absolute;

@@ -109,8 +109,9 @@ export interface RulesParse {
   subrules: Subrule[];
 }
 
-export interface SearchValue {
+export interface SearchFormValue {
   searchTerm: string;
+  searchType: string;
   submitted: number;
   validated: number;
 }
@@ -127,6 +128,7 @@ export interface SearchResults {
 export interface SearchData {
   searchTerm: string;
   searchCompleted: number;
+  searchType: string;
   sections: Section[];
   chapters: Chapter[];
   rules: Rule[];

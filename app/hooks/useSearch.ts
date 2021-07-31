@@ -9,7 +9,7 @@ import {
 } from "../typing/types";
 
 const useSearch = (props: SearchData): SearchResults => {
-  const { searchTerm, sections, chapters, rules, subrules } = props;
+  const { searchTerm, searchType, sections, chapters, rules, subrules } = props;
 
   /* 
     - Filter rules and subrules node arrays
@@ -20,7 +20,10 @@ const useSearch = (props: SearchData): SearchResults => {
   */
 
   // Create regex
-  const termRegex = new RegExp(searchTerm, "gim");
+  const termRegex: RegExp =
+    searchType === "partial"
+      ? new RegExp(searchTerm, "gim")
+      : new RegExp(`\\W${searchTerm}\\W`, "gm");
 
   // Checks whether a rule or subrule's exampleArray contains searchTerm
   const checkExamples = (exampleArray: string[]): number => {
