@@ -116,15 +116,6 @@ export interface SearchFormValue {
   validated: number;
 }
 
-export interface SearchResults {
-  searchTerm: string;
-  searchSections: Section[];
-  searchChapters: Chapter[];
-  searchRules: Rule[];
-  searchSubrules: Subrule[];
-  searchResult: number;
-}
-
 export interface SearchData {
   searchTerm: string;
   searchCompleted: number;
@@ -133,6 +124,15 @@ export interface SearchData {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
+}
+
+export interface SearchResults {
+  searchTerm: string;
+  searchSections: Section[];
+  searchChapters: Chapter[];
+  searchRules: Rule[];
+  searchSubrules: Subrule[];
+  searchResult: number;
 }
 
 export interface ModifyArgs {
