@@ -96,6 +96,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   });
   const [searchResults, setSearchResults] = useState<SearchResults>({
     searchTerm: "",
+    searchType: "",
     searchSections: [],
     searchChapters: [],
     searchRules: [],
@@ -204,9 +205,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   }, [pause]);
 
-  // Collect mutable refs in [] for useTopRule to iterate over and observe
-  const rulesRef = useRef<HTMLDivElement[]>([]);
-
   // Track what rules are rendered
   useEffect(() => {
     // Either the search result else default
@@ -218,6 +216,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       setRulesInUse(result);
     }
   }, [rules, rulesInUse, searchResults.searchRules]);
+
+  // Collect mutable refs in [] for useTopRule to iterate over and observe
+  const rulesRef = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     // Adjust the size of rulesRef to trigger observation of rules by useTopRule
