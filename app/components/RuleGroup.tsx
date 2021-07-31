@@ -9,10 +9,19 @@ interface Props {
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 const RuleGroup = (props: Props): JSX.Element => {
-  const { chapter, rules, subrules, elRef, onLinkClick, searchResults } = props;
+  const {
+    chapter,
+    rules,
+    subrules,
+    elRef,
+    onLinkClick,
+    searchResults,
+    allChaptersN,
+  } = props;
 
   const ruleSubset = rules.filter(
     (rule) => rule.chapterNumber === chapter.chapterNumber
@@ -29,6 +38,7 @@ const RuleGroup = (props: Props): JSX.Element => {
             elRef={elRef}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={allChaptersN}
           />
         </ul>
       )}

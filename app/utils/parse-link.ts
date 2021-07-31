@@ -4,8 +4,15 @@ import nodeNumbers from "./node-numbers";
 import { ParseLinkArgs, ReplaceRuleNumbers } from "../typing/types";
 
 const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
-  const { routerValues, onLinkClick, example, rule, subrule, searchResults } =
-    args;
+  const {
+    routerValues,
+    onLinkClick,
+    example,
+    rule,
+    subrule,
+    searchResults,
+    allChaptersN,
+  } = args;
   const {
     searchTerm,
     searchSections,
@@ -33,58 +40,35 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   }
 
   // Regex
-  const regexSection = /section\s+(\d)/gim;
-  // Include extra characters to avoid creating links on erroneous numbers, ex: 2011
-  const regexChapter = /\s+(\d{3})[\s,.;()]/gim;
-  const regexRule = /(\d{3})\.(\d+)/gim;
-  const regexSubrule = /(\d{3})\.(\d+)([a-z]+)/gim;
+  const regexSection = /(section)\s+(\d{1})/gim;
+  const regexChapter = /(\d{3})(?=,|\)|\w)/gim;
+  const regexRule = /(\d{3}\.\d{1,3})(?=,|\)|\s|\.)/gim;
+  const regexSubrule = /(\d{3}\.\d{1,3}[a-z])(?=,|\)|\s|\.)/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
   const findMatches = (
     regexArray: RegExp[],
     text: string
   ): string | ReactNodeArray => {
-    const matchArray: RegExpMatchArray[] = [];
-    const indexOfArray: number[][] = [];
+    const filteredArray: RegExpMatchArray[] = [];
 
-    // Push all matched ruleNumber strings to matchArray
+    // Push all matched ruleNumber strings to filteredArray
     regexArray.forEach((regex, i) => {
-      // Find all matches for a particular regex
-      matchArray.push(text.match(regex));
-
-      // Remove extra characters
-      matchArray[matchArray.length - 1].forEach((match, ind) => {
-        if (match.includes("section")) {
-          matchArray[matchArray.length - 1][ind] = match.replace(
-            /section\s+/,
-            ""
-          );
-        }
-        if (/\s|\.|,|;|-|:|\)/g.test(match) && regexChapter.test(match)) {
-          // eslint-disable-next-line prefer-destructuring
-          matchArray[matchArray.length - 1][ind] = match.match(/\d{3}/)[0];
-        }
-      });
-
-      // Find starting position for all values of most recent push
-      indexOfArray[i] = matchArray[matchArray.length - 1].map((match) =>
-        linkText.indexOf(match)
-      );
-    });
-
-    const flatIndexOf: number[] = indexOfArray.flat();
-    const extraRuleNumbers: string[] = matchArray.flat();
-    const trackIndex: number[] = [];
-    const ruleNumberArray: string[] = [];
-
-    extraRuleNumbers.forEach((s, i) => {
-      if (!trackIndex.includes(flatIndexOf[i])) {
-        trackIndex.push(flatIndexOf[i]);
-        ruleNumberArray.push(s);
+      if (regex === regexSection) {
+        const matchArray: RegExpMatchArray = text.match(regex);
+        matchArray[0] = matchArray[0].replace(/section\s+/, "");
+        filteredArray[i] = matchArray;
+      } else if (regex === regexChapter && regex.test(text)) {
+        const matchArray: RegExpMatchArray = text.match(regex);
+        filteredArray[i] = matchArray.filter(
+          (a, ind) => allChaptersN.includes(a.toString()) && ind > 0
+        );
+      } else {
+        filteredArray[i] = text.match(regex);
       }
     });
 
-    //   TODO: Prevent invalid chapter values like 999
+    const ruleNumberArray: string[] = filteredArray.flat();
 
     // If there are searchResults, remove all values not found in searchValues, or get links to nowhere
     const linkValues: string[] = searchTerm

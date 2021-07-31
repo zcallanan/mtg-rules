@@ -6,10 +6,11 @@ interface Props {
   subrules: Subrule[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 const SubruleGroup = (props: Props): JSX.Element => {
-  const { rule, subrules, onLinkClick, searchResults } = props;
+  const { rule, subrules, onLinkClick, searchResults, allChaptersN } = props;
 
   const subruleSubset = subrules.filter(
     (subrule) =>
@@ -25,6 +26,7 @@ const SubruleGroup = (props: Props): JSX.Element => {
             subruleSubset={subruleSubset}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
+            allChaptersN={allChaptersN}
           />
         </ul>
       )}

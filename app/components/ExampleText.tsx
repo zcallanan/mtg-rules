@@ -9,10 +9,11 @@ interface Props {
   subrule?: Subrule;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
+  allChaptersN: string[];
 }
 
 const ExampleText = (props: Props): JSX.Element => {
-  const { rule, subrule, onLinkClick, searchResults } = props;
+  const { rule, subrule, onLinkClick, searchResults, allChaptersN } = props;
   const data: Rule | Subrule = rule || subrule;
   // Use regular array of example strings if no searchTerm
   const exampleText =
@@ -47,6 +48,7 @@ const ExampleText = (props: Props): JSX.Element => {
                           example,
                           rule,
                           searchResults,
+                          allChaptersN,
                         }
                       : {
                           routerValues,
@@ -54,6 +56,7 @@ const ExampleText = (props: Props): JSX.Element => {
                           example,
                           subrule,
                           searchResults,
+                          allChaptersN,
                         }
                   )
                 : modifySearchRules(
@@ -67,6 +70,7 @@ const ExampleText = (props: Props): JSX.Element => {
                             example,
                             rule,
                             searchResults,
+                            allChaptersN,
                           }),
                         }
                       : {
@@ -78,6 +82,7 @@ const ExampleText = (props: Props): JSX.Element => {
                             example,
                             subrule,
                             searchResults,
+                            allChaptersN,
                           }),
                         }
                   )}
