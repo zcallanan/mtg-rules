@@ -142,3 +142,8 @@ export interface ModifyArgs {
   subrule?: Subrule;
   toModify: string | ReactNodeArray;
 }
+
+export interface RadioCheck {
+  partial: boolean;
+  exact: boolean;
+}

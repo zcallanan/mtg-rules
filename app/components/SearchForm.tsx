@@ -20,6 +20,7 @@ import {
   Chapter,
   Rule,
   Subrule,
+  RadioCheck,
 } from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
 
@@ -56,6 +57,11 @@ const SearchForm = (props: Props): JSX.Element => {
     searchType: "partial",
     submitted: 0,
     validated: 0,
+  });
+
+  const [radioCheck, setRadioCheck] = useState<RadioCheck>({
+    partial: false,
+    exact: false,
   });
 
   // Deconstruct searchFormValue
@@ -192,10 +198,6 @@ const SearchForm = (props: Props): JSX.Element => {
     }
   };
 
-  // Store radio button toggle values in refs
-  const exactChecked = useRef<boolean>(false);
-  const partialChecked = useRef<boolean>(false);
-
   const radioChange = (e: ChangeEvent<HTMLInputElement>): void => {
     // Save search type from radio button toggle
     if (searchValue.searchType !== e.target.value) {
@@ -205,20 +207,48 @@ const SearchForm = (props: Props): JSX.Element => {
       }));
     }
     // Toggle radio button checked
-    if (e.target.value === "exact" && partialChecked.current) {
-      partialChecked.current = false;
-      exactChecked.current = true;
-    } else if (e.target.value === "partial" && exactChecked.current) {
-      partialChecked.current = true;
-      exactChecked.current = false;
+    if (e.target.value === "exact" && !radioCheck.exact) {
+      setRadioCheck({
+        partial: false,
+        exact: true,
+      });
+    } else if (e.target.value === "partial" && !radioCheck.partial) {
+      setRadioCheck({
+        partial: true,
+        exact: false,
+      });
     }
   };
 
-  // Check partial search radio button on first page load
-  useEffect(() => {
-    if (!partialChecked.current) {
-      partialChecked.current = true;
+  // Prop for SearchRadio label to toggle radio selection
+  const updateFromLabel = (s: string): void => {
+    // Save search type from clicking on label
+    if (searchValue.searchType !== s) {
+      setSearchValue((prevValue) => ({
+        ...prevValue,
+        searchType: s,
+      }));
     }
+    // Toggle radio button checked
+    if (s === "partial" && !radioCheck.partial) {
+      setRadioCheck({
+        partial: true,
+        exact: false,
+      });
+    } else if (s === "exact" && !radioCheck.exact) {
+      setRadioCheck({
+        partial: false,
+        exact: true,
+      });
+    }
+  };
+
+  // Select partial search radio button on first page load
+  useEffect(() => {
+    setRadioCheck({
+      partial: true,
+      exact: false,
+    });
   }, []);
 
   return (
@@ -246,11 +276,22 @@ const SearchForm = (props: Props): JSX.Element => {
           <FontAwesomeIcon icon={faSearch} />
         </button>
       </div>
-      <SearchRadio
-        radioChange={radioChange}
-        partialChecked={partialChecked}
-        exactChecked={exactChecked}
-      />
+      <div className={styles.radiosContainer}>
+        <SearchRadio
+          radioChange={radioChange}
+          updateFromLabel={updateFromLabel}
+          partialChecked={radioCheck.partial}
+          exactChecked={radioCheck.exact}
+          type={"partial"}
+        />
+        <SearchRadio
+          radioChange={radioChange}
+          updateFromLabel={updateFromLabel}
+          partialChecked={radioCheck.partial}
+          exactChecked={radioCheck.exact}
+          type={"exact"}
+        />
+      </div>
     </form>
   );
 };

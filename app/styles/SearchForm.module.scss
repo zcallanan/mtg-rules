@@ -9,6 +9,13 @@
   z-index: 1000;
 }
 
+.radiosContainer {
+  width: 70%;
+  display: flex;
+  justify-content: left;
+  margin-left: 12px;
+}
+
 .searchField {
   display: flex;
   position: relative;

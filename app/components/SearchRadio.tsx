@@ -1,58 +1,64 @@
-import { MutableRefObject, ChangeEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import styles from "../styles/SearchType.module.scss";
+import styles from "../styles/SearchRadio.module.scss";
 
 interface Props {
   radioChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  partialChecked: MutableRefObject<boolean>;
-  exactChecked: MutableRefObject<boolean>;
+  updateFromLabel: (s: string) => void;
+  partialChecked: boolean;
+  exactChecked: boolean;
+  type: string;
 }
 
 const SearchRadio = (props: Props): JSX.Element => {
-  const { radioChange, partialChecked, exactChecked } = props;
+  const { radioChange, updateFromLabel, partialChecked, exactChecked, type } =
+    props;
+
+  const labelClicked = (e: MouseEvent<HTMLLabelElement>) => {
+    // Cast target for TypeScript
+    const target = e.target as HTMLLabelElement;
+
+    if (target.htmlFor === "partial") {
+      updateFromLabel(target.htmlFor);
+    } else if (target.htmlFor === "exact") {
+      updateFromLabel(target.htmlFor);
+    }
+  };
 
   return (
-    <div className={styles.radiosContainer}>
-      <div className={`${styles.partialRadioContainer} form-check`}>
-        <input
-          className="form-check-input"
-          type="radio"
-          name="inlineRadioOptions"
-          id={styles.partialRadio}
-          value="partial"
-          onChange={radioChange}
-          checked={partialChecked.current}
-        />
-        <label
-          className={`${styles.radioLabel} form-check-label`}
-          htmlFor="partialRadio"
-        >
-          Partial Match
-        </label>
-        <div title="partial info text" className={styles.radioIcon}>
-          <FontAwesomeIcon icon={faInfoCircle} />
-        </div>
-      </div>
-      <div className={`${styles.exactRadioContainer} form-check`}>
-        <input
-          className="form-check-input"
-          type="radio"
-          name="inlineRadioOptions"
-          id={styles.exactRadio}
-          value="exact"
-          onChange={radioChange}
-          checked={exactChecked.current}
-        />
-        <label
-          className={`${styles.radioLabel} form-check-label`}
-          htmlFor="exactRadio"
-        >
-          Exact Match
-        </label>
-        <div title="exact info text" className={styles.radioIcon}>
-          <FontAwesomeIcon icon={faInfoCircle} />
-        </div>
+    <div
+      className={`${
+        type === "partial"
+          ? styles.partialRadioContainer
+          : styles.exactRadioContainer
+      } form-check`}
+    >
+      <input
+        className="form-check-input"
+        type="radio"
+        name="inlineRadioOptions"
+        id={type === "partial" ? styles.partial : styles.exact}
+        value={type === "partial" ? "partial" : "exact"}
+        onChange={radioChange}
+        checked={type === "partial" ? partialChecked : exactChecked}
+      />
+      <label
+        className={`${styles.radioLabel} form-check-label`}
+        htmlFor={type === "partial" ? "partial" : "exact"}
+        onClick={labelClicked}
+      >
+        {type === "partial" ? "Partial Match" : "Exact Match"}
+      </label>
+      <div
+        title={
+          type === "partial"
+            ? "Case insensitive search that returns all occurrences of the searched term."
+            : "Case sensitive search that returns exact instances of the searched term."
+        }
+        className={styles.radioIcon}
+      >
+        <FontAwesomeIcon icon={faInfoCircle} />
       </div>
     </div>
   );
