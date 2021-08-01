@@ -246,11 +246,18 @@ const SearchForm = (props: Props): JSX.Element => {
           <FontAwesomeIcon icon={faSearch} />
         </button>
       </div>
-      <SearchRadio
-        radioChange={radioChange}
-        partialChecked={partialChecked}
-        exactChecked={exactChecked}
-      />
+      <div className={styles.radiosContainer}>
+        <SearchRadio
+          radioChange={radioChange}
+          partialChecked={partialChecked}
+          type={"partial"}
+        />
+        <SearchRadio
+          radioChange={radioChange}
+          exactChecked={exactChecked}
+          type={"exact"}
+        />
+      </div>
     </form>
   );
 };
