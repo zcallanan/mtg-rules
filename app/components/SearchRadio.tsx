@@ -36,9 +36,16 @@ const SearchRadio = (props: Props): JSX.Element => {
         className={`${styles.radioLabel} form-check-label`}
         htmlFor={type === "partial" ? "partialRadio" : "exactRadio"}
       >
-        Partial Match
+        {type === "partial" ? "Partial Match" : "Exact Match"}
       </label>
-      <div title="partial info text" className={styles.radioIcon}>
+      <div
+        title={
+          type === "partial"
+            ? "Case insensitive search that returns all occurrences of the searched term."
+            : "Case sensitive search that returns exact instances of the searched term."
+        }
+        className={styles.radioIcon}
+      >
         <FontAwesomeIcon icon={faInfoCircle} />
       </div>
     </div>
