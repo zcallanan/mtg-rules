@@ -1,17 +1,30 @@
-import { MutableRefObject, ChangeEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import styles from "../styles/SearchRadio.module.scss";
 
 interface Props {
   radioChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  partialChecked?: MutableRefObject<boolean>;
-  exactChecked?: MutableRefObject<boolean>;
+  updateFromLabel: (s: string) => void;
+  partialChecked: boolean;
+  exactChecked: boolean;
   type: string;
 }
 
 const SearchRadio = (props: Props): JSX.Element => {
-  const { radioChange, partialChecked, exactChecked, type } = props;
+  const { radioChange, updateFromLabel, partialChecked, exactChecked, type } =
+    props;
+
+  const labelClicked = (e: MouseEvent<HTMLLabelElement>) => {
+    // Cast target for TypeScript
+    const target = e.target as HTMLLabelElement;
+
+    if (target.htmlFor === "partial") {
+      updateFromLabel(target.htmlFor);
+    } else if (target.htmlFor === "exact") {
+      updateFromLabel(target.htmlFor);
+    }
+  };
 
   return (
     <div
@@ -25,16 +38,15 @@ const SearchRadio = (props: Props): JSX.Element => {
         className="form-check-input"
         type="radio"
         name="inlineRadioOptions"
-        id={type === "partial" ? styles.partialRadio : styles.exactRadio}
-        value="partial"
+        id={type === "partial" ? styles.partial : styles.exact}
+        value={type === "partial" ? "partial" : "exact"}
         onChange={radioChange}
-        checked={
-          type === "partial" ? partialChecked.current : exactChecked.current
-        }
+        checked={type === "partial" ? partialChecked : exactChecked}
       />
       <label
         className={`${styles.radioLabel} form-check-label`}
-        htmlFor={type === "partial" ? "partialRadio" : "exactRadio"}
+        htmlFor={type === "partial" ? "partial" : "exact"}
+        onClick={labelClicked}
       >
         {type === "partial" ? "Partial Match" : "Exact Match"}
       </label>
