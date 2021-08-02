@@ -393,22 +393,24 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       ) : (
         <div className={styles.bodyContainer}>
           <div className={styles.leftContainer} ref={leftViewportRef}>
-            <TocSections
-              searchResults={searchResults}
-              leftViewportRef={leftViewportRef}
-              sections={
-                searchResults.searchSections.length
-                  ? searchResults.searchSections
-                  : sections
-              }
-              chapters={
-                searchResults.searchChapters.length
-                  ? searchResults.searchChapters
-                  : chapters
-              }
-              onLinkClick={onLinkClick}
-              tocTitleRef={tocRefs}
-            />
+            {leftViewportRef && (
+              <TocSections
+                searchResults={searchResults}
+                leftViewportRef={leftViewportRef}
+                sections={
+                  searchResults.searchSections.length
+                    ? searchResults.searchSections
+                    : sections
+                }
+                chapters={
+                  searchResults.searchChapters.length
+                    ? searchResults.searchChapters
+                    : chapters
+                }
+                onLinkClick={onLinkClick}
+                tocTitleRef={tocRefs}
+              />
+            )}
           </div>
           <div className={styles.rightContainer}>
             <div className={styles.rightRelative}>

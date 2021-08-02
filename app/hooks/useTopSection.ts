@@ -1,9 +1,15 @@
-import { useEffect, useRef, useCallback, useState, RefObject } from "react";
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  useState,
+  MutableRefObject,
+} from "react";
 import { Section } from "../typing/types";
 
 const useTopSection = (
-  refArray: HTMLSpanElement[] = null,
-  root: RefObject<HTMLDivElement> | null = null,
+  spanArray: HTMLSpanElement[] = null,
+  root: MutableRefObject<HTMLDivElement>,
   sectionsInUse: Section[]
 ): number | void => {
   const observerRef = useRef<IntersectionObserver>(null);
@@ -11,7 +17,6 @@ const useTopSection = (
 
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
-      console.log(entry);
       setSectionNumber(
         Number(entry.target.innerText.match(/(?<=\b)(\d{1})(?=\.)/g)[0])
       );
@@ -35,12 +40,14 @@ const useTopSection = (
     }
 
     // Observe all section Divs
-    refArray.forEach((s) => {
-      if (s && sectionsInUse) {
-        observerRef.current.observe(s);
-      }
-    });
-  }, [refArray, sectionsInUse]);
+    if (spanArray && spanArray.length) {
+      spanArray.forEach((s) => {
+        if (s && sectionsInUse) {
+          observerRef.current.observe(s);
+        }
+      });
+    }
+  }, [spanArray, sectionsInUse]);
 
   // Cleanup
   useEffect(

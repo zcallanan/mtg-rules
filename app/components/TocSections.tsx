@@ -1,7 +1,6 @@
 import { useRef, MutableRefObject, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import TocChapterList from "./TocChapterList";
-import useTopSection from "../hooks/useTopSection";
+import TopSectionWrapper from "./TopSectionWrapper";
 import objectArrayComparison from "../utils/object-array-comparison";
 import { Section, Chapter, SearchResults } from "../typing/types";
 import styles from "../styles/TocSections.module.scss";
@@ -11,7 +10,7 @@ interface Props {
   chapters: Chapter[];
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   tocTitleRef: MutableRefObject<HTMLDivElement[]>;
-  leftViewport: MutableRefObject<HTMLDivElement>;
+  leftViewportRef: MutableRefObject<HTMLDivElement>;
   searchResults: SearchResults;
 }
 
@@ -21,17 +20,20 @@ const TocSections = (props: Props): JSX.Element => {
     chapters,
     onLinkClick,
     tocTitleRef,
-    leftViewport,
+    leftViewportRef,
     searchResults,
   } = props;
 
   // State
-  const [sectionsInUse, setSectionsInUse] = useState<Section[]>([]);
   const [scrolledToSection, setScrolledToSection] = useState<number>(0);
-  const [anchorValue, setAnchorValue] = useState<string>("");
 
   // Collect mutable refs in [] for useTopSection to iterate over and observe
   const sectionTextRefs = useRef<HTMLSpanElement[]>([]);
+
+  const [sectionsInUse, setSectionsInUse] = useState<Section[]>([]);
+
+  // Ref won't inform a child of update, so use state
+  const [spanArray, setSpanArray] = useState<HTMLSpanElement[]>(null);
 
   const localSearchResults = useRef<SearchResults>({
     searchTerm: "",
@@ -72,33 +74,12 @@ const TocSections = (props: Props): JSX.Element => {
     }
   }, [sectionsInUse]);
 
-  // Get path from useRouter
-  const path: string[] = useRouter().asPath.split("#");
-
-  // Save local value of anchorValue to determine toc section at load
+  // Save spanArray to state to pass to callback wrapper TopSectionWrapper
   useEffect(() => {
-    const [anchorChapter] = path[1].match(/\d{3}/);
-    if (anchorValue !== anchorChapter) {
-      setAnchorValue(anchorChapter);
+    if (spanArray !== sectionTextRefs.current) {
+      setSpanArray(sectionTextRefs.current);
     }
-  }, [anchorValue, path]);
-
-  // Latest section # from scrolling callback or from anchor value at load
-  const latestScrolledToSection =
-    useTopSection(sectionTextRefs.current, leftViewport, sectionsInUse) ||
-    anchorValue
-      ? Number(anchorValue.match(/(?<=\b)(\d{1})(?=\d)/)[0])
-      : undefined;
-
-  // Save the latest value from useTopSection to state
-  useEffect(() => {
-    if (
-      latestScrolledToSection &&
-      scrolledToSection !== latestScrolledToSection
-    ) {
-      setScrolledToSection(latestScrolledToSection);
-    }
-  }, [scrolledToSection, latestScrolledToSection]);
+  }, [spanArray]);
 
   // Position the topmost section as sticky within the leftContainer, so that it is visible on scroll
   useEffect(() => {
@@ -110,6 +91,15 @@ const TocSections = (props: Props): JSX.Element => {
 
   return (
     <div>
+      {leftViewportRef && (
+        <TopSectionWrapper
+          leftViewportRef={leftViewportRef}
+          spanArray={spanArray}
+          sectionsInUse={sectionsInUse}
+          scrolledToSection={scrolledToSection}
+          setScrolledToSection={setScrolledToSection}
+        />
+      )}
       {sections.map((section, i) => (
         <div key={`s${section.sectionNumber}`}>
           <span
