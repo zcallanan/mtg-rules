@@ -1,7 +1,18 @@
-.sectionText {
-  color: #FFFFFF !important;
-  background-color: #00468B !important;
+@import "./variables.scss";
+
+.tocSectionCard {
+  display: inline-block;
+  background: $toc-section;
+  background: $toc-section-gradient;
+  box-shadow: $toc-section-shadow;
+  color: $toc-font-color;
+  padding-left: 12px;
   padding-top: 8px;
   padding-bottom: 8px;
-  width: 200px;
+  width: 100%;
+  z-index: 9999;
 }
+
+// .tocSectionContainer {
+//   position: relative;
+// }

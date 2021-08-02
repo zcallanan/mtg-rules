@@ -10,7 +10,7 @@ import useTopSection from "../hooks/useTopSection";
 import { Section } from "../typing/types";
 
 interface Props {
-  spanArray: HTMLSpanElement[];
+  divArray: HTMLDivElement[];
   leftViewportRef: MutableRefObject<HTMLDivElement>;
   sectionsInUse: Section[];
   scrolledToSection: number;
@@ -19,7 +19,7 @@ interface Props {
 
 const TopSectionWrapper = (props: Props): JSX.Element => {
   const {
-    spanArray,
+    divArray,
     leftViewportRef,
     sectionsInUse,
     scrolledToSection,
@@ -42,7 +42,7 @@ const TopSectionWrapper = (props: Props): JSX.Element => {
 
   // Latest section # from scrolling callback or from anchor value at load
   const callbackValue: number | void = useTopSection(
-    spanArray,
+    divArray,
     leftViewportRef,
     sectionsInUse
   );

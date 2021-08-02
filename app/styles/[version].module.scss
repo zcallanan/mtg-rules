@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 .bodyContainer {
   display: flex;
   width: 100vw;
@@ -7,17 +9,19 @@
 }
 
 .leftContainer {
+  background-color: $sidebar;
   left: 0;
   position: fixed;
   overflow-y: scroll;
   height: 100vh;
-  width: 24%;
+  width: 25%;
+  background-color: $sidebar;
 }
 
 .rightContainer {
   position: absolute;
-  left: 24%;
-  width: 76%;
+  left: 25%;
+  width: 75%;
 }
 
 .rightRelative {
@@ -29,20 +33,20 @@
 
 .tabsContainer {
   position: fixed;
-  width: 76%;
+  width: 75%;
   top: 0;
 }
 
 .chapterTitleContainer {
   position: fixed;
-  width: 76%;
+  width: 75%;
   z-index: 1;
   top: 25%
 }
 
 .overviewContainer {
   position: fixed;
-  width: 76%;
+  width: 75%;
   z-index: 1;
   top: 20%
 }

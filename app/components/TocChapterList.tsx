@@ -9,20 +9,33 @@ interface Props {
   toc: number;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   tocTitleRef: MutableRefObject<HTMLDivElement[]>;
+  tocChapterListRefs: MutableRefObject<HTMLDivElement[]>;
 }
 
 const TocChapterList = (props: Props): JSX.Element => {
-  const { chapters, sectionNumber, toc, onLinkClick, tocTitleRef } = props;
+  const {
+    chapters,
+    sectionNumber,
+    toc,
+    onLinkClick,
+    tocTitleRef,
+    tocChapterListRefs,
+  } = props;
 
   const chapterSubset = chapters.filter(
     (chapter) => chapter.sectionNumber === sectionNumber
   );
 
   return (
-    <div className={styles.tocChapters}>
-      {chapterSubset.map((chapter, index) => (
-        <ul className={"list-group"} key={`titles-${index}`}>
+    <div
+      className={styles.tocChaptersContainer}
+      // eslint-disable-next-line no-return-assign
+      ref={(el) => (tocChapterListRefs.current[sectionNumber - 1] = el)}
+    >
+      <ul className={"list-group"}>
+        {chapterSubset.map((chapter, index) => (
           <ChapterTitle
+            key={`chapterTitle-${index}`}
             chapter={chapter}
             toc={toc}
             onLinkClick={onLinkClick}
@@ -31,8 +44,8 @@ const TocChapterList = (props: Props): JSX.Element => {
               (ch) => ch.chapterNumber === chapter.chapterNumber
             )}
           />
-        </ul>
-      ))}
+        ))}
+      </ul>
     </div>
   );
 };

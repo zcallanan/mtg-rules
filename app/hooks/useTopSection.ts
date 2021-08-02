@@ -8,7 +8,7 @@ import {
 import { Section } from "../typing/types";
 
 const useTopSection = (
-  spanArray: HTMLSpanElement[] = null,
+  divArray: HTMLDivElement[] = null,
   root: MutableRefObject<HTMLDivElement>,
   sectionsInUse: Section[]
 ): number | void => {
@@ -18,7 +18,7 @@ const useTopSection = (
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
       setSectionNumber(
-        Number(entry.target.innerText.match(/(?<=\b)(\d{1})(?=\.)/g)[0])
+        Number(entry.target.innerText.match(/(?<=\b)(\d{1})(?=\d)/g)[0])
       );
     }
   }, []);
@@ -40,14 +40,14 @@ const useTopSection = (
     }
 
     // Observe all section Divs
-    if (spanArray && spanArray.length) {
-      spanArray.forEach((s) => {
+    if (divArray && divArray.length) {
+      divArray.forEach((s) => {
         if (s && sectionsInUse) {
           observerRef.current.observe(s);
         }
       });
     }
-  }, [spanArray, sectionsInUse]);
+  }, [divArray, sectionsInUse]);
 
   // Cleanup
   useEffect(

@@ -70,8 +70,11 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       {toc ? (
-        // eslint-disable-next-line no-return-assign
-        <div ref={(el) => (tocTitleRef.current[i] = el)}>
+        <div
+          className={styles.tocChapterCard}
+          // eslint-disable-next-line no-return-assign
+          ref={(el) => (tocTitleRef.current[i] = el)}
+        >
           <li
             key={`${key}${chapterObj.chapterNumber}`}
             className={styles.chapterList}
@@ -83,7 +86,7 @@ const ChapterTitle = (props: Props): JSX.Element => {
             >
               <a>
                 <span
-                  className={styles.chapterNum}
+                  className={styles.chapterNumToc}
                   onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >
                   {chapterObj.chapterNumber}.

@@ -28,12 +28,13 @@ const TocSections = (props: Props): JSX.Element => {
   const [scrolledToSection, setScrolledToSection] = useState<number>(0);
 
   // Collect mutable refs in [] for useTopSection to iterate over and observe
-  const sectionTextRefs = useRef<HTMLSpanElement[]>([]);
+  const sectionCardRefs = useRef<HTMLSpanElement[]>([]);
+  const tocChapterListRefs = useRef<HTMLDivElement[]>([]);
 
   const [sectionsInUse, setSectionsInUse] = useState<Section[]>([]);
 
   // Ref won't inform a child of update, so use state
-  const [spanArray, setSpanArray] = useState<HTMLSpanElement[]>(null);
+  const [divArray, setDivArray] = useState<HTMLDivElement[]>(null);
 
   const localSearchResults = useRef<SearchResults>({
     searchTerm: "",
@@ -67,25 +68,27 @@ const TocSections = (props: Props): JSX.Element => {
   // Adjust the size of sectionTextRef to trigger observation of rules by useTopSections
   useEffect(() => {
     if (sectionsInUse.length) {
-      sectionTextRefs.current = sectionTextRefs.current.slice(
+      sectionCardRefs.current = sectionCardRefs.current.slice(
         0,
         sectionsInUse.length
       );
     }
   }, [sectionsInUse]);
 
-  // Save spanArray to state to pass to callback wrapper TopSectionWrapper
+  // Save divArray to state to pass to callback wrapper TopSectionWrapper
   useEffect(() => {
-    if (spanArray !== sectionTextRefs.current) {
-      setSpanArray(sectionTextRefs.current);
+    if (divArray !== tocChapterListRefs.current) {
+      setDivArray(tocChapterListRefs.current);
     }
-  }, [spanArray]);
+  }, [divArray]);
 
   // Position the topmost section as sticky within the leftContainer, so that it is visible on scroll
   useEffect(() => {
     if (scrolledToSection) {
-      sectionTextRefs.current[scrolledToSection - 1].style.position = "sticky";
-      sectionTextRefs.current[scrolledToSection - 1].style.top = "0";
+      const n = scrolledToSection - 1;
+      const arr = sectionCardRefs.current;
+      arr[n].style.position = "sticky";
+      arr[n].style.top = "0";
     }
   }, [scrolledToSection]);
 
@@ -94,20 +97,23 @@ const TocSections = (props: Props): JSX.Element => {
       {leftViewportRef && (
         <TopSectionWrapper
           leftViewportRef={leftViewportRef}
-          spanArray={spanArray}
+          divArray={divArray}
           sectionsInUse={sectionsInUse}
           scrolledToSection={scrolledToSection}
           setScrolledToSection={setScrolledToSection}
         />
       )}
       {sections.map((section, i) => (
-        <div key={`s${section.sectionNumber}`}>
+        <div
+          className={styles.tocSectionContainer}
+          key={`s${section.sectionNumber}`}
+        >
           <span
-            className={styles.sectionText}
+            className={styles.tocSectionCard}
             // eslint-disable-next-line no-return-assign
-            ref={(el) => (sectionTextRefs.current[i] = el)}
+            ref={(el) => (sectionCardRefs.current[i] = el)}
           >
-            {section.sectionNumber}. &nbsp; {section.text}
+            {`${section.sectionNumber}. ${section.text}`}
           </span>
           <TocChapterList
             sectionNumber={section.sectionNumber}
@@ -115,6 +121,7 @@ const TocSections = (props: Props): JSX.Element => {
             toc={1}
             onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
+            tocChapterListRefs={tocChapterListRefs}
           />
         </div>
       ))}
