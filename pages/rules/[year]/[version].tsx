@@ -187,8 +187,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterValues.anchorValue]);
 
-  // SectionList viewport ref
-  const rootRef = useRef<HTMLDivElement>();
+  // Root refs
+  const rightViewport = useRef<HTMLDivElement>();
+  const leftViewport = useRef<HTMLDivElement>();
 
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
@@ -373,9 +374,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           searchData={searchData}
         />
       )}
-      {rootRef && (
+      {rightViewport && (
         <TopRuleWrapper
-          rootRef={rootRef}
+          rootRef={rightViewport}
           topRuleProp={topRuleProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
@@ -391,8 +392,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         </div>
       ) : (
         <div className={styles.bodyContainer}>
-          <div className={styles.leftContainer}>
+          <div className={styles.leftContainer} ref={leftViewport}>
             <TocSections
+              leftViewport={leftViewport}
               sections={
                 searchResults.searchSections.length
                   ? searchResults.searchSections
@@ -471,7 +473,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                         : subrules
                     }
                     elRef={rulesRef}
-                    root={rootRef}
+                    root={rightViewport}
                     onLinkClick={onLinkClick}
                     searchResults={searchResults}
                   />
