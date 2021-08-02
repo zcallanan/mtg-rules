@@ -1,5 +1,5 @@
 #input {
-  width: 95.5%;
+  width: 95%;
 }
 
 #timesCircle {
@@ -10,7 +10,7 @@
 }
 
 .radiosContainer {
-  width: 70%;
+  width: 100%;
   display: flex;
   justify-content: left;
   margin-left: 12px;
@@ -19,12 +19,12 @@
 .searchField {
   display: flex;
   position: relative;
-  width: 90%;
+  width: 88%;
   z-index: 0;
 }
 
 .inputContainer {
   margin-top: 16px;
   display: flex;
-  width: 70%;
+  width: 84%;
 }

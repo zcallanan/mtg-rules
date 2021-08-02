@@ -11,6 +11,7 @@ import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
 import NoSearchResults from "../../../app/components/NoSearchResults";
+import Overview from "../../../app/components/Overview";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
   ChapterValues,
@@ -186,8 +187,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterValues.anchorValue]);
 
-  // SectionList viewport ref
-  const rootRef = useRef<HTMLDivElement>();
+  // Root refs
+  const rightViewportRef = useRef<HTMLDivElement>();
+  const leftViewportRef = useRef<HTMLDivElement>();
 
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
@@ -372,9 +374,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           searchData={searchData}
         />
       )}
-      {rootRef && (
+      {rightViewportRef && (
         <TopRuleWrapper
-          rootRef={rootRef}
+          rootRef={rightViewportRef}
           topRuleProp={topRuleProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
@@ -390,21 +392,25 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         </div>
       ) : (
         <div className={styles.bodyContainer}>
-          <div className={styles.leftContainer}>
-            <TocSections
-              sections={
-                searchResults.searchSections.length
-                  ? searchResults.searchSections
-                  : sections
-              }
-              chapters={
-                searchResults.searchChapters.length
-                  ? searchResults.searchChapters
-                  : chapters
-              }
-              onLinkClick={onLinkClick}
-              tocTitleRef={tocRefs}
-            />
+          <div className={styles.leftContainer} ref={leftViewportRef}>
+            {leftViewportRef && (
+              <TocSections
+                searchResults={searchResults}
+                leftViewportRef={leftViewportRef}
+                sections={
+                  searchResults.searchSections.length
+                    ? searchResults.searchSections
+                    : sections
+                }
+                chapters={
+                  searchResults.searchChapters.length
+                    ? searchResults.searchChapters
+                    : chapters
+                }
+                onLinkClick={onLinkClick}
+                tocTitleRef={tocRefs}
+              />
+            )}
           </div>
           <div className={styles.rightContainer}>
             <div className={styles.rightRelative}>
@@ -428,6 +434,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                   </Tab>
                 </Tabs>
               </div>
+              <div className={styles.overviewContainer}>
+                <Overview
+                  nodes={nodes}
+                  searchData={searchData}
+                  searchResults={searchResults}
+                  effectiveDate={effectiveDate}
+                />
+              </div>
               <div className={styles.chapterTitleContainer}>
                 {searchData.searchTerm &&
                 !searchResults.searchResult &&
@@ -440,7 +454,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                         chapter.chapterNumber === chapterValues.chapterNumber
                     )}
                     toc={0}
-                    effectiveDate={effectiveDate}
                     sections={sections}
                   />
                 )}
@@ -465,7 +478,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                         : subrules
                     }
                     elRef={rulesRef}
-                    root={rootRef}
+                    root={rightViewportRef}
                     onLinkClick={onLinkClick}
                     searchResults={searchResults}
                   />
