@@ -1,4 +1,5 @@
 import { useRef, MutableRefObject, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import TocChapterList from "./TocChapterList";
 import useTopSection from "../hooks/useTopSection";
 import objectArrayComparison from "../utils/object-array-comparison";
@@ -24,8 +25,10 @@ const TocSections = (props: Props): JSX.Element => {
     searchResults,
   } = props;
 
+  // State
   const [sectionsInUse, setSectionsInUse] = useState<Section[]>([]);
   const [scrolledToSection, setScrolledToSection] = useState<number>(0);
+  const [anchorValue, setAnchorValue] = useState<string>("");
 
   // Collect mutable refs in [] for useTopSection to iterate over and observe
   const sectionTextRefs = useRef<HTMLSpanElement[]>([]);
@@ -69,11 +72,23 @@ const TocSections = (props: Props): JSX.Element => {
     }
   }, [sectionsInUse]);
 
-  const latestScrolledToSection = useTopSection(
-    sectionTextRefs.current,
-    leftViewport,
-    sectionsInUse
-  );
+  // Get path from useRouter
+  const path: string[] = useRouter().asPath.split("#");
+
+  // Save local value of anchorValue to determine toc section at load
+  useEffect(() => {
+    const [anchorChapter] = path[1].match(/\d{3}/);
+    if (anchorValue !== anchorChapter) {
+      setAnchorValue(anchorChapter);
+    }
+  }, [anchorValue, path]);
+
+  // Latest section # from scrolling callback or from anchor value at load
+  const latestScrolledToSection =
+    useTopSection(sectionTextRefs.current, leftViewport, sectionsInUse) ||
+    anchorValue
+      ? Number(anchorValue.match(/(?<=\b)(\d{1})(?=\d)/)[0])
+      : undefined;
 
   // Save the latest value from useTopSection to state
   useEffect(() => {

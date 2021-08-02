@@ -16,8 +16,7 @@ interface Props {
 }
 
 const ChapterTitle = (props: Props): JSX.Element => {
-  const { chapter, i, toc, onLinkClick, tocTitleRef, effectiveDate, sections } =
-    props;
+  const { chapter, i, toc, onLinkClick, tocTitleRef, sections } = props;
 
   const key = toc ? "toc" : "chapter";
 
@@ -55,17 +54,12 @@ const ChapterTitle = (props: Props): JSX.Element => {
           {
             <div className={styles.chapterText}>
               <span key={`${key}${chapterObj.chapterNumber}`}>
-                {chapterObj.chapterNumber}. &nbsp; {chapterObj.text}
+                <h4>{`${chapterObj.chapterNumber}. ${chapterObj.text}`}</h4>
               </span>
-              <span className={styles.effectiveDate}>
-                Effective: &nbsp; {effectiveDate}
+              <span className={styles.sectionSpan}>
+                <h6>{` •  ${chapterObj.sectionNumber}. ${sectionObj.text}`}</h6>
               </span>
             </div>
-          }
-          {
-            <span className={styles.sectionSpan}>
-              • &nbsp; {chapterObj.sectionNumber}. &nbsp; {sectionObj.text}
-            </span>
           }
         </div>
       )}

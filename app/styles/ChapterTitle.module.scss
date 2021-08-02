@@ -2,8 +2,7 @@
   font-size: 20px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: 70%;
+  width: 100%;
 }
 
 .chapterNum {
@@ -35,12 +34,10 @@
   height: 100%;
 }
 
-.effectiveDate {
-  margin-right: 36px;
-}
-
 .sectionSpan {
-  margin-left: 8px;
+  margin-left: 10px;
   font-size: 14px;
   color: grey;
+  display: flex;
+  align-items: center;
 }

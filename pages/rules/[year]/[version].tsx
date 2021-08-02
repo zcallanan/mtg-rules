@@ -188,8 +188,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   }, [chapterValues.anchorValue]);
 
   // Root refs
-  const rightViewport = useRef<HTMLDivElement>();
-  const leftViewport = useRef<HTMLDivElement>();
+  const rightViewportRef = useRef<HTMLDivElement>();
+  const leftViewportRef = useRef<HTMLDivElement>();
 
   /*
     When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
@@ -374,9 +374,9 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           searchData={searchData}
         />
       )}
-      {rightViewport && (
+      {rightViewportRef && (
         <TopRuleWrapper
-          rootRef={rightViewport}
+          rootRef={rightViewportRef}
           topRuleProp={topRuleProp}
           rulesRef={rulesRef}
           init={chapterValues.init}
@@ -392,9 +392,10 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         </div>
       ) : (
         <div className={styles.bodyContainer}>
-          <div className={styles.leftContainer} ref={leftViewport}>
+          <div className={styles.leftContainer} ref={leftViewportRef}>
             <TocSections
-              leftViewport={leftViewport}
+              searchResults={searchResults}
+              leftViewportRef={leftViewportRef}
               sections={
                 searchResults.searchSections.length
                   ? searchResults.searchSections
@@ -431,11 +432,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                   </Tab>
                 </Tabs>
               </div>
-              <Overview
-                nodes={nodes}
-                searchData={searchData}
-                searchResults={searchResults}
-              />
+              <div className={styles.overviewContainer}>
+                <Overview
+                  nodes={nodes}
+                  searchData={searchData}
+                  searchResults={searchResults}
+                  effectiveDate={effectiveDate}
+                />
+              </div>
               <div className={styles.chapterTitleContainer}>
                 {searchData.searchTerm &&
                 !searchResults.searchResult &&
@@ -448,7 +452,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                         chapter.chapterNumber === chapterValues.chapterNumber
                     )}
                     toc={0}
-                    effectiveDate={effectiveDate}
                     sections={sections}
                   />
                 )}
@@ -473,7 +476,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                         : subrules
                     }
                     elRef={rulesRef}
-                    root={rightViewport}
+                    root={rightViewportRef}
                     onLinkClick={onLinkClick}
                     searchResults={searchResults}
                   />
