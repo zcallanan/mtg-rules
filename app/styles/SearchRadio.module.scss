@@ -3,7 +3,12 @@
   margin-left: 12px;
 }
   
-
+.radioIcon {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  opacity: 60%;
+}
   
 .partialRadioContainer {
   display: flex;

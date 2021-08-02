@@ -11,6 +11,7 @@ import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
 import NoSearchResults from "../../../app/components/NoSearchResults";
+import Overview from "../../../app/components/Overview";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
   ChapterValues,
@@ -428,6 +429,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
                   </Tab>
                 </Tabs>
               </div>
+              <Overview
+                nodes={nodes}
+                searchData={searchData}
+                searchResults={searchResults}
+              />
               <div className={styles.chapterTitleContainer}>
                 {searchData.searchTerm &&
                 !searchResults.searchResult &&
