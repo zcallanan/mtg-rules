@@ -31,17 +31,11 @@
 }
 
 .tabsContainer {
-//   background: $main-dark;
   position: fixed;
   width: 75%;
   top: 0;
+  margin-top: 38px;
 }
-
-a.nav-item.nav-link.active {
-  background-color: yellow !important;
-}
-
-
 
 .chapterTitleContainer {
   background: $main-mid;

@@ -1,8 +1,13 @@
 @import "./variables.scss";
 @import "./mixins.scss";
 
-#input {
+#searchInput {
+  color: $color0;
+  background-color: $color8;
   width: 95%;
+  &:focus {
+    box-shadow: none;
+  }
 }
 
 #cancelFormButton {
@@ -17,7 +22,7 @@
   width: 100%;
   display: flex;
   justify-content: left;
-  margin-left: 12px;
+  margin-left: 12%;
 }
 
 #searchFormButton {
@@ -33,7 +38,7 @@
 }
 
 .inputContainer {
-  margin-top: 16px;
   display: flex;
   width: 84%;
+  margin-left: 10%;
 }

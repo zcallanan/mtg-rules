@@ -29,7 +29,7 @@ const TocSections = (props: Props): JSX.Element => {
 
   // Collect mutable refs in [] for useTopSection to iterate over and observe
   const sectionCardRefs = useRef<HTMLSpanElement[]>([]);
-  const tocChapterListRefs = useRef<HTMLDivElement[]>([]);
+  const tocSectionListRefs = useRef<HTMLDivElement[]>([]);
 
   const [sectionsInUse, setSectionsInUse] = useState<Section[]>([]);
 
@@ -77,8 +77,8 @@ const TocSections = (props: Props): JSX.Element => {
 
   // Save divArray to state to pass to callback wrapper TopSectionWrapper
   useEffect(() => {
-    if (divArray !== tocChapterListRefs.current) {
-      setDivArray(tocChapterListRefs.current);
+    if (divArray !== tocSectionListRefs.current) {
+      setDivArray(tocSectionListRefs.current);
     }
   }, [divArray]);
 
@@ -105,6 +105,8 @@ const TocSections = (props: Props): JSX.Element => {
       )}
       {sections.map((section, i) => (
         <div
+          // eslint-disable-next-line no-return-assign
+          ref={(el) => (tocSectionListRefs.current[i] = el)}
           className={styles.tocSectionContainer}
           key={`s${section.sectionNumber}`}
         >
@@ -121,7 +123,6 @@ const TocSections = (props: Props): JSX.Element => {
             toc={1}
             onLinkClick={onLinkClick}
             tocTitleRef={tocTitleRef}
-            tocChapterListRefs={tocChapterListRefs}
           />
         </div>
       ))}

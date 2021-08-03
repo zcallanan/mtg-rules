@@ -258,7 +258,7 @@ const SearchForm = (props: Props): JSX.Element => {
           <input
             ref={input}
             onChange={handleChange}
-            id={styles.input}
+            id={styles.searchInput}
             type="text"
             className="form-control"
           />

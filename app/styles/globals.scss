@@ -22,10 +22,14 @@ h4, h5, h6 {
   box-sizing: border-box;
 }
 
-a.nav-item.nav-link {
+nav {
+  margin-left: 10%;
+}
+
+a.nav-link {
   color: $color8;
   border-color: $color7;
-  &:active {
+  &.active {
     background-color: $color8 !important;
     color: $color0 !important;
     border-color: $color7;

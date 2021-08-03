@@ -1,17 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
-import { Spinner, Tabs, Tab } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import parseNodes from "../../../app/utils/parse-nodes";
 import TocSections from "../../../app/components/TocSections";
 import SectionList from "../../../app/components/SectionList";
 import ChapterTitle from "../../../app/components/ChapterTitle";
-import RulesetForm from "../../../app/components/RulesetForm";
-import SearchForm from "../../../app/components/SearchForm";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
 import NoSearchResults from "../../../app/components/NoSearchResults";
 import Overview from "../../../app/components/Overview";
+import TabContent from "../../../app/components/TabContent";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
   ChapterValues,
@@ -415,24 +414,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           <div className={styles.rightContainer}>
             <div className={styles.rightRelative}>
               <div className={styles.tabsContainer}>
-                <Tabs defaultActiveKey="search">
-                  <Tab eventKey="search" title="Search Ruleset">
-                    <div>
-                      <SearchForm
-                        setSearchData={setSearchData}
-                        setSearchResults={setSearchResults}
-                        searchedTerm={searchResults.searchTerm}
-                        sections={sections}
-                        chapters={chapters}
-                        rules={rules}
-                        subrules={subrules}
-                      />
-                    </div>
-                  </Tab>
-                  <Tab eventKey="ruleset" title="Load Another Ruleset">
-                    <RulesetForm smallText="Change and submit a link to view a different ruleset." />
-                  </Tab>
-                </Tabs>
+                <TabContent
+                  searchResults={searchResults}
+                  sections={sections}
+                  chapters={chapters}
+                  rules={rules}
+                  subrules={subrules}
+                  setSearchData={setSearchData}
+                  setSearchResults={setSearchResults}
+                />
               </div>
               <div className={styles.overviewContainer}>
                 <Overview
