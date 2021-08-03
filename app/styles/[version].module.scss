@@ -20,7 +20,7 @@
 .rightContainer {
   position: absolute;
   left: 25%;
-  width: 75%;
+  width: 74%;
 }
 
 .rightRelative {
@@ -32,7 +32,7 @@
 
 .tabsContainer {
   position: fixed;
-  width: 75%;
+  width: 74%;
   top: 0;
   margin-top: 30px;
 }
@@ -40,25 +40,27 @@
 .chapterTitleContainer {
   background: $color5;
   position: fixed;
-  width: 75%;
+  width: 74%;
   z-index: 1;
-  top: 27%;
-  height: 5%;
+  top: 28%;
+  height: 6%;
+  border: $color2 solid .25rem;
 }
 
 .overviewContainer {
   background: $color4;
   position: fixed;
-  width: 75%;
-  height: 5%;
+  width: 74%;
+  height: 6%;
   z-index: 1;
-  top: 22%;
+  top: 23%;
+  border: $color2 solid .25rem;
 }
 
 .rulesContainer {
   position: absolute;
   width: 100%;
-  height: 68vh;
+  height: 67vh;
   overflow: hidden;
   z-index: 0;
   top: 230px;

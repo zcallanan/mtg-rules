@@ -72,7 +72,7 @@ const SearchRadio = (props: Props): JSX.Element => {
           <Tooltip id={styles.radioTooltip}>
             {type === "partial"
               ? "Case insensitive search that returns all occurrences of the searched term."
-              : "Case sensitive search that returns exact instances of the searched term."}
+              : "Case sensitive search that returns only exact instances of the searched term."}
           </Tooltip>
         }
       >

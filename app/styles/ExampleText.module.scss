@@ -1,3 +1,16 @@
-// .example {
+@import "./variables.scss";
+
+.ruleExampleContainer {
+  border: $color3 groove .5rem;
+  font-size: 16px;
+}
+
+.exampleRuleItem {
+  background-color: $color7;
+  opacity: .9;
+  color: $color0;
+}
+
+// .subruleExampleContainer {
 
 // }

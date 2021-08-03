@@ -42,7 +42,7 @@ const RuleList = (props: Props): JSX.Element => {
       {ruleSubset.map((rule, index) => (
         <div
           key={`ruleListDiv-${index}`}
-          className={styles.ruleDiv}
+          className={styles.ruleContainer}
           // eslint-disable-next-line no-return-assign
           ref={(el) =>
             (elRef.current[
@@ -57,7 +57,7 @@ const RuleList = (props: Props): JSX.Element => {
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
               key={`r${rule.ruleNumber}`}
-              className={`${styles.ruleText} list-group-item`}
+              className={`${styles.ruleListItem} list-group-item`}
             >
               <div>
                 <span>

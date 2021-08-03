@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
 import modifySearchRules from "../utils/modify-search-rules";
@@ -30,14 +31,26 @@ const ExampleText = (props: Props): JSX.Element => {
     : router.query.version;
   const routerValues: RouterValues = { year, version };
 
+  const containerDiv = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (rule && exampleText.length && containerDiv.current) {
+      containerDiv.current.classList.add(styles.ruleExampleContainer);
+    } else if (subrule && exampleText.length && containerDiv.current) {
+      containerDiv.current.classList.add(styles.subruleExampleContainer);
+    }
+  }, [exampleText.length, rule, subrule]);
+
   return (
-    <div>
+    <div ref={containerDiv}>
       {exampleText.map(
         (example, index) =>
           data.example && (
             <li
               key={rule ? `rule-e${index}` : `subrule-e${index}`}
-              className={`${styles.example} list-group-item`}
+              className={`${
+                rule ? styles.exampleRuleItem : styles.exampleSubruleItem
+              } list-group-item`}
             >
               {!searchResults.searchTerm
                 ? parseLink(
