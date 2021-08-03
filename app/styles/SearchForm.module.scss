@@ -1,8 +1,12 @@
+@import "./variables.scss";
+@import "./mixins.scss";
+
 #input {
   width: 95%;
 }
 
-#timesCircle {
+#cancelFormButton {
+  @include button;
   position: absolute;
   right: 0%;
   top: 0%;
@@ -14,6 +18,11 @@
   display: flex;
   justify-content: left;
   margin-left: 12px;
+}
+
+#searchFormButton {
+  width: 7%;
+  @include button;
 }
 
 .searchField {

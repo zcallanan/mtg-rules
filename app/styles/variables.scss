@@ -1,9 +1,31 @@
+// Base colors
+$color0: #03045e;
+$color1: #023e8a;
+$color2: #0077b6;
+$color3: #0096c7;
+$color4: #00b4d8;
+$color5: #48cae4;
+$color6: #90e0ef;
+$color7: #ade8f4;
+$color8: #caf0f8;
+
 // Toc
-$sidebar: #00b4d8;
-$toc-font-color: #caf0f8;
-$toc-section: #023e8a;
+$toc-font-color: $color8;
+$toc-section: $color1;
 $toc-section-shadow: inset 1px 0px 18px 7px rgba(3,4,94,0.57);
 $toc-section-gradient: linear-gradient(135deg, rgba(3,4,94,1) 0%, rgba(2,62,138,1) 50%, rgba(3,4,94,1) 100%);
-$toc-chapter: #0077b6;
+$main-dark: $color2;
+$main-mid: $color4;
+$main-light: $color7;
 $toc-chapter-shadow: inset 1px 1px 13px 17px rgba(2,62,138,0.5);
+$toc-chapter-hover: $color6;
+$toc-chapter-color-hover: $color0;
+
+// Tabs
+
+// Overview
+
+// Title
+
+// Rules
 

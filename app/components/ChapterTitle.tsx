@@ -70,21 +70,21 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       {toc ? (
-        <div
-          className={styles.tocChapterCard}
-          // eslint-disable-next-line no-return-assign
-          ref={(el) => (tocTitleRef.current[i] = el)}
+        <Link
+          href={"/rules/[year]/[version]"}
+          as={`${router.asPath.split("#")[0]}#${chapterObj.chapterNumber}`}
+          scroll={false}
         >
-          <li
-            key={`${key}${chapterObj.chapterNumber}`}
-            className={styles.chapterList}
-          >
-            <Link
-              href={"/rules/[year]/[version]"}
-              as={`${router.asPath.split("#")[0]}#${chapterObj.chapterNumber}`}
-              scroll={false}
+          <a>
+            <div
+              className={styles.tocChapterCard}
+              // eslint-disable-next-line no-return-assign
+              ref={(el) => (tocTitleRef.current[i] = el)}
             >
-              <a>
+              <li
+                key={`${key}${chapterObj.chapterNumber}`}
+                className={styles.chapterList}
+              >
                 <span
                   className={styles.chapterNumToc}
                   onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
@@ -97,10 +97,10 @@ const ChapterTitle = (props: Props): JSX.Element => {
                 >
                   {chapterObj.text}
                 </span>
-              </a>
-            </Link>
-          </li>
-        </div>
+              </li>
+            </div>
+          </a>
+        </Link>
       ) : (
         handleZeroChapter(chapterObj.chapterNumber)
       )}

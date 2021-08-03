@@ -1,12 +1,11 @@
-// .helpText {
-
-// }
+@import "./mixins.scss";
 
 #input {
   width: 70%;
 }
 
-#button {
+#rulesetFormButton {
+  @include button;
   width: 10%;
 }
 

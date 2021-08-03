@@ -59,26 +59,32 @@ const RuleList = (props: Props): JSX.Element => {
               key={`r${rule.ruleNumber}`}
               className={`${styles.ruleText} list-group-item`}
             >
-              {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
-              {!searchResults.searchTerm
-                ? parseLink({
-                    routerValues,
-                    onLinkClick,
-                    rule,
-                    searchResults,
-                    allChaptersN,
-                  })
-                : modifySearchRules({
-                    searchResults,
-                    rule,
-                    toModify: parseLink({
-                      routerValues,
-                      onLinkClick,
-                      rule,
-                      searchResults,
-                      allChaptersN,
-                    }),
-                  })}
+              <div>
+                <span>
+                  <strong>{`${rule.chapterNumber}.${rule.ruleNumber}`}</strong>
+                </span>
+                <span>{` • ${
+                  !searchResults.searchTerm
+                    ? parseLink({
+                        routerValues,
+                        onLinkClick,
+                        rule,
+                        searchResults,
+                        allChaptersN,
+                      })
+                    : modifySearchRules({
+                        searchResults,
+                        rule,
+                        toModify: parseLink({
+                          routerValues,
+                          onLinkClick,
+                          rule,
+                          searchResults,
+                          allChaptersN,
+                        }),
+                      })
+                }`}</span>
+              </div>
             </li>
           </section>
           <ExampleText

@@ -122,7 +122,11 @@ const RulesetForm = (props: Props): JSX.Element => {
           className="form-control"
           required
         />
-        <button className="btn btn-primary" id={styles.button} type="submit">
+        <button
+          className="btn btn-primary"
+          id={styles.rulesetFormButton}
+          type="submit"
+        >
           Get Rules
         </button>
       </div>

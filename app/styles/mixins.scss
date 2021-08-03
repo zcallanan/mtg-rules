@@ -1,0 +1,14 @@
+@import "./variables.scss";
+
+@mixin button() {
+  background-color: $color0;
+  border-color: $color1;
+  color: $color8;
+  &:hover {
+    background-color: $color1;
+    border-color: $color2;
+  }
+  &:active {
+    background-color: $color2;
+  }
+}

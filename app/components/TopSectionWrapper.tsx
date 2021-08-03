@@ -34,9 +34,11 @@ const TopSectionWrapper = (props: Props): JSX.Element => {
 
   // Save local value of anchorValue to determine toc section at load
   useEffect(() => {
-    const [anchorChapter] = path[1].match(/\d{3}/);
-    if (anchorValue !== anchorChapter) {
-      setAnchorValue(anchorChapter);
+    if (path && path.length > 1) {
+      const [anchorChapter] = path[1].match(/\d{3}/);
+      if (anchorValue !== anchorChapter) {
+        setAnchorValue(anchorChapter);
+      }
     }
   }, [anchorValue, path]);
 
