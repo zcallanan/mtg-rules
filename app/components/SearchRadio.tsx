@@ -35,6 +35,7 @@ const SearchRadio = (props: Props): JSX.Element => {
     const child2 = d.children[1] as HTMLDivElement;
     // Add styling to tooltip
     child1.style.borderTopColor = "#03045e";
+    child2.style.opacity = "1";
     child2.style.backgroundColor = "#03045e";
   };
 

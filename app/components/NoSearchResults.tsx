@@ -1,3 +1,5 @@
+import styles from "../styles/NoSearchResults.module.scss";
+
 interface Props {
   title: number;
 }
@@ -8,11 +10,17 @@ const NoSearchResults = (props: Props): JSX.Element => {
   return (
     <div>
       {title ? (
-        <span>No Search Results</span>
+        <div className={styles.noTitleContainer}>
+          <span className={styles.noTitle}>No Search Results!</span>
+        </div>
       ) : (
-        <span>
-          There was nothing to display. Please search for another term!
-        </span>
+        <div className={styles.noRulesContainer}>
+          <span className={styles.noRules}>
+            <span>
+              There was nothing to display. Please search for another term!
+            </span>
+          </span>
+        </div>
       )}
     </div>
   );

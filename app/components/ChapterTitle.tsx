@@ -52,12 +52,15 @@ const ChapterTitle = (props: Props): JSX.Element => {
       ) : (
         <div>
           {
-            <div className={styles.chapterText}>
-              <span key={`${key}${chapterObj.chapterNumber}`}>
-                <h4>{`${chapterObj.chapterNumber}. ${chapterObj.text}`}</h4>
+            <div className={styles.ruleChapterContainer}>
+              <span
+                className={styles.ruleChapterText}
+                key={`${key}${chapterObj.chapterNumber}`}
+              >
+                {`${chapterObj.chapterNumber}. ${chapterObj.text}`}
               </span>
-              <span className={styles.sectionSpan}>
-                <h6>{` •  ${chapterObj.sectionNumber}. ${sectionObj.text}`}</h6>
+              <span className={styles.ruleSectionText}>
+                {` •  ${chapterObj.sectionNumber}. ${sectionObj.text}`}
               </span>
             </div>
           }

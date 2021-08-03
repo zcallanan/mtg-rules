@@ -117,7 +117,7 @@ const RulesetForm = (props: Props): JSX.Element => {
           ref={input}
           onChange={handleChange}
           value={url}
-          id={styles.input}
+          id={styles.rulesetInput}
           type="text"
           className="form-control"
           required

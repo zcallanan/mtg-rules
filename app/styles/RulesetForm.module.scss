@@ -1,7 +1,10 @@
+@import "./variables.scss";
 @import "./mixins.scss";
 
-#input {
+#rulesetInput {
   width: 70%;
+  color: $color0;
+  background-color: $color8;
 }
 
 #rulesetFormButton {
