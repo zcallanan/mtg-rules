@@ -23,6 +23,7 @@ const RuleGroup = (props: Props): JSX.Element => {
     allChaptersN,
   } = props;
 
+  // Create subset of rules with the same chapterNumber
   const ruleSubset = rules.filter(
     (rule) => rule.chapterNumber === chapter.chapterNumber
   );

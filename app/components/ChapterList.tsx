@@ -29,6 +29,7 @@ const ChapterList = (props: Props): JSX.Element => {
     searchResults,
   } = props;
 
+  // Create subset of chapters with the same sectionNumber
   let chapterSubset: Chapter[];
   if (section) {
     chapterSubset = chapters.filter(

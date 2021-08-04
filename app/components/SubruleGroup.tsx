@@ -12,6 +12,7 @@ interface Props {
 const SubruleGroup = (props: Props): JSX.Element => {
   const { rule, subrules, onLinkClick, searchResults, allChaptersN } = props;
 
+  // Create subset of subrules with the same ruleNumber and chapterNumber
   const subruleSubset = subrules.filter(
     (subrule) =>
       rule.ruleNumber === subrule.ruleNumber &&
