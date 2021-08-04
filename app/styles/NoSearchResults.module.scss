@@ -1,0 +1,20 @@
+@import "./variables.scss";
+
+.noTitleContainer, .noRulesContainer {
+  height: 5%;
+  margin-left: 16px;
+  margin-top: 4px; 
+}
+
+.noTitle {
+  color: $color0;
+  opacity: .8;
+  font-size: 18px;
+}
+
+.noRules {
+  color: $color8;
+  font-size: 24px;
+  opacity: .9;
+  margin-top: 8px;
+}

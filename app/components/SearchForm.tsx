@@ -258,21 +258,25 @@ const SearchForm = (props: Props): JSX.Element => {
           <input
             ref={input}
             onChange={handleChange}
-            id={styles.input}
+            id={styles.searchInput}
             type="text"
             className="form-control"
           />
           <button
             type="button"
             className="btn btn-outline-primary"
-            id={styles.timesCircle}
+            id={styles.cancelFormButton}
             ref={cancel}
             onClick={handleCancel}
           >
             <FontAwesomeIcon icon={faTimesCircle} />
           </button>
         </div>
-        <button className="btn btn-primary" id={styles.button} type="submit">
+        <button
+          className="btn btn-primary"
+          id={styles.searchFormButton}
+          type="submit"
+        >
           <FontAwesomeIcon icon={faSearch} />
         </button>
       </div>

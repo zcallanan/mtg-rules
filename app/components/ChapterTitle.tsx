@@ -52,12 +52,15 @@ const ChapterTitle = (props: Props): JSX.Element => {
       ) : (
         <div>
           {
-            <div className={styles.chapterText}>
-              <span key={`${key}${chapterObj.chapterNumber}`}>
-                <h4>{`${chapterObj.chapterNumber}. ${chapterObj.text}`}</h4>
+            <div className={styles.ruleChapterContainer}>
+              <span
+                className={styles.ruleChapterText}
+                key={`${key}${chapterObj.chapterNumber}`}
+              >
+                {`${chapterObj.chapterNumber}. ${chapterObj.text}`}
               </span>
-              <span className={styles.sectionSpan}>
-                <h6>{` •  ${chapterObj.sectionNumber}. ${sectionObj.text}`}</h6>
+              <span className={styles.ruleSectionText}>
+                {` •  ${chapterObj.sectionNumber}. ${sectionObj.text}`}
               </span>
             </div>
           }
@@ -70,20 +73,23 @@ const ChapterTitle = (props: Props): JSX.Element => {
   return (
     <div>
       {toc ? (
-        // eslint-disable-next-line no-return-assign
-        <div ref={(el) => (tocTitleRef.current[i] = el)}>
-          <li
-            key={`${key}${chapterObj.chapterNumber}`}
-            className={styles.chapterList}
-          >
-            <Link
-              href={"/rules/[year]/[version]"}
-              as={`${router.asPath.split("#")[0]}#${chapterObj.chapterNumber}`}
-              scroll={false}
+        <Link
+          href={"/rules/[year]/[version]"}
+          as={`${router.asPath.split("#")[0]}#${chapterObj.chapterNumber}`}
+          scroll={false}
+        >
+          <a>
+            <div
+              className={styles.tocChapterCard}
+              // eslint-disable-next-line no-return-assign
+              ref={(el) => (tocTitleRef.current[i] = el)}
             >
-              <a>
+              <li
+                key={`${key}${chapterObj.chapterNumber}`}
+                className={styles.chapterList}
+              >
                 <span
-                  className={styles.chapterNum}
+                  className={styles.chapterNumToc}
                   onClick={() => onLinkClick(chapterObj.chapterNumber, "toc")}
                 >
                   {chapterObj.chapterNumber}.
@@ -94,10 +100,10 @@ const ChapterTitle = (props: Props): JSX.Element => {
                 >
                   {chapterObj.text}
                 </span>
-              </a>
-            </Link>
-          </li>
-        </div>
+              </li>
+            </div>
+          </a>
+        </Link>
       ) : (
         handleZeroChapter(chapterObj.chapterNumber)
       )}

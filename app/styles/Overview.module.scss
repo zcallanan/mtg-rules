@@ -1,9 +1,27 @@
-.effectiveDate {
-  margin-right: 36px;
-}
+@import "./variables.scss";
 
 .overviewContents {
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: left;
+  margin-left: 16px;
+  margin-top: 3px;
+}
+
+.overviewText {
+  font-size: 18px;
+  opacity: .6;
+  color: $color0;
+}
+
+#effectiveDate {
+  opacity: .3;
+  color: $color0;
+  font-size: 18px;
+  margin-left: 6px;
+}
+
+.alas {
+  font-size: 18px;
+  color: $color0;
 }

@@ -4,13 +4,7 @@ import formValidation from "../utils/form-validation";
 import { RouterValues } from "../typing/types";
 import styles from "../styles/RulesetForm.module.scss";
 
-interface Props {
-  smallText: string;
-}
-
-const RulesetForm = (props: Props): JSX.Element => {
-  const { smallText } = props;
-
+const RulesetForm = (): JSX.Element => {
   // Create local state to validate a submission
   const [url, setUrl] = useState("");
 
@@ -117,17 +111,21 @@ const RulesetForm = (props: Props): JSX.Element => {
           ref={input}
           onChange={handleChange}
           value={url}
-          id={styles.input}
+          id={styles.rulesetInput}
           type="text"
           className="form-control"
           required
         />
-        <button className="btn btn-primary" id={styles.button} type="submit">
+        <button
+          className="btn btn-primary"
+          id={styles.rulesetFormButton}
+          type="submit"
+        >
           Get Rules
         </button>
       </div>
       <small id={styles.helpText} className="form-text text-muted">
-        {smallText}
+        {"Change and submit a link to view a different ruleset."}
       </small>
     </form>
   );

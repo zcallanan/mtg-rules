@@ -1,7 +1,6 @@
 import { MutableRefObject } from "react";
 import ChapterTitle from "./ChapterTitle";
 import { Chapter } from "../typing/types";
-import styles from "../styles/TocChapterList.module.scss";
 
 interface Props {
   chapters: Chapter[];
@@ -19,10 +18,11 @@ const TocChapterList = (props: Props): JSX.Element => {
   );
 
   return (
-    <div className={styles.tocChapters}>
-      {chapterSubset.map((chapter, index) => (
-        <ul className={"list-group"} key={`titles-${index}`}>
+    <div>
+      <ul className={"list-group"}>
+        {chapterSubset.map((chapter, index) => (
           <ChapterTitle
+            key={`chapterTitle-${index}`}
             chapter={chapter}
             toc={toc}
             onLinkClick={onLinkClick}
@@ -31,8 +31,8 @@ const TocChapterList = (props: Props): JSX.Element => {
               (ch) => ch.chapterNumber === chapter.chapterNumber
             )}
           />
-        </ul>
-      ))}
+        ))}
+      </ul>
     </div>
   );
 };

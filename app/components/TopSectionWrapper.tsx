@@ -10,7 +10,7 @@ import useTopSection from "../hooks/useTopSection";
 import { Section } from "../typing/types";
 
 interface Props {
-  spanArray: HTMLSpanElement[];
+  divArray: HTMLDivElement[];
   leftViewportRef: MutableRefObject<HTMLDivElement>;
   sectionsInUse: Section[];
   scrolledToSection: number;
@@ -19,7 +19,7 @@ interface Props {
 
 const TopSectionWrapper = (props: Props): JSX.Element => {
   const {
-    spanArray,
+    divArray,
     leftViewportRef,
     sectionsInUse,
     scrolledToSection,
@@ -34,15 +34,17 @@ const TopSectionWrapper = (props: Props): JSX.Element => {
 
   // Save local value of anchorValue to determine toc section at load
   useEffect(() => {
-    const [anchorChapter] = path[1].match(/\d{3}/);
-    if (anchorValue !== anchorChapter) {
-      setAnchorValue(anchorChapter);
+    if (path && path.length > 1) {
+      const [anchorChapter] = path[1].match(/\d{3}/);
+      if (anchorValue !== anchorChapter) {
+        setAnchorValue(anchorChapter);
+      }
     }
   }, [anchorValue, path]);
 
   // Latest section # from scrolling callback or from anchor value at load
   const callbackValue: number | void = useTopSection(
-    spanArray,
+    divArray,
     leftViewportRef,
     sectionsInUse
   );

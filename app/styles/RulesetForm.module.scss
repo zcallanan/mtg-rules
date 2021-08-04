@@ -1,17 +1,25 @@
-// .helpText {
+@import "./variables.scss";
+@import "./mixins.scss";
 
-// }
-
-#input {
+#rulesetInput {
   width: 70%;
+  color: $color0;
+  background-color: $color8;
 }
 
-#button {
+#rulesetFormButton {
+  @include button;
   width: 10%;
 }
 
 .inputContainer {
-  margin-top: 16px;
+  margin-left: 10%;
   display: flex;
   width: 100%;
+}
+
+#helpText {
+  margin-left: 12%;
+  color: $color8 !important;
+  opacity: .6;
 }

@@ -27,35 +27,44 @@ const SubruleList = (props: Props): JSX.Element => {
   return (
     <div>
       {subruleSubset.map((subrule, index) => (
-        <div key={`dv${index}`}>
+        <div key={`subruleContainer-${index}`}>
           <section
             id={`${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter}`}
           >
             <li
-              key={`subr-${index}`}
-              className={`${styles.subruleText} list-group-item`}
+              key={`subruleListItem-${index}`}
+              className={`${styles.subruleListItem} list-group-item`}
             >
-              {subrule.chapterNumber}.{subrule.ruleNumber}
-              {subrule.subruleLetter} &nbsp;
-              {!searchResults.searchTerm
-                ? parseLink({
-                    routerValues,
-                    onLinkClick,
-                    subrule,
-                    searchResults,
-                    allChaptersN,
-                  })
-                : modifySearchRules({
-                    searchResults,
-                    subrule,
-                    toModify: parseLink({
-                      routerValues,
-                      onLinkClick,
-                      subrule,
-                      searchResults,
-                      allChaptersN,
-                    }),
-                  })}
+              <div className={styles.subruleInnerContainer}>
+                <span>
+                  <strong>
+                    {subrule.chapterNumber}.{subrule.ruleNumber}
+                    {subrule.subruleLetter}
+                  </strong>
+                </span>
+                <span>{" • "}</span>
+                <span>
+                  {!searchResults.searchTerm
+                    ? parseLink({
+                        routerValues,
+                        onLinkClick,
+                        subrule,
+                        searchResults,
+                        allChaptersN,
+                      })
+                    : modifySearchRules({
+                        searchResults,
+                        subrule,
+                        toModify: parseLink({
+                          routerValues,
+                          onLinkClick,
+                          subrule,
+                          searchResults,
+                          allChaptersN,
+                        }),
+                      })}
+                </span>
+              </div>
             </li>
           </section>
           <ExampleText

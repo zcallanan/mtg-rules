@@ -1,13 +1,31 @@
+@import "./variables.scss";
+
 .radioContainer {
   display: flex;
   margin-left: 12px;
 }
-  
+
+.radioInput {
+  &:checked {
+    border-color: $color2;
+    background-color: $color1;
+  }
+}
+
 .radioIcon {
+  color: $color6;
   display: flex;
   align-items: center;
   font-size: 11px;
   opacity: 60%;
+}
+
+.radioLabel {
+  color: $color8;
+}
+
+.radioLabel, .radioIcon {
+  margin-left: 4px;
 }
   
 .partialRadioContainer {
@@ -17,9 +35,5 @@
 .exactRadioContainer {
   margin-left: 24px;
   display: flex;
-}
-  
-.radioLabel, .radioIcon {
-  margin-left: 4px;
 }
   

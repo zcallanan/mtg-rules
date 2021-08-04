@@ -1,8 +1,17 @@
-#input {
+@import "./variables.scss";
+@import "./mixins.scss";
+
+#searchInput {
+  color: $color0;
+  background-color: $color8;
   width: 95%;
+  &:focus {
+    box-shadow: none;
+  }
 }
 
-#timesCircle {
+#cancelFormButton {
+  @include button;
   position: absolute;
   right: 0%;
   top: 0%;
@@ -13,7 +22,12 @@
   width: 100%;
   display: flex;
   justify-content: left;
-  margin-left: 12px;
+  margin-left: 12%;
+}
+
+#searchFormButton {
+  width: 7%;
+  @include button;
 }
 
 .searchField {
@@ -24,7 +38,7 @@
 }
 
 .inputContainer {
-  margin-top: 16px;
   display: flex;
   width: 84%;
+  margin-left: 10%;
 }

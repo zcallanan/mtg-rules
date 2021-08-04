@@ -41,8 +41,8 @@ const RuleList = (props: Props): JSX.Element => {
     <div>
       {ruleSubset.map((rule, index) => (
         <div
-          key={`ruleListDiv-${index}`}
-          className={styles.ruleDiv}
+          key={`ruleContainer-${index}`}
+          className={styles.ruleContainer}
           // eslint-disable-next-line no-return-assign
           ref={(el) =>
             (elRef.current[
@@ -56,29 +56,36 @@ const RuleList = (props: Props): JSX.Element => {
         >
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
-              key={`r${rule.ruleNumber}`}
-              className={`${styles.ruleText} list-group-item`}
+              key={`ruleListItem-${rule.ruleNumber}`}
+              className={`${styles.ruleListItem} list-group-item`}
             >
-              {rule.chapterNumber}.{rule.ruleNumber} &nbsp;
-              {!searchResults.searchTerm
-                ? parseLink({
-                    routerValues,
-                    onLinkClick,
-                    rule,
-                    searchResults,
-                    allChaptersN,
-                  })
-                : modifySearchRules({
-                    searchResults,
-                    rule,
-                    toModify: parseLink({
-                      routerValues,
-                      onLinkClick,
-                      rule,
-                      searchResults,
-                      allChaptersN,
-                    }),
-                  })}
+              <div>
+                <span>
+                  <strong>{`${rule.chapterNumber}.${rule.ruleNumber}`}</strong>
+                </span>
+                <span>{" • "}</span>
+                <span>
+                  {!searchResults.searchTerm
+                    ? parseLink({
+                        routerValues,
+                        onLinkClick,
+                        rule,
+                        searchResults,
+                        allChaptersN,
+                      })
+                    : modifySearchRules({
+                        searchResults,
+                        rule,
+                        toModify: parseLink({
+                          routerValues,
+                          onLinkClick,
+                          rule,
+                          searchResults,
+                          allChaptersN,
+                        }),
+                      })}
+                </span>
+              </div>
             </li>
           </section>
           <ExampleText

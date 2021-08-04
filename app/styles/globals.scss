@@ -1,3 +1,6 @@
+@import "./variables.scss";
+@import "~bootstrap/scss/bootstrap";
+
 html,
 body {
   padding: 0;
@@ -7,14 +10,49 @@ body {
 }
 
 a {
-  color: inherit;
+  color: #548CA8;
   text-decoration: none;
 }
 
-h4, h5, h6 {
-  margin-bottom: 0;
+li {
+  list-style-type: none;
 }
 
 * {
   box-sizing: border-box;
+}
+
+nav {
+  margin-left: 10%;
+}
+
+a.nav-link {
+  color: $color8;
+  border-color: $color7;
+  &.active {
+    background-color: $color8 !important;
+    color: $color0 !important;
+    border-color: $color7;
+  }
+  &:hover {
+    background-color: $color7 !important;
+    color: $color1 !important;
+    border-color: $color6;
+  }
+}
+
+.ruleLink {
+  color: $color1;
+  opacity: .8;
+  &:hover {
+    color: $color2;
+  }
+}
+
+.subruleLink {
+  color: $color0;
+  opacity: .8;
+  &:hover {
+    color: $color1;
+  }
 }

@@ -1,7 +1,11 @@
-.ruleText {
-  font-size: 14px;
+@import "./variables.scss";
+
+.ruleListItem {
+  background-color: $color7;
+  font-size: 16px;
+  color: $color0;
 }
 
-.example {
-
+.ruleContainer {
+  border: $color2 solid .25rem;
 }

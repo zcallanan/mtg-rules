@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
 import modifySearchRules from "../utils/modify-search-rules";
@@ -21,6 +22,7 @@ const ExampleText = (props: Props): JSX.Element => {
       ? data.example
       : data.exampleSearch;
 
+  // RouterValues
   const router: NextRouter = useRouter();
   const year: string = Array.isArray(router.query.year)
     ? router.query.year[0]
@@ -30,62 +32,103 @@ const ExampleText = (props: Props): JSX.Element => {
     : router.query.version;
   const routerValues: RouterValues = { year, version };
 
+  // Container div refs
+  const outerContainerDiv = useRef<HTMLDivElement>();
+  const innerContainerDiv = useRef<HTMLDivElement[]>([]);
+
+  // Insert different styling classes for rule or subrule
+  useEffect(() => {
+    if (
+      rule &&
+      exampleText.length &&
+      outerContainerDiv.current &&
+      innerContainerDiv.current.length
+    ) {
+      outerContainerDiv.current.classList.add(styles.ruleExampleContainer);
+      innerContainerDiv.current.forEach((d) =>
+        d.classList.add(styles.ruleExInnerContainer)
+      );
+    } else if (
+      subrule &&
+      exampleText.length &&
+      outerContainerDiv.current &&
+      innerContainerDiv.current.length
+    ) {
+      outerContainerDiv.current.classList.add(styles.subruleExampleContainer);
+      innerContainerDiv.current.forEach((d) =>
+        d.classList.add(styles.subruleExInnerContainer)
+      );
+    }
+  }, [exampleText.length, rule, subrule]);
+
   return (
-    <div>
+    <div ref={outerContainerDiv}>
       {exampleText.map(
         (example, index) =>
           data.example && (
             <li
               key={rule ? `rule-e${index}` : `subrule-e${index}`}
-              className={`${styles.example} list-group-item`}
+              className={`${
+                rule ? styles.exampleRuleItem : styles.exampleSubruleItem
+              } list-group-item`}
             >
-              {!searchResults.searchTerm
-                ? parseLink(
-                    rule
-                      ? {
-                          routerValues,
-                          onLinkClick,
-                          example,
-                          rule,
-                          searchResults,
-                          allChaptersN,
-                        }
-                      : {
-                          routerValues,
-                          onLinkClick,
-                          example,
-                          subrule,
-                          searchResults,
-                          allChaptersN,
-                        }
-                  )
-                : modifySearchRules(
-                    rule
-                      ? {
-                          searchResults,
-                          rule,
-                          toModify: parseLink({
-                            routerValues,
-                            onLinkClick,
-                            example,
-                            rule,
-                            searchResults,
-                            allChaptersN,
-                          }),
-                        }
-                      : {
-                          searchResults,
-                          subrule,
-                          toModify: parseLink({
-                            routerValues,
-                            onLinkClick,
-                            example,
-                            subrule,
-                            searchResults,
-                            allChaptersN,
-                          }),
-                        }
-                  )}
+              {/* eslint-disable-next-line no-return-assign */}
+              <div ref={(el) => (innerContainerDiv.current[index] = el)}>
+                <span>
+                  {rule
+                    ? `${rule.chapterNumber}.${rule.ruleNumber} `
+                    : `${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter} `}
+                </span>
+                <span>
+                  {!searchResults.searchTerm
+                    ? parseLink(
+                        rule
+                          ? {
+                              routerValues,
+                              onLinkClick,
+                              example,
+                              rule,
+                              searchResults,
+                              allChaptersN,
+                            }
+                          : {
+                              routerValues,
+                              onLinkClick,
+                              example,
+                              subrule,
+                              searchResults,
+                              allChaptersN,
+                            }
+                      )
+                    : modifySearchRules(
+                        rule
+                          ? {
+                              searchResults,
+                              rule,
+                              toModify: parseLink({
+                                routerValues,
+                                onLinkClick,
+                                example,
+                                rule,
+                                searchResults,
+                                allChaptersN,
+                              }),
+                            }
+                          : {
+                              searchResults,
+                              subrule,
+                              toModify: parseLink({
+                                routerValues,
+                                onLinkClick,
+                                example,
+                                subrule,
+                                searchResults,
+                                allChaptersN,
+                              }),
+                            }
+                      )}
+                </span>
+              </div>
             </li>
           )
       )}

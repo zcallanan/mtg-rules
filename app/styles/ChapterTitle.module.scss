@@ -1,16 +1,30 @@
-.chapterText {
-  font-size: 20px;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
+@import "./variables.scss";
+
+.tocChapterCard {
+  height: 36px;
+  box-shadow: inset 1px 1px 13px 17px rgba(2,62,138,0.5);
+  color: $color0;
+  padding: 3px 0px 3px 12px;
+  border: $color1 solid .25rem;
+  &:hover {
+    background: $color6;
+    .chapterNumToc {
+      color: $color0;
+    }
+    .chapterTextToc {
+      color: $color0;
+    }
+  }
 }
 
-.chapterNum {
+.chapterNumToc {
+  color: $color8;
   font-size: 16px;
   position: absolute;
 }
 
 .chapterTextToc {
+  color: $color8;
   font-size: 16px;
   position: absolute;
   left: 40px;
@@ -19,6 +33,27 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+}
+
+.ruleChapterContainer {
+  height: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-left: 16px;
+  margin-top: 4px;
+}
+
+.ruleChapterText {
+  font-size: 18px;
+  color: $color0;
+}
+
+.ruleSectionText {
+  margin-left: 6px;
+  font-size: 18px;
+  color: $color0;
+  opacity: .3;
 }
 
 .chapterList {
@@ -32,12 +67,4 @@
 .spinnerDiv {
   width: 100%;
   height: 100%;
-}
-
-.sectionSpan {
-  margin-left: 10px;
-  font-size: 14px;
-  color: grey;
-  display: flex;
-  align-items: center;
 }

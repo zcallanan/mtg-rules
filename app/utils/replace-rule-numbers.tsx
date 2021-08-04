@@ -34,6 +34,7 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
           >
             <a>
               <span
+                className={rule ? "ruleLink" : "subruleLink"}
                 onClick={() =>
                   onLinkClick(
                     typeof chapterValue === "string"
@@ -43,7 +44,7 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
                   )
                 }
               >
-                {match}
+                <strong>{match}</strong>
               </span>
             </a>
           </Link>
