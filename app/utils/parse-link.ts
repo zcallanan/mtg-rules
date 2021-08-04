@@ -61,7 +61,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
       } else if (regex === regexChapter) {
         const matchArray: RegExpMatchArray = text.match(regex);
         filteredArray[i] = matchArray.filter((a) => {
-          return allChaptersN.includes(a.toString());
+          return allChaptersN.includes(a);
         });
       } else {
         filteredArray[i] = text.match(regex);
