@@ -2,30 +2,29 @@
 
 .tocChapterCard {
   height: 36px;
-//   background: $main-dark;
-  box-shadow: $toc-chapter-shadow;
-  $toc-font-color: #caf0f8;
+  box-shadow: inset 1px 1px 13px 17px rgba(2,62,138,0.5);
+  color: $color0;
   padding: 3px 0px 3px 12px;
   border: $color1 solid .25rem;
   &:hover {
-    background: $toc-chapter-hover;
+    background: $color6;
     .chapterNumToc {
-      color: $toc-chapter-color-hover;
+      color: $color0;
     }
     .chapterTextToc {
-      color: $toc-chapter-color-hover;
+      color: $color0;
     }
   }
 }
 
 .chapterNumToc {
-  color: $toc-font-color;
+  color: $color8;
   font-size: 16px;
   position: absolute;
 }
 
 .chapterTextToc {
-  color: $toc-font-color;
+  color: $color8;
   font-size: 16px;
   position: absolute;
   left: 40px;

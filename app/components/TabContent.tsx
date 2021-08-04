@@ -65,7 +65,7 @@ const TabContent = (props: Props): JSX.Element => {
           </div>
         </Tab>
         <Tab eventKey="ruleset" title="Load Rule Set">
-          <RulesetForm smallText="Change and submit a link to view a different ruleset." />
+          <RulesetForm />
         </Tab>
       </Tabs>
     </div>

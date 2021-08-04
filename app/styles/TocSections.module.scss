@@ -2,17 +2,13 @@
 
 .tocSectionCard {
   display: inline-block;
-  background: $toc-section;
-  background: $toc-section-gradient;
-  box-shadow: $toc-section-shadow;
-  color: $toc-font-color;
+  background: $color1;
+  background: linear-gradient(135deg, rgba(3,4,94,1) 0%, rgba(2,62,138,1) 50%, rgba(3,4,94,1) 100%);;
+  box-shadow: inset 1px 0px 18px 7px rgba(3,4,94,0.57);
+  color: $color8;
   padding-left: 12px;
   padding-top: 9px;
   padding-bottom: 9px;
   width: 100%;
   z-index: 9999;
 }
-
-// .tocSectionContainer {
-//   position: relative;
-// }
