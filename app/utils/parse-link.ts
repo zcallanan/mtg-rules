@@ -42,8 +42,8 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   // Regex
   const regexSection = /(section)\s+(\d{1})/gim;
   const regexChapter = /(\d{3})(?=,|\)|\w)/gim;
-  const regexRule = /(\d{3}\.\d{1,3})(?=,|\)|\s|\.)/gim;
-  const regexSubrule = /(\d{3}\.\d{1,3}[a-z])(?=,|\)|\s|\.)/gim;
+  const regexRule = /(\d{3}\.\d{1,3})(?=,|\)|\s|\.|-|—)/gim;
+  const regexSubrule = /(\d{3}\.\d{1,3}[a-z-])/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
   const findMatches = (
@@ -58,11 +58,11 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
         const matchArray: RegExpMatchArray = text.match(regex);
         matchArray[0] = matchArray[0].replace(/section\s+/, "");
         filteredArray[i] = matchArray;
-      } else if (regex === regexChapter && regex.test(text)) {
+      } else if (regex === regexChapter) {
         const matchArray: RegExpMatchArray = text.match(regex);
-        filteredArray[i] = matchArray.filter(
-          (a, ind) => allChaptersN.includes(a.toString()) && ind > 0
-        );
+        filteredArray[i] = matchArray.filter((a) => {
+          return allChaptersN.includes(a);
+        });
       } else {
         filteredArray[i] = text.match(regex);
       }
