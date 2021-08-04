@@ -40,3 +40,19 @@ a.nav-link {
     border-color: $color6;
   }
 }
+
+.ruleLink {
+  color: $color1;
+  opacity: .8;
+  &:hover {
+    color: $color2;
+  }
+}
+
+.subruleLink {
+  color: $color0;
+  opacity: .8;
+  &:hover {
+    color: $color1;
+  }
+}

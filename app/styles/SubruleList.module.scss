@@ -1,7 +1,11 @@
-.subruleText {
-  font-size: 12px;
+@import "./variables.scss";
+
+.subruleListItem {
+  color: $color1;
+  background-color: $color9;
+  font-size: 14px;
 }
 
-// .example {
-
-// }
+.subruleInnerContainer {
+  margin-left: 16px;
+}

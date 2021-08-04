@@ -41,7 +41,7 @@ const RuleList = (props: Props): JSX.Element => {
     <div>
       {ruleSubset.map((rule, index) => (
         <div
-          key={`ruleListDiv-${index}`}
+          key={`ruleContainer-${index}`}
           className={styles.ruleContainer}
           // eslint-disable-next-line no-return-assign
           ref={(el) =>
@@ -56,15 +56,16 @@ const RuleList = (props: Props): JSX.Element => {
         >
           <section id={`${rule.chapterNumber}.${rule.ruleNumber}`}>
             <li
-              key={`r${rule.ruleNumber}`}
+              key={`ruleListItem-${rule.ruleNumber}`}
               className={`${styles.ruleListItem} list-group-item`}
             >
               <div>
                 <span>
                   <strong>{`${rule.chapterNumber}.${rule.ruleNumber}`}</strong>
                 </span>
-                <span>{` • ${
-                  !searchResults.searchTerm
+                <span>{" • "}</span>
+                <span>
+                  {!searchResults.searchTerm
                     ? parseLink({
                         routerValues,
                         onLinkClick,
@@ -82,8 +83,8 @@ const RuleList = (props: Props): JSX.Element => {
                           searchResults,
                           allChaptersN,
                         }),
-                      })
-                }`}</span>
+                      })}
+                </span>
               </div>
             </li>
           </section>
