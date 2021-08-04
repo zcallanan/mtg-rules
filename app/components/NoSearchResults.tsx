@@ -16,9 +16,7 @@ const NoSearchResults = (props: Props): JSX.Element => {
       ) : (
         <div className={styles.noRulesContainer}>
           <span className={styles.noRules}>
-            <span>
-              There was nothing to display. Please search for another term!
-            </span>
+            There was nothing to display. Please search for another term!
           </span>
         </div>
       )}

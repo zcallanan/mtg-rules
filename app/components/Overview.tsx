@@ -34,9 +34,7 @@ const Overview = (props: Props): JSX.Element => {
       searchData.searchCompleted ? (
         <span className={styles.alas}>Alas!</span>
       ) : (
-        <span id={styles.effectiveDate}>
-          <span>{`• Effective: ${effectiveDate}`}</span>
-        </span>
+        <span id={styles.effectiveDate}>{`• Effective: ${effectiveDate}`}</span>
       )}
     </div>
   );
