@@ -7,7 +7,6 @@ import {
   Subrule,
   SearchResults,
 } from "../typing/types";
-// import styles from "../styles/ChapterList.module.scss";
 
 interface Props {
   section?: Section;
@@ -37,6 +36,11 @@ const ChapterList = (props: Props): JSX.Element => {
     );
   }
 
+  // Create string array of chapter numbers for use in parseLinks
+  const allChaptersN: string[] = chapters.map((ch) =>
+    ch.chapterNumber.toString()
+  );
+
   return (
     <div>
       {chapterSubset.map((chapter, index) => (
@@ -49,7 +53,7 @@ const ChapterList = (props: Props): JSX.Element => {
             elRef={elRef}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
-            allChaptersN={chapters.map((chapter) => chapter.chapterNumber)}
+            allChaptersN={allChaptersN}
           />
         </div>
       ))}

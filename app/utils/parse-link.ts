@@ -58,11 +58,11 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
         const matchArray: RegExpMatchArray = text.match(regex);
         matchArray[0] = matchArray[0].replace(/section\s+/, "");
         filteredArray[i] = matchArray;
-      } else if (regex === regexChapter && regex.test(text)) {
+      } else if (regex === regexChapter) {
         const matchArray: RegExpMatchArray = text.match(regex);
-        filteredArray[i] = matchArray.filter(
-          (a, ind) => allChaptersN.includes(a.toString()) && ind > 0
-        );
+        filteredArray[i] = matchArray.filter((a) => {
+          return allChaptersN.includes(a.toString());
+        });
       } else {
         filteredArray[i] = text.match(regex);
       }
