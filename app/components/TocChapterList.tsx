@@ -12,7 +12,6 @@ interface Props {
 
 const TocChapterList = (props: Props): JSX.Element => {
   const { chapters, sectionNumber, toc, onLinkClick, tocTitleRef } = props;
-//   console.log(sectionNumber, toc, chapters, )
 
   const chapterSubset = chapters.filter(
     (chapter) => chapter.sectionNumber === sectionNumber

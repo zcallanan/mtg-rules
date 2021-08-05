@@ -12,8 +12,8 @@ const wrapExampleText = (args: ExampleModifyArgs): string | ReactNodeArray => {
       <span
         key={
           rule
-            ? `${exampleText}.${rule.chapterNumber}-${rule.ruleNumber}-${i}${offset}`
-            : `${exampleText}.${subrule.chapterNumber}-${subrule.ruleNumber}-${subrule.ruleNumber}${subrule.subruleLetter}-${i}${offset}`
+            ? `example.${rule.chapterNumber}-${rule.ruleNumber}-${i}${offset}`
+            : `example.${subrule.chapterNumber}-${subrule.ruleNumber}-${subrule.ruleNumber}${subrule.subruleLetter}-${i}${offset}`
         }
         className={"exampleEmphasis"}
       >

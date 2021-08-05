@@ -136,7 +136,7 @@ export interface SearchResults {
   searchResult: number;
 }
 
-export interface ModifyArgs {
+export interface SearchModifyArgs {
   searchResults: SearchResults;
   rule?: Rule;
   subrule?: Subrule;
