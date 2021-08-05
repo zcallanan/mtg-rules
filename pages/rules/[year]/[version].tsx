@@ -3,12 +3,11 @@ import { useRouter, NextRouter } from "next/router";
 import { Spinner } from "react-bootstrap";
 import parseNodes from "../../../app/utils/parse-nodes";
 import TocSections from "../../../app/components/TocSections";
-import SectionList from "../../../app/components/SectionList";
-import ChapterTitle from "../../../app/components/ChapterTitle";
+import RulePane from "../../../app/components/RulePane";
+import RuleChapterPane from "../../../app/components/RuleChapterPane";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
-import NoSearchResults from "../../../app/components/NoSearchResults";
 import Overview from "../../../app/components/Overview";
 import TabContent from "../../../app/components/TabContent";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
@@ -440,69 +439,39 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
             )}
           </div>
           <div className={styles.rightContainer}>
-            <div className={styles.rightRelative}>
-              <div className={styles.tabsContainer}>
-                <TabContent
-                  searchResults={searchResults}
-                  sections={sections}
-                  chapters={chapters}
-                  rules={rules}
-                  subrules={subrules}
-                  setSearchData={setSearchData}
-                  setSearchResults={setSearchResults}
-                />
-              </div>
-              <div className={styles.overviewContainer}>
-                <Overview
-                  nodes={nodes}
-                  searchData={searchData}
-                  searchResults={searchResults}
-                  effectiveDate={effectiveDate}
-                />
-              </div>
-              <div className={styles.chapterTitleContainer}>
-                {searchData.searchTerm &&
-                !searchResults.searchResult &&
-                searchData.searchCompleted ? (
-                  <NoSearchResults title={1} />
-                ) : (
-                  <ChapterTitle
-                    chapter={chapters.find(
-                      (chapter) =>
-                        chapter.chapterNumber === chapterValues.chapterNumber
-                    )}
-                    toc={0}
-                    sections={sections}
-                  />
-                )}
-              </div>
-              <div className={styles.rulesContainer}>
-                {searchData.searchTerm &&
-                !searchResults.searchResult &&
-                searchData.searchCompleted ? (
-                  <NoSearchResults title={0} />
-                ) : (
-                  <SectionList
-                    sections={sections}
-                    chapters={chapters}
-                    rules={
-                      searchResults.searchRules.length
-                        ? searchResults.searchRules
-                        : rules
-                    }
-                    subrules={
-                      searchResults.searchRules.length
-                        ? searchResults.searchSubrules
-                        : subrules
-                    }
-                    elRef={rulesRef}
-                    root={rightViewportRef}
-                    onLinkClick={onLinkClick}
-                    searchResults={searchResults}
-                  />
-                )}
-              </div>
-            </div>
+            <TabContent
+              searchResults={searchResults}
+              sections={sections}
+              chapters={chapters}
+              rules={rules}
+              subrules={subrules}
+              setSearchData={setSearchData}
+              setSearchResults={setSearchResults}
+            />
+            <Overview
+              nodes={nodes}
+              searchData={searchData}
+              searchResults={searchResults}
+              effectiveDate={effectiveDate}
+            />
+            <RuleChapterPane
+              searchData={searchData}
+              searchResults={searchResults}
+              chapters={chapters}
+              chapterValues={chapterValues}
+              sections={sections}
+            />
+            <RulePane
+              searchData={searchData}
+              searchResults={searchResults}
+              sections={sections}
+              chapters={chapters}
+              rules={rules}
+              subrules={subrules}
+              rulesRef={rulesRef}
+              rightViewportRef={rightViewportRef}
+              onLinkClick={onLinkClick}
+            />
           </div>
         </div>
       )}

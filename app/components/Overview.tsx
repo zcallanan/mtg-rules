@@ -16,7 +16,7 @@ const Overview = (props: Props): JSX.Element => {
   const type = searchResults.searchType === "partial" ? "Partial" : "Exact";
 
   return (
-    <div className={styles.overviewContents}>
+    <div className={styles.overviewPane}>
       {!!searchResults.searchResult &&
         !searchData.searchCompleted &&
         !!nodes.rules.length && (
