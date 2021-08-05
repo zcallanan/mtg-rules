@@ -12,3 +12,15 @@
   width: 100%;
   z-index: 9999;
 }
+
+.spinnerDiv {
+  position: relative;
+  width: 25vw;
+  height: 100vh;
+}
+  
+.spinnerComponent {
+  position: fixed;
+  left: 12%;
+  top: 50%;
+}

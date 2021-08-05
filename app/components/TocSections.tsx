@@ -1,4 +1,5 @@
 import { useRef, MutableRefObject, useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import TocChapterList from "./TocChapterList";
 import TopSectionWrapper from "./TopSectionWrapper";
 import objectArrayComparison from "../utils/object-array-comparison";
@@ -94,7 +95,7 @@ const TocSections = (props: Props): JSX.Element => {
 
   return (
     <div>
-      {leftViewportRef && (
+      {!!leftViewportRef && !!sections.length && (
         <TopSectionWrapper
           leftViewportRef={leftViewportRef}
           divArray={divArray}
@@ -103,29 +104,42 @@ const TocSections = (props: Props): JSX.Element => {
           setScrolledToSection={setScrolledToSection}
         />
       )}
-      {sections.map((section, i) => (
-        <div
-          // eslint-disable-next-line no-return-assign
-          ref={(el) => (tocSectionListRefs.current[i] = el)}
-          className={styles.tocSectionContainer}
-          key={`s${section.sectionNumber}`}
-        >
-          <span
-            className={styles.tocSectionCard}
+      {sections.length ? (
+        sections.map((section, i) => (
+          <div
             // eslint-disable-next-line no-return-assign
-            ref={(el) => (sectionCardRefs.current[i] = el)}
+            ref={(el) => (tocSectionListRefs.current[i] = el)}
+            className={styles.tocSectionContainer}
+            key={`s${section.sectionNumber}`}
           >
-            {`${section.sectionNumber}. ${section.text}`}
-          </span>
-          <TocChapterList
-            sectionNumber={section.sectionNumber}
-            chapters={chapters}
-            toc={1}
-            onLinkClick={onLinkClick}
-            tocTitleRef={tocTitleRef}
-          />
+            <span
+              className={styles.tocSectionCard}
+              // eslint-disable-next-line no-return-assign
+              ref={(el) => (sectionCardRefs.current[i] = el)}
+            >
+              {`${section.sectionNumber}. ${section.text}`}
+            </span>
+            <TocChapterList
+              sectionNumber={section.sectionNumber}
+              chapters={chapters}
+              toc={1}
+              onLinkClick={onLinkClick}
+              tocTitleRef={tocTitleRef}
+            />
+          </div>
+        ))
+      ) : (
+        <div className={styles.spinnerDiv}>
+          <Spinner
+            animation="border"
+            role="status"
+            variant="dark"
+            className={styles.spinnerComponent}
+          >
+            <span className={styles.loadingText}></span>
+          </Spinner>
         </div>
-      ))}
+      )}
     </div>
   );
 };
