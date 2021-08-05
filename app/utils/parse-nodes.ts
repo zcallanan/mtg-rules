@@ -21,12 +21,17 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
       const parser = new Parser();
 
       // Regex
-      const sectionRegex = /^(\d).\s+(.+)[\r\n][\r\n]/gm;
-      const chapterRegex = /^(\d{3}).\s+(.+)[\r\n][\r\n]/gm;
+      const sectionRegex =
+        /(?<=\n)(\d{1})\.\s([a-z\s,:;.]*)(?=\r\n\r\n|\r\r)/gim;
+
+      const chapterRegex =
+        /(?<=\n|\r)(\d{3})\.\s([a-z\s.,:-;]*)(?=\r\n\r\n|\r\r)/gim;
+
       const ruleRegex =
-        /^(\d{3})\.(\d+)\.\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
+        /(?<=\n|\r)(\d{3})\.(\d{1,3})\.\s([âûáú‘’\da-z\s,:\-;()+—™*[\]{}®.&"“”/'–\\]*?)(?=\r\n\r\n|\r\r)/gim;
+
       const subruleRegex =
-        /^(\d{3}).(\d+)([a-z]+)\s+([\s\S]+?)[\r\n][\r\n][\r\n][\r\n]/gm;
+        /(?<=\n|\r)(\d{3})\.(\d{1,3})([a-z]+)\s([âûáú‘’\da-z\s,:\-;()+—™*[\]{}®.&"“”/'–\\]*?)(?=\r\n\r|\r\r)/gim;
 
       // Add rules
       parser.addRule(sectionRegex, (match, section, txt) => {
@@ -96,19 +101,24 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
         tree.filter((node) => node.type === "section"),
         ["sectionNumber"]
       );
+
       const chapterNodes: Node[] = sortBy(
         tree.filter((node) => node.type === "chapter"),
         ["sectionNumber", "chapterNumber"]
       );
-      const rules: Node[] = tree.filter((node) => node.type === "rule");
-      const subrules: Node[] = tree.filter((node) => node.type === "subrule");
+
+      const rulesNodes: Node[] = tree.filter((node) => node.type === "rule");
+
+      const subrulesNodes: Node[] = tree.filter(
+        (node) => node.type === "subrule"
+      );
 
       // Return
       return {
         sections: sectionNodes as unknown as Section[],
         chapters: chapterNodes as unknown as Chapter[],
-        rules: rules as unknown as Rule[],
-        subrules: subrules as unknown as Subrule[],
+        rules: rulesNodes as unknown as Rule[],
+        subrules: subrulesNodes as unknown as Subrule[],
       };
     } catch (err) {
       console.error(err);

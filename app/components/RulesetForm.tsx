@@ -17,12 +17,12 @@ const RulesetForm = (): JSX.Element => {
     ? router.query.version[0]
     : router.query.version;
   const routerValues: RouterValues = { year, version };
-  const initUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
 
   // Set initial url on page load
   useEffect(() => {
+    const initUrl = `https://media.wizards.com/${routerValues.year}/downloads/MagicCompRules%${routerValues.version}.txt`;
     setUrl(initUrl);
-  }, [initUrl]);
+  }, [routerValues.version, routerValues.year]);
 
   // Input element ref
   const input = useRef<HTMLInputElement>();
@@ -52,12 +52,8 @@ const RulesetForm = (): JSX.Element => {
     const result = await formValidation(rulesetUrl, versionUrl, yearUrl);
     // Change the displayed ruleset
     if (result === 200) {
-      // Link validated, update router
-      router.query.version = versionUrl;
-      router.query.year = yearUrl;
-      // Trigger ISR page update
-      // TODO: Unknown key error in dev, although update works
-      router.push(router);
+      const newUrl = `/rules/${yearUrl}/${versionUrl}#100`;
+      router.push(newUrl);
       return 1;
     }
     // No data found at that link
