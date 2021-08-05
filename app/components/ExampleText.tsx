@@ -46,9 +46,11 @@ const ExampleText = (props: Props): JSX.Element => {
       innerContainerDiv.current.length
     ) {
       outerContainerDiv.current.classList.add(styles.ruleExampleContainer);
-      innerContainerDiv.current.forEach((d) =>
-        d.classList.add(styles.ruleExInnerContainer)
-      );
+      innerContainerDiv.current.forEach((d) => {
+        if (d) {
+          d.classList.add(styles.ruleExInnerContainer);
+        }
+      });
     } else if (
       subrule &&
       exampleText.length &&
@@ -56,9 +58,11 @@ const ExampleText = (props: Props): JSX.Element => {
       innerContainerDiv.current.length
     ) {
       outerContainerDiv.current.classList.add(styles.subruleExampleContainer);
-      innerContainerDiv.current.forEach((d) =>
-        d.classList.add(styles.subruleExInnerContainer)
-      );
+      innerContainerDiv.current.forEach((d) => {
+        if (d) {
+          d.classList.add(styles.subruleExInnerContainer);
+        }
+      });
     }
   }, [exampleText.length, rule, subrule]);
 
