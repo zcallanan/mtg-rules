@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
 import parseLink from "../utils/parse-link";
+import modifyExampleText from "../utils/modify-example-text";
 import modifySearchRules from "../utils/modify-search-rules";
 import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/ExampleText.module.scss";
@@ -75,37 +76,19 @@ const ExampleText = (props: Props): JSX.Element => {
               {/* eslint-disable-next-line no-return-assign */}
               <div ref={(el) => (innerContainerDiv.current[index] = el)}>
                 <span>
-                  {rule
-                    ? `${rule.chapterNumber}.${rule.ruleNumber} `
-                    : `${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter} `}
+                  <em>
+                    {rule
+                      ? `${rule.chapterNumber}.${rule.ruleNumber} `
+                      : `${subrule.chapterNumber}.${subrule.ruleNumber}${subrule.subruleLetter} `}
+                  </em>
                 </span>
                 <span>
                   {!searchResults.searchTerm
-                    ? parseLink(
+                    ? modifyExampleText(
                         rule
                           ? {
-                              routerValues,
-                              onLinkClick,
-                              example,
                               rule,
-                              searchResults,
-                              allChaptersN,
-                            }
-                          : {
-                              routerValues,
-                              onLinkClick,
-                              example,
-                              subrule,
-                              searchResults,
-                              allChaptersN,
-                            }
-                      )
-                    : modifySearchRules(
-                        rule
-                          ? {
-                              searchResults,
-                              rule,
-                              toModify: parseLink({
+                              exampleText: parseLink({
                                 routerValues,
                                 onLinkClick,
                                 example,
@@ -115,15 +98,47 @@ const ExampleText = (props: Props): JSX.Element => {
                               }),
                             }
                           : {
-                              searchResults,
                               subrule,
-                              toModify: parseLink({
+                              exampleText: parseLink({
                                 routerValues,
                                 onLinkClick,
                                 example,
                                 subrule,
                                 searchResults,
                                 allChaptersN,
+                              }),
+                            }
+                      )
+                    : modifyExampleText(
+                        rule
+                          ? {
+                              rule,
+                              exampleText: modifySearchRules({
+                                searchResults,
+                                rule,
+                                toModify: parseLink({
+                                  routerValues,
+                                  onLinkClick,
+                                  example,
+                                  rule,
+                                  searchResults,
+                                  allChaptersN,
+                                }),
+                              }),
+                            }
+                          : {
+                              subrule,
+                              exampleText: modifySearchRules({
+                                searchResults,
+                                subrule,
+                                toModify: parseLink({
+                                  routerValues,
+                                  onLinkClick,
+                                  example,
+                                  subrule,
+                                  searchResults,
+                                  allChaptersN,
+                                }),
                               }),
                             }
                       )}

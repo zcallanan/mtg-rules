@@ -143,6 +143,12 @@ export interface ModifyArgs {
   toModify: string | ReactNodeArray;
 }
 
+export interface ExampleModifyArgs {
+  exampleText: string | ReactNodeArray;
+  rule?: Rule;
+  subrule?: Subrule;
+}
+
 export interface RadioCheck {
   partial: boolean;
   exact: boolean;
