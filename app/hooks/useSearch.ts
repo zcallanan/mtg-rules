@@ -40,6 +40,7 @@ const useSearch = (props: SearchData): SearchResults => {
         termRegex.test(subruleNode.text) ||
         (subruleNode.example.length ? checkExamples(subruleNode.example) : 0)
     );
+
     const subruleRules: number[][] = subrulesResult.map((subrule) => [
       subrule.chapterNumber,
       subrule.ruleNumber,
@@ -91,6 +92,7 @@ const useSearch = (props: SearchData): SearchResults => {
       ),
       "sectionNumber"
     );
+
     const ruleChapters: Chapter[] = uniqBy(
       ruleValues.map((val) =>
         chapters.find((chapter) => chapter.chapterNumber === val[1])

@@ -136,11 +136,17 @@ export interface SearchResults {
   searchResult: number;
 }
 
-export interface ModifyArgs {
+export interface SearchModifyArgs {
   searchResults: SearchResults;
   rule?: Rule;
   subrule?: Subrule;
   toModify: string | ReactNodeArray;
+}
+
+export interface ExampleModifyArgs {
+  exampleText: string | ReactNodeArray;
+  rule?: Rule;
+  subrule?: Subrule;
 }
 
 export interface RadioCheck {
