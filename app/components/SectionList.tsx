@@ -57,7 +57,7 @@ const SectionList = (props: Props): JSX.Element => {
             variant="dark"
             className={styles.spinnerComponent}
           >
-            <span className={styles.loadingText}>Loading</span>
+            <span className={styles.loadingText}></span>
           </Spinner>
         </div>
       )}

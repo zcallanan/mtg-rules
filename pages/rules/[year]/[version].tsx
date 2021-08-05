@@ -118,21 +118,46 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [rules, setRules] = useState<Rule[]>([]);
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
-  // Save parsed node data to state
-  if (nodes) {
-    if (nodes.sections && nodes.sections.length && !sections.length) {
-      setSections(nodes.sections);
+  // Save parsed node data to state at init
+  useEffect(() => {
+    if (nodes) {
+      console.log(nodes);
+      if (
+        (nodes.sections && nodes.sections.length && !sections.length) ||
+        nodes.sections !== sections
+      ) {
+        setSections(nodes.sections);
+      }
+      if (
+        (nodes.chapters && nodes.chapters.length && !chapters.length) ||
+        nodes.chapters !== chapters
+      ) {
+        setChapters(nodes.chapters);
+      }
+      if (
+        (nodes.rules && nodes.rules.length && !rules.length) ||
+        nodes.rules !== rules
+      ) {
+        setRules(nodes.rules);
+      }
+      if (
+        (nodes.subrules && nodes.subrules.length && !subrules.length) ||
+        nodes.subrules !== subrules
+      ) {
+        setSubrules(nodes.subrules);
+      }
     }
-    if (nodes.chapters && nodes.chapters.length && !chapters.length) {
-      setChapters(nodes.chapters);
-    }
-    if (nodes.rules && nodes.rules.length && !rules.length) {
-      setRules(nodes.rules);
-    }
-    if (nodes.subrules && nodes.subrules.length && !subrules.length) {
-      setSubrules(nodes.subrules);
-    }
-  }
+  }, [
+    nodes,
+    sections.length,
+    chapters.length,
+    rules.length,
+    subrules.length,
+    sections,
+    chapters,
+    rules,
+    subrules,
+  ]);
 
   // Add a hash to url if none provided
   useEffect(() => {
