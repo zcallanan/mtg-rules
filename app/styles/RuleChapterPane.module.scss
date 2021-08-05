@@ -1,0 +1,11 @@
+@import "./variables.scss";
+
+.ruleChapterPane {
+    background: $color5;
+    position: fixed;
+    width: 74%;
+    z-index: 1;
+    top: 28%;
+    height: 6%;
+    border: $color2 solid .25rem;
+  }

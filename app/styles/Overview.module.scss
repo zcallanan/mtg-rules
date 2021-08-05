@@ -1,11 +1,18 @@
 @import "./variables.scss";
 
-.overviewContents {
+.overviewPane {
   display: flex;
+  position: fixed;
+  z-index: 1;
   width: 100%;
+  width: 74%;
+  height: 6%;
+  top: 23%;
   justify-content: left;
-  margin-left: 16px;
+  padding-left: 16px;
   margin-top: 3px;
+  background: $color4;
+  border: $color2 solid .25rem;
 }
 
 .overviewText {

@@ -10,6 +10,7 @@ import {
   Rule,
   Subrule,
 } from "../typing/types";
+import styles from "../styles/TabContent.module.scss";
 
 interface Props {
   searchResults: SearchResults;
@@ -45,7 +46,7 @@ const TabContent = (props: Props): JSX.Element => {
   };
 
   return (
-    <div>
+    <div className={styles.tabsContainer}>
       <Tabs
         defaultActiveKey="search"
         variant="pills"
