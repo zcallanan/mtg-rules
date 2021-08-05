@@ -118,7 +118,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [rules, setRules] = useState<Rule[]>([]);
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
-  // Save parsed node data to state at init
+  // Save parsed node data to state at init or when a node array changes
   useEffect(() => {
     if (nodes) {
       console.log(nodes);
@@ -264,9 +264,12 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   // Scroll ToC to chapterTitle corresponding to url hash value
   const scrollToc = (chapterNumber: number) => {
-    const re = new RegExp(`(${chapterNumber})`);
-    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
-    element.scrollIntoView();
+    // Jumps to chapterNumber 1 less, so don't jump to ~ 100 as there is no 99
+    if (chapterNumber % 100 !== 0) {
+      const re = new RegExp(`(${chapterNumber - 1})`);
+      const element = tocRefs.current.find((elem) => re.test(elem.innerText));
+      element.scrollIntoView();
+    }
   };
 
   // Prop used by TopRuleWrapper to save useTopRule callback value
