@@ -8,6 +8,7 @@ import RuleChapterPane from "../../../app/components/RuleChapterPane";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
+import ScrollTocWrapper from "../../../app/components/ScrollTocWrapper";
 import Overview from "../../../app/components/Overview";
 import TabContent from "../../../app/components/TabContent";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
@@ -84,6 +85,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const path = router.asPath.split("#");
 
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
+  const [chaptersInUse, setChaptersInUse] = useState<Chapter[]>([]);
+  const [scrollToc, setScrollToc] = useState<number>(0);
   const [searchData, setSearchData] = useState<SearchData>({
     searchTerm: "",
     searchType: "partial",
@@ -261,15 +264,24 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Collect mutable refs in [] for toc scrolling
   const tocRefs = useRef<HTMLDivElement[]>([]);
 
-  // Scroll ToC to chapterTitle corresponding to url hash value
-  const scrollToc = (chapterNumber: number) => {
-    // Jumps to chapterNumber 1 less, so don't jump to ~ 100 as there is no 99
-    if (chapterNumber % 100 !== 0) {
-      const re = new RegExp(`(${chapterNumber - 1})`);
-      const element = tocRefs.current.find((elem) => re.test(elem.innerText));
-      element.scrollIntoView();
+  // Track what chapters are rendered
+  useEffect(() => {
+    // Either the search result else default
+    const result = searchResults.searchChapters.length
+      ? searchResults.searchChapters
+      : chapters;
+    // Save the rules in use to state
+    if (!objectArrayComparison(result, chaptersInUse)) {
+      setChaptersInUse(result);
     }
-  };
+  }, [chapters, chaptersInUse, searchResults.searchChapters]);
+
+  useEffect(() => {
+    // Adjust the size of chaptersInUse
+    if (chaptersInUse.length) {
+      tocRefs.current = tocRefs.current.slice(0, chaptersInUse.length);
+    }
+  }, [chaptersInUse]);
 
   // Prop used by TopRuleWrapper to save useTopRule callback value
   const topRuleProp = (chapterN: number): void => {
@@ -282,8 +294,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Prop used by ToC links and rule & subrule viewport links
   const onLinkClick = (chapterN: number, dataSource: string): void => {
     // If chapterN comes from a sectionList viewport link, scroll Toc
-    if (dataSource === "rules") {
-      scrollToc(chapterN);
+    if (dataSource === "rules" && chapterN) {
+      setScrollToc(chapterN);
     }
 
     let source: string;
@@ -329,7 +341,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       }));
 
       // Scroll ToC viewport to anchor tag's chapter title
-      scrollToc(chapterValues.chapterNumber);
+      setScrollToc(chapterValues.chapterNumber);
     } else if (
       callbackNumber &&
       !pause &&
@@ -392,6 +404,13 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   return (
     <div>
+      {scrollToc && (
+        <ScrollTocWrapper
+          setScrollToc={setScrollToc}
+          scrollToc={scrollToc}
+          tocRefs={tocRefs}
+        />
+      )}
       {!searchData.searchCompleted && searchData.searchTerm && (
         <SearchWrapper
           setSearchData={setSearchData}
