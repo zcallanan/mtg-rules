@@ -5,7 +5,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import useScrollToc from "../hooks/useScrollToc";
 import { Chapter } from "../typing/types";
 
 interface Props {
@@ -15,7 +14,7 @@ interface Props {
   chaptersInUse: Chapter[];
 }
 
-const ScrollTocWrapper = (props: Props): JSX.Element => {
+const TocScroll = (props: Props): JSX.Element => {
   const { scrollToc, setScrollToc, tocRefs, chaptersInUse } = props;
 
   const [localChapters, setLocalChapters] = useState<Chapter[]>(null);
@@ -28,14 +27,18 @@ const ScrollTocWrapper = (props: Props): JSX.Element => {
   }, [chaptersInUse, localChapters]);
 
   // Scroll to scrollToc chapter number
-  const result = useScrollToc({ scrollToc, tocRefs });
+  if (scrollToc % 100 !== 0) {
+    const re = new RegExp(`(${scrollToc - 1})`);
+    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
+    element.scrollIntoView();
+  }
 
   // Scrolling complete, set scrollToc to evaluate false
-  if (scrollToc && result) {
+  if (scrollToc) {
     setScrollToc(0);
   }
 
   return null;
 };
 
-export default ScrollTocWrapper;
+export default TocScroll;

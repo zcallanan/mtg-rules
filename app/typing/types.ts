@@ -40,12 +40,10 @@ export interface RouterValues {
 }
 
 export interface ChapterValues {
-  currentCallback: number;
+  ignoreCallbackNumber: number;
   chapterNumber: number;
   anchorValue: number;
-  init: number;
   source: string;
-  propValue: number;
 }
 
 export interface ErrorData {
@@ -152,4 +150,9 @@ export interface ExampleModifyArgs {
 export interface RadioCheck {
   partial: boolean;
   exact: boolean;
+}
+
+export interface ClickData {
+  chapterN: number;
+  dataSource: string;
 }
