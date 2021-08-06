@@ -8,11 +8,14 @@ import RuleChapterPane from "../../../app/components/RuleChapterPane";
 import CustomErrors from "../../../app/components/CustomErrors";
 import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
 import SearchWrapper from "../../../app/components/SearchWrapper";
+import ChapterClicked from "../../../app/components/ChapterClicked";
+import TocScroll from "../../../app/components/TocScroll";
 import Overview from "../../../app/components/Overview";
 import TabContent from "../../../app/components/TabContent";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
   ChapterValues,
+  ClickData,
   Section,
   Chapter,
   Rule,
@@ -81,9 +84,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   });
 
   const router: NextRouter = useRouter();
-  const path = router.asPath.split("#");
 
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
+  const [chaptersInUse, setChaptersInUse] = useState<Chapter[]>([]);
+  const [scrollToc, setScrollToc] = useState<number>(0);
+  const [clickData, setClickData] = useState<ClickData>({
+    chapterN: 0,
+    dataSource: "",
+  });
   const [searchData, setSearchData] = useState<SearchData>({
     searchTerm: "",
     searchType: "partial",
@@ -102,15 +110,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     searchSubrules: [],
     searchResult: 1,
   });
-  const [callbackChapterNumber, setCallbackValue] = useState<number>(0);
-  const [pause, setPause] = useState<boolean>(false);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({
-    currentCallback: 0,
+    ignoreCallbackNumber: 0,
     chapterNumber: 0,
     anchorValue: 0,
-    init: 0,
     source: "",
-    propValue: 0,
   });
   const [sections, setSections] = useState<Section[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -120,7 +124,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Save parsed node data to state at init or when a node array changes
   useEffect(() => {
     if (nodes) {
-      console.log(nodes);
       if (
         (nodes.sections && nodes.sections.length && !sections.length) ||
         nodes.sections !== sections
@@ -158,32 +161,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     subrules,
   ]);
 
-  // Add a hash to url if none provided
-  useEffect(() => {
-    if (path.length === 1) {
-      router.push("#100", undefined, { shallow: true });
-    }
-  }, [router, path]);
-
-  // Initialize chapterValue state
-  useEffect(() => {
-    // Get anchor value from url hash via router
-    if (!chapterValues.anchorValue && path[1]) {
-      // Hash can refer to rule or subrule, so isolate chapter digits
-      const [anchorChapter] = path[1].match(/\d{3}/);
-      const anchorValue = Number(anchorChapter);
-
-      setChapterValues((prevValue) => ({
-        ...prevValue,
-        currentCallback: 100,
-        chapterNumber: anchorValue,
-        anchorValue,
-        init: anchorValue,
-        source: "init",
-      }));
-    }
-  }, [path, chapterValues.anchorValue]);
-
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
     if (nodes && nodes.chapters && nodes.chapters.length) {
@@ -214,22 +191,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const rightViewportRef = useRef<HTMLDivElement>();
   const leftViewportRef = useRef<HTMLDivElement>();
 
-  /*
-    When a toc link is clicked, chapterTitle returns a chapterNumber via a prop.
-    This value is overriden by the callback on render, unless the update is
-    paused, callback chapterNumber saved to state, and a condition prevents the
-    callback chapterNumber from being saved to state.
-  */
-
-  // Apply pause
-  useEffect(() => {
-    if (pause) {
-      setTimeout(() => {
-        setPause(!pause);
-      }, 500);
-    }
-  }, [pause]);
-
   // Track what rules are rendered
   useEffect(() => {
     // Either the search result else default
@@ -245,132 +206,40 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   // Collect mutable refs in [] for useTopRule to iterate over and observe
   const rulesRef = useRef<HTMLDivElement[]>([]);
 
+  // Adjust the size of rulesRef to trigger observation of rules by useTopRule
   useEffect(() => {
-    // Adjust the size of rulesRef to trigger observation of rules by useTopRule
     if (rulesInUse.length) {
       rulesRef.current = rulesRef.current.slice(0, rulesInUse.length);
     }
   }, [rulesInUse]);
 
-  let callbackNumber: number;
-
-  if (!pause && callbackChapterNumber) {
-    callbackNumber = callbackChapterNumber;
-  }
-
   // Collect mutable refs in [] for toc scrolling
   const tocRefs = useRef<HTMLDivElement[]>([]);
 
-  // Scroll ToC to chapterTitle corresponding to url hash value
-  const scrollToc = (chapterNumber: number) => {
-    // Jumps to chapterNumber 1 less, so don't jump to ~ 100 as there is no 99
-    if (chapterNumber % 100 !== 0) {
-      const re = new RegExp(`(${chapterNumber - 1})`);
-      const element = tocRefs.current.find((elem) => re.test(elem.innerText));
-      element.scrollIntoView();
+  // Track what chapters are rendered
+  useEffect(() => {
+    // Either the search result else default
+    const result = searchResults.searchChapters.length
+      ? searchResults.searchChapters
+      : chapters;
+    // Save the rules in use to state
+    if (!objectArrayComparison(result, chaptersInUse)) {
+      setChaptersInUse(result);
     }
-  };
-
-  // Prop used by TopRuleWrapper to save useTopRule callback value
-  const topRuleProp = (chapterN: number): void => {
-    if (chapterN >= 100 && callbackChapterNumber !== chapterN) {
-      // Delay to prevent TopRuleWrapper updating dynamic page while rendering
-      setTimeout(() => setCallbackValue(chapterN), 200);
-    }
-  };
-
-  // Prop used by ToC links and rule & subrule viewport links
-  const onLinkClick = (chapterN: number, dataSource: string): void => {
-    // If chapterN comes from a sectionList viewport link, scroll Toc
-    if (dataSource === "rules") {
-      scrollToc(chapterN);
-    }
-
-    let source: string;
-    // Initiate a pause as chapterNumber is supplied by prop
-    setPause(true);
-    const { chapterNumber } = chapterValues;
-    if (chapterNumber && chapterN < chapterNumber) {
-      source = "prop decrease";
-    } else if (chapterNumber && chapterN > chapterNumber) {
-      source = "prop increase";
-    }
-
-    // Save value from prop
-    if (chapterValues.chapterNumber !== chapterN) {
-      setChapterValues((prevValue) => ({
-        ...prevValue,
-        chapterNumber: chapterN,
-        anchorValue: chapterN,
-        source,
-        propValue: chapterN,
-      }));
-    }
-  };
-
-  /*
-    If at initialization, use hash value as anchor link, and scroll to that chapter
-      in ToC list
-    Else use propValue or callbackNumber
-  */
+  }, [chapters, chaptersInUse, searchResults.searchChapters]);
 
   useEffect(() => {
-    const anchorNumber = chapterValues.anchorValue;
-    if (
-      anchorNumber &&
-      chapterValues.source === "init" &&
-      tocRefs.current.length &&
-      chapters.length
-    ) {
-      setChapterValues((prevValue) => ({
-        ...prevValue,
-        chapterNumber: anchorNumber,
-        source: "anchor tag",
-      }));
-
-      // Scroll ToC viewport to anchor tag's chapter title
-      scrollToc(chapterValues.chapterNumber);
-    } else if (
-      callbackNumber &&
-      !pause &&
-      chapterValues.chapterNumber !== callbackNumber &&
-      chapterValues.currentCallback !== callbackNumber
-    ) {
-      const { source, propValue } = chapterValues;
-
-      // Update chapterValues chapterNumber and currentCallback fn
-      const updateState = (chapterN: number): void => {
-        setChapterValues((prevValue) => ({
-          ...prevValue,
-          source: "callback",
-          chapterNumber: chapterN,
-          currentCallback: chapterN,
-        }));
-      };
-
-      /*
-        When the prop returns a # less than the state chapterNumber, the observer
-          callback returns the wrong value.
-        When the prop returns a # greater than the state chapterNumber, the observer
-          does not return a value at all.
-        In this case use propValue instead.
-      */
-
-      if (
-        (source === "prop decrease" || source === "prop increase") &&
-        propValue
-      ) {
-        updateState(propValue);
-      } else if (
-        callbackNumber &&
-        callbackNumber !== chapterValues.chapterNumber
-      ) {
-        updateState(callbackNumber);
-      }
+    // Adjust the size of chaptersInUse
+    if (chaptersInUse.length) {
+      tocRefs.current = tocRefs.current.slice(0, chaptersInUse.length);
     }
-    // Eslint complains of missing dependencies that are unnecessary here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.asPath, callbackNumber, pause]);
+  }, [chaptersInUse]);
+
+  const onLinkClick = (chapterN: number, dataSource: string): void => {
+    if (chapterN !== clickData.chapterN) {
+      setClickData({ chapterN, dataSource });
+    }
+  };
 
   // Check if there is an error on the page
   const errorResult = (obj: ValidateChapter): boolean =>
@@ -392,6 +261,23 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   return (
     <div>
+      {!!scrollToc && (
+        <TocScroll
+          setScrollToc={setScrollToc}
+          scrollToc={scrollToc}
+          tocRefs={tocRefs}
+          chaptersInUse={chaptersInUse}
+        />
+      )}
+      {!!clickData && !!clickData.chapterN && (
+        <ChapterClicked
+          chapterValues={chapterValues}
+          clickData={clickData}
+          setChapterValues={setChapterValues}
+          setClickedData={setClickData}
+          setScrollToc={setScrollToc}
+        />
+      )}
       {!searchData.searchCompleted && searchData.searchTerm && (
         <SearchWrapper
           setSearchData={setSearchData}
@@ -402,11 +288,13 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       )}
       {rightViewportRef && (
         <TopRuleWrapper
+          chapterValues={chapterValues}
           rootRef={rightViewportRef}
-          topRuleProp={topRuleProp}
           rulesRef={rulesRef}
-          init={chapterValues.init}
           rulesInUse={rulesInUse}
+          tocRefDivs={tocRefs.current}
+          setChapterValues={setChapterValues}
+          setScrollToc={setScrollToc}
         />
       )}
       {!errorResult(errorData) ? (
