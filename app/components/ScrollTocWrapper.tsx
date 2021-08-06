@@ -1,14 +1,31 @@
-import { Dispatch, SetStateAction, MutableRefObject } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  MutableRefObject,
+  useEffect,
+  useState,
+} from "react";
 import useScrollToc from "../hooks/useScrollToc";
+import { Chapter } from "../typing/types";
 
 interface Props {
   scrollToc: number;
   setScrollToc: Dispatch<SetStateAction<number>>;
   tocRefs: MutableRefObject<HTMLDivElement[]>;
+  chaptersInUse: Chapter[];
 }
 
 const ScrollTocWrapper = (props: Props): JSX.Element => {
-  const { scrollToc, setScrollToc, tocRefs } = props;
+  const { scrollToc, setScrollToc, tocRefs, chaptersInUse } = props;
+
+  const [localChapters, setLocalChapters] = useState<Chapter[]>(null);
+
+  // Save to local state to ensure updated tocRefs is evaluated
+  useEffect(() => {
+    if (localChapters !== chaptersInUse) {
+      setLocalChapters(chaptersInUse);
+    }
+  }, [chaptersInUse, localChapters]);
 
   // Scroll to scrollToc chapter number
   const result = useScrollToc({ scrollToc, tocRefs });

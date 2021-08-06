@@ -409,6 +409,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           setScrollToc={setScrollToc}
           scrollToc={scrollToc}
           tocRefs={tocRefs}
+          chaptersInUse={chaptersInUse}
         />
       )}
       {!searchData.searchCompleted && searchData.searchTerm && (
