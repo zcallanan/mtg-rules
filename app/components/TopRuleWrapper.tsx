@@ -51,9 +51,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
 
   // Initialize chapterValue state
   useEffect(() => {
-    // Get anchor value from url hash via router
     if (anchorChapter) {
-      // Hash can refer to rule or subrule, so isolate chapter digits
       const aV = Number(anchorChapter);
 
       setChapterValues((prevValue) => ({
@@ -67,11 +65,12 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
 
   // Scroll ToC viewport to anchor hash vicinity
   useEffect(() => {
-    if (chapterNumber && source === "anchor hash" && tocRefDivs.length) {
+    if (chapterNumber && tocRefDivs.length) {
       setScrollToc(chapterNumber);
     }
   }, [chapterNumber, setScrollToc, source, tocRefDivs.length]);
 
+  // When loading, or a chapter title is clicked, ignore the number from useTopRule
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
@@ -87,6 +86,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
     }
   }, [latestRuleChapterNumber, setChapterValues, source]);
 
+  // When scrolling, save the chapterNumber from useTopRule callback
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
