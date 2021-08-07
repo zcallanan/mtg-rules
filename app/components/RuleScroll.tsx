@@ -57,7 +57,7 @@ const RuleScroll = (props: Props): JSX.Element => {
     searchResults.searchRules.length,
   ]);
 
-  // Scrolling complete, set scrollRules.takeAction to evaluate false
+  // Scrolling complete, set scrollRules.promptScrollToRule to evaluate false
   useEffect(() => {
     if (scrollRules) {
       setScrollRules((prevValue) => ({

@@ -6,7 +6,7 @@ import TocSections from "../../../app/components/TocSections";
 import RulePane from "../../../app/components/RulePane";
 import RuleChapterPane from "../../../app/components/RuleChapterPane";
 import CustomErrors from "../../../app/components/CustomErrors";
-import TopRuleWrapper from "../../../app/components/TopRuleWrapper";
+import TitleChapterNumber from "../../../app/components/TitleChapterNumber";
 import SearchWrapper from "../../../app/components/SearchWrapper";
 import ChapterClicked from "../../../app/components/ChapterClicked";
 import TocScroll from "../../../app/components/TocScroll";
@@ -104,9 +104,11 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [searchData, setSearchData] = useState<SearchData>({
     searchTerm: "",
     searchType: "partial",
+    searchCleared: 0,
     searchCompleted: 0,
     sections: [],
     chapters: [],
+    previousSearchTerm: "",
     rules: [],
     subrules: [],
   });
@@ -338,7 +340,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         />
       )}
       {rightViewportRef && (
-        <TopRuleWrapper
+        <TitleChapterNumber
           chaptersInUse={chaptersInUse}
           chapterValues={chapterValues}
           rootRef={rightViewportRef}

@@ -95,9 +95,11 @@ const SearchForm = (props: Props): JSX.Element => {
         setSearchData((prevValue) => ({
           ...prevValue,
           searchTerm: "",
+          searchCleared: 1,
           searchCompleted: 0,
           sections: [],
           chapters: [],
+          previousSearchTerm: searchedTerm,
           rules: [],
           subrules: [],
         }));
@@ -113,15 +115,17 @@ const SearchForm = (props: Props): JSX.Element => {
         });
       } else if (searchedTerm !== memoSearchValue.searchTerm) {
         // Save search data
-        setSearchData({
+        setSearchData((prevValue) => ({
+          ...prevValue,
           searchTerm: memoSearchValue.searchTerm,
+          searchCleared: 0,
           searchCompleted: 0,
           searchType: memoSearchValue.searchType,
           sections,
           chapters,
           rules,
           subrules,
-        });
+        }));
       }
 
       // Mark local searchValue as submitted

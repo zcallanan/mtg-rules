@@ -1,4 +1,10 @@
-import { useEffect, MutableRefObject, Dispatch, SetStateAction } from "react";
+import {
+  useEffect,
+  useState,
+  MutableRefObject,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useRouter, NextRouter } from "next/router";
 import useTopRule from "../hooks/useTopRule";
 import {
@@ -22,7 +28,7 @@ interface Props {
   tocRefDivs: HTMLDivElement[];
 }
 
-const TopRuleWrapper = (props: Props): JSX.Element => {
+const TitleChapterNumber = (props: Props): JSX.Element => {
   const {
     chaptersInUse,
     chapterValues,
@@ -38,6 +44,15 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   const { anchorValue, chapterNumber, ignoreCallbackNumber, source } =
     chapterValues;
 
+  let firstChapterNumber: number;
+  if (chaptersInUse && chaptersInUse.length) {
+    firstChapterNumber = chaptersInUse[0].chapterNumber;
+  }
+
+  // State
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>("");
+
+  // Router
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
@@ -90,20 +105,20 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
+      firstChapterNumber &&
       searchData.searchCompleted &&
       searchResults.searchResult &&
       searchResults.searchChapters.length
     ) {
-      const firstChapterNumber = chaptersInUse[0].chapterNumber;
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "search",
         chapterNumber: firstChapterNumber,
-        ignoreCallbackNumber: latestRuleChapterNumber,
       }));
     }
   }, [
     chaptersInUse,
+    firstChapterNumber,
     latestRuleChapterNumber,
     searchData.searchCompleted,
     searchResults.searchChapters.length,
@@ -111,14 +126,34 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
     setChapterValues,
   ]);
 
-  // When loading, or a chapter title is clicked, ignore the number from useTopRule
+  // Set chapterNumber after search is cleared
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
-      (source === "init" ||
-        source === "prop increase" ||
-        source === "prop decrease")
+      firstChapterNumber &&
+      searchData.searchCleared &&
+      localSearchTerm !== searchData.previousSearchTerm
     ) {
+      setLocalSearchTerm(searchData.previousSearchTerm);
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        source: "search cleared",
+        chapterNumber: firstChapterNumber,
+      }));
+    }
+  }, [
+    chaptersInUse,
+    firstChapterNumber,
+    latestRuleChapterNumber,
+    localSearchTerm,
+    searchData.previousSearchTerm,
+    searchData.searchCleared,
+    setChapterValues,
+  ]);
+
+  // If there was a source other than a callback chapterNumber, then ignore current callback
+  useEffect(() => {
+    if (latestRuleChapterNumber && source !== "callback") {
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "callback",
@@ -153,4 +188,4 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   return null;
 };
 
-export default TopRuleWrapper;
+export default TitleChapterNumber;
