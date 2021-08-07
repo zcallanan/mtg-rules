@@ -156,3 +156,8 @@ export interface ClickData {
   chapterN: number;
   dataSource: string;
 }
+
+export interface ScrollRules {
+  hash: string;
+  val: number;
+}

@@ -27,16 +27,20 @@ const TocScroll = (props: Props): JSX.Element => {
   }, [chaptersInUse, localChapters]);
 
   // Scroll to scrollToc chapter number
-  if (scrollToc % 100 !== 0) {
-    const re = new RegExp(`(${scrollToc - 1})`);
-    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
-    element.scrollIntoView();
-  }
+  useEffect(() => {
+    if (scrollToc % 100 !== 0) {
+      const re = new RegExp(`(${scrollToc - 1})`);
+      const element = tocRefs.current.find((elem) => re.test(elem.innerText));
+      element.scrollIntoView();
+    }
+  }, [scrollToc, tocRefs]);
 
   // Scrolling complete, set scrollToc to evaluate false
-  if (scrollToc) {
-    setScrollToc(0);
-  }
+  useEffect(() => {
+    if (scrollToc) {
+      setScrollToc(0);
+    }
+  }, [scrollToc, setScrollToc]);
 
   return null;
 };

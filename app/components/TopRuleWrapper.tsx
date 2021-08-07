@@ -65,7 +65,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
 
   // Scroll ToC viewport to anchor hash vicinity
   useEffect(() => {
-    if (chapterNumber && tocRefDivs.length) {
+    if (chapterNumber && source === "init" && tocRefDivs.length) {
       setScrollToc(chapterNumber);
     }
   }, [chapterNumber, setScrollToc, source, tocRefDivs.length]);

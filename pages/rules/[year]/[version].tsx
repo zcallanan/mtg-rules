@@ -28,8 +28,10 @@ import {
   GetStaticPathsResult,
   SearchData,
   SearchResults,
+  ScrollRules,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
+import RuleScroll from "../../../app/components/RuleScroll";
 
 export const getStaticProps = async (
   context: GetStaticPropsParams
@@ -84,9 +86,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   });
 
   const router: NextRouter = useRouter();
+  const path = router.asPath.split("#");
 
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
   const [chaptersInUse, setChaptersInUse] = useState<Chapter[]>([]);
+  const [scrollRules, setScrollRules] = useState<ScrollRules>({
+    hash: "",
+    val: 0,
+  });
+  const [hashString, setHashString] = useState<string>("");
   const [scrollToc, setScrollToc] = useState<number>(0);
   const [clickData, setClickData] = useState<ClickData>({
     chapterN: 0,
@@ -121,45 +129,53 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [rules, setRules] = useState<Rule[]>([]);
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
+  // Save url hash value as a string
+  useEffect(() => {
+    if (path[1] && hashString !== path[1]) {
+      setHashString(path[1]);
+    }
+  }, [hashString, path]);
+
+  // Prompt scrolling to a rule if the url hash changes
+  useEffect(() => {
+    const result = searchResults.searchRules.length
+      ? searchResults.searchRules
+      : rules;
+
+    if (
+      !objectArrayComparison(result, rulesInUse) &&
+      hashString !== scrollRules.hash
+    ) {
+      setScrollRules({
+        hash: hashString,
+        val: 1,
+      });
+    }
+  }, [
+    hashString,
+    rules,
+    rulesInUse,
+    scrollRules.hash,
+    searchResults.searchRules,
+  ]);
+
   // Save parsed node data to state at init or when a node array changes
   useEffect(() => {
     if (nodes) {
-      if (
-        (nodes.sections && nodes.sections.length && !sections.length) ||
-        nodes.sections !== sections
-      ) {
+      if (nodes.sections.length !== sections.length) {
         setSections(nodes.sections);
       }
-      if (
-        (nodes.chapters && nodes.chapters.length && !chapters.length) ||
-        nodes.chapters !== chapters
-      ) {
+      if (nodes.chapters.length !== chapters.length) {
         setChapters(nodes.chapters);
       }
-      if (
-        (nodes.rules && nodes.rules.length && !rules.length) ||
-        nodes.rules !== rules
-      ) {
+      if (nodes.rules.length !== rules.length) {
         setRules(nodes.rules);
       }
-      if (
-        (nodes.subrules && nodes.subrules.length && !subrules.length) ||
-        nodes.subrules !== subrules
-      ) {
+      if (nodes.subrules.length !== subrules.length) {
         setSubrules(nodes.subrules);
       }
     }
-  }, [
-    nodes,
-    sections.length,
-    chapters.length,
-    rules.length,
-    subrules.length,
-    sections,
-    chapters,
-    rules,
-    subrules,
-  ]);
+  }, [chapters.length, nodes, rules.length, sections.length, subrules.length]);
 
   // Error Detection: Add nodes array to errorData
   useEffect(() => {
@@ -191,6 +207,16 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const rightViewportRef = useRef<HTMLDivElement>();
   const leftViewportRef = useRef<HTMLDivElement>();
 
+  // Ref Arrays
+  // For useTopRule to iterate over and observe
+  const rulesRef = useRef<HTMLDivElement[]>([]);
+
+  // For toc scrolling
+  const tocRefs = useRef<HTMLDivElement[]>([]);
+
+  // For scrolling to a rule after load or search
+  const ruleNumberRefs = useRef<HTMLSpanElement[]>([]);
+
   // Track what rules are rendered
   useEffect(() => {
     // Either the search result else default
@@ -203,18 +229,16 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   }, [rules, rulesInUse, searchResults.searchRules]);
 
-  // Collect mutable refs in [] for useTopRule to iterate over and observe
-  const rulesRef = useRef<HTMLDivElement[]>([]);
-
-  // Adjust the size of rulesRef to trigger observation of rules by useTopRule
+  // Adjust the size of rulesRef & ruleNumberRefs
   useEffect(() => {
     if (rulesInUse.length) {
       rulesRef.current = rulesRef.current.slice(0, rulesInUse.length);
+      ruleNumberRefs.current = ruleNumberRefs.current.slice(
+        0,
+        rulesInUse.length
+      );
     }
   }, [rulesInUse]);
-
-  // Collect mutable refs in [] for toc scrolling
-  const tocRefs = useRef<HTMLDivElement[]>([]);
 
   // Track what chapters are rendered
   useEffect(() => {
@@ -267,6 +291,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           scrollToc={scrollToc}
           tocRefs={tocRefs}
           chaptersInUse={chaptersInUse}
+        />
+      )}
+      {!!scrollRules.val && (
+        <RuleScroll
+          ruleNumberRefs={ruleNumberRefs}
+          rulesInUse={rulesInUse}
+          scrollRules={scrollRules}
+          setScrollRules={setScrollRules}
         />
       )}
       {!!clickData && !!clickData.chapterN && (
@@ -359,6 +391,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
               rulesRef={rulesRef}
               rightViewportRef={rightViewportRef}
               onLinkClick={onLinkClick}
+              ruleNumberRefs={ruleNumberRefs}
             />
           </div>
         </div>
