@@ -1,13 +1,22 @@
 import { useEffect, MutableRefObject, Dispatch, SetStateAction } from "react";
 import { useRouter, NextRouter } from "next/router";
 import useTopRule from "../hooks/useTopRule";
-import { ChapterValues, Rule } from "../typing/types";
+import {
+  Chapter,
+  ChapterValues,
+  Rule,
+  SearchData,
+  SearchResults,
+} from "../typing/types";
 
 interface Props {
+  chaptersInUse: Chapter[];
   chapterValues: ChapterValues;
   rootRef: MutableRefObject<HTMLDivElement>;
   rulesRef: MutableRefObject<HTMLDivElement[]>;
   rulesInUse: Rule[];
+  searchData: SearchData;
+  searchResults: SearchResults;
   setChapterValues: Dispatch<SetStateAction<ChapterValues>>;
   setScrollToc: Dispatch<SetStateAction<number>>;
   tocRefDivs: HTMLDivElement[];
@@ -15,10 +24,13 @@ interface Props {
 
 const TopRuleWrapper = (props: Props): JSX.Element => {
   const {
+    chaptersInUse,
     chapterValues,
     rootRef,
     rulesRef,
     rulesInUse,
+    searchData,
+    searchResults,
     setChapterValues,
     setScrollToc,
     tocRefDivs,
@@ -63,12 +75,41 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
     }
   }, [path, anchorValue, setChapterValues, anchorChapter]);
 
-  // Scroll ToC viewport to anchor hash vicinity
+  // On load or search, scroll ToC viewport to chapterNumber
   useEffect(() => {
-    if (chapterNumber && source === "init" && tocRefDivs.length) {
+    if (
+      chapterNumber &&
+      tocRefDivs.length &&
+      (source === "init" || source === "search")
+    ) {
       setScrollToc(chapterNumber);
     }
   }, [chapterNumber, setScrollToc, source, tocRefDivs.length]);
+
+  // When searching, set chapterNumber to the first value in chaptersInUse
+  useEffect(() => {
+    if (
+      latestRuleChapterNumber &&
+      searchData.searchCompleted &&
+      searchResults.searchResult &&
+      searchResults.searchChapters.length
+    ) {
+      const firstChapterNumber = chaptersInUse[0].chapterNumber;
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        source: "search",
+        chapterNumber: firstChapterNumber,
+        ignoreCallbackNumber: latestRuleChapterNumber,
+      }));
+    }
+  }, [
+    chaptersInUse,
+    latestRuleChapterNumber,
+    searchData.searchCompleted,
+    searchResults.searchChapters.length,
+    searchResults.searchResult,
+    setChapterValues,
+  ]);
 
   // When loading, or a chapter title is clicked, ignore the number from useTopRule
   useEffect(() => {
@@ -98,6 +139,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
         ...prevValue,
         source: "callback",
         chapterNumber: latestRuleChapterNumber,
+        ignoreCallbackNumber: 999,
       }));
     }
   }, [

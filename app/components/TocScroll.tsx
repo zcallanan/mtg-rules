@@ -28,9 +28,9 @@ const TocScroll = (props: Props): JSX.Element => {
 
   // Scroll to scrollToc chapter number
   useEffect(() => {
-    if (scrollToc % 100 !== 0) {
-      const re = new RegExp(`(${scrollToc - 1})`);
-      const element = tocRefs.current.find((elem) => re.test(elem.innerText));
+    const re = new RegExp(`(${scrollToc})`);
+    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
+    if (element) {
       element.scrollIntoView();
     }
   }, [scrollToc, tocRefs]);

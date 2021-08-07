@@ -92,7 +92,8 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [chaptersInUse, setChaptersInUse] = useState<Chapter[]>([]);
   const [scrollRules, setScrollRules] = useState<ScrollRules>({
     hash: "",
-    val: 0,
+    promptScrollToRule: 0,
+    searchTerm: "",
   });
   const [hashString, setHashString] = useState<string>("");
   const [scrollToc, setScrollToc] = useState<number>(0);
@@ -146,17 +147,34 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       !objectArrayComparison(result, rulesInUse) &&
       hashString !== scrollRules.hash
     ) {
-      setScrollRules({
+      setScrollRules((prevValue) => ({
+        ...prevValue,
         hash: hashString,
-        val: 1,
-      });
+        promptScrollToRule: 1,
+      }));
+    } else if (
+      !objectArrayComparison(result, rulesInUse) &&
+      searchResults.searchTerm !== scrollRules.searchTerm &&
+      searchResults.searchTerm &&
+      searchResults.searchResult &&
+      searchData.searchCompleted
+    ) {
+      setScrollRules((prevValue) => ({
+        ...prevValue,
+        searchTerm: searchResults.searchTerm,
+        promptScrollToRule: 1,
+      }));
     }
   }, [
     hashString,
     rules,
     rulesInUse,
     scrollRules.hash,
+    scrollRules.searchTerm,
+    searchData.searchCompleted,
+    searchResults.searchResult,
     searchResults.searchRules,
+    searchResults.searchTerm,
   ]);
 
   // Save parsed node data to state at init or when a node array changes
@@ -207,7 +225,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const rightViewportRef = useRef<HTMLDivElement>();
   const leftViewportRef = useRef<HTMLDivElement>();
 
-  // Ref Arrays
   // For useTopRule to iterate over and observe
   const rulesRef = useRef<HTMLDivElement[]>([]);
 
@@ -293,11 +310,13 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           chaptersInUse={chaptersInUse}
         />
       )}
-      {!!scrollRules.val && (
+      {!!scrollRules.promptScrollToRule && (
         <RuleScroll
           ruleNumberRefs={ruleNumberRefs}
           rulesInUse={rulesInUse}
           scrollRules={scrollRules}
+          searchData={searchData}
+          searchResults={searchResults}
           setScrollRules={setScrollRules}
         />
       )}
@@ -320,11 +339,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
       )}
       {rightViewportRef && (
         <TopRuleWrapper
+          chaptersInUse={chaptersInUse}
           chapterValues={chapterValues}
           rootRef={rightViewportRef}
           rulesRef={rulesRef}
           rulesInUse={rulesInUse}
           tocRefDivs={tocRefs.current}
+          searchData={searchData}
+          searchResults={searchResults}
           setChapterValues={setChapterValues}
           setScrollToc={setScrollToc}
         />

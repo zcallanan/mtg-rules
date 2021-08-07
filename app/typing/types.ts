@@ -159,5 +159,6 @@ export interface ClickData {
 
 export interface ScrollRules {
   hash: string;
-  val: number;
+  searchTerm: string;
+  promptScrollToRule: number;
 }
