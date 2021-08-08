@@ -5,7 +5,13 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Rule, ScrollRules, SearchData, SearchResults } from "../typing/types";
+import {
+  Rule,
+  RuleScrollData,
+  ScrollRules,
+  SearchData,
+  SearchResults,
+} from "../typing/types";
 
 interface Props {
   ruleNumberRefs: MutableRefObject<HTMLSpanElement[]>;
@@ -27,12 +33,7 @@ const RuleScroll = (props: Props): JSX.Element => {
   } = props;
   const { hash, previousSearchTerm, searchTerm } = scrollRules;
 
-  interface RuleData {
-    rulesInUse: Rule[];
-    ruleNumbers: HTMLSpanElement[];
-  }
-
-  const [localRuleData, setLocalRuleData] = useState<RuleData>({
+  const [localRuleData, setLocalRuleData] = useState<RuleScrollData>({
     rulesInUse: [],
     ruleNumbers: [],
   });
@@ -74,7 +75,7 @@ const RuleScroll = (props: Props): JSX.Element => {
         firstRule = `${localRuleData.rulesInUse[0].chapterNumber}.${localRuleData.rulesInUse[0].ruleNumber}`;
       }
 
-      // Determine the regex string to find the right element
+      // Determine the regex to find the right element
       const re = firstRule
         ? new RegExp(`(${firstRule})`)
         : new RegExp(`(${hash})`);
