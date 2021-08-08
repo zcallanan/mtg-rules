@@ -11,6 +11,7 @@ interface Props {
   ruleSubset: Rule[];
   rules: Rule[];
   subrules: Subrule[];
+  ruleNumberRefs: MutableRefObject<HTMLSpanElement[]>;
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
@@ -22,6 +23,7 @@ const RuleList = (props: Props): JSX.Element => {
     ruleSubset,
     rules,
     subrules,
+    ruleNumberRefs,
     elRef,
     onLinkClick,
     searchResults,
@@ -60,7 +62,19 @@ const RuleList = (props: Props): JSX.Element => {
               className={`${styles.ruleListItem} list-group-item`}
             >
               <div>
-                <span>
+                <span
+                  className={styles.ruleNumberSpan}
+                  // eslint-disable-next-line no-return-assign
+                  ref={(el) =>
+                    (ruleNumberRefs.current[
+                      rules.findIndex(
+                        (r) =>
+                          r.ruleNumber === rule.ruleNumber &&
+                          r.chapterNumber === rule.chapterNumber
+                      )
+                    ] = el)
+                  }
+                >
                   <strong>{`${rule.chapterNumber}.${rule.ruleNumber}`}</strong>
                 </span>
                 <span>{" • "}</span>

@@ -1,24 +1,42 @@
-import { useEffect, MutableRefObject, Dispatch, SetStateAction } from "react";
+import {
+  useEffect,
+  useState,
+  MutableRefObject,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useRouter, NextRouter } from "next/router";
 import useTopRule from "../hooks/useTopRule";
-import { ChapterValues, Rule } from "../typing/types";
+import {
+  Chapter,
+  ChapterValues,
+  Rule,
+  SearchData,
+  SearchResults,
+} from "../typing/types";
 
 interface Props {
+  chaptersInUse: Chapter[];
   chapterValues: ChapterValues;
   rootRef: MutableRefObject<HTMLDivElement>;
   rulesRef: MutableRefObject<HTMLDivElement[]>;
   rulesInUse: Rule[];
+  searchData: SearchData;
+  searchResults: SearchResults;
   setChapterValues: Dispatch<SetStateAction<ChapterValues>>;
   setScrollToc: Dispatch<SetStateAction<number>>;
   tocRefDivs: HTMLDivElement[];
 }
 
-const TopRuleWrapper = (props: Props): JSX.Element => {
+const TitleChapterNumber = (props: Props): JSX.Element => {
   const {
+    chaptersInUse,
     chapterValues,
     rootRef,
     rulesRef,
     rulesInUse,
+    searchData,
+    searchResults,
     setChapterValues,
     setScrollToc,
     tocRefDivs,
@@ -26,6 +44,10 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   const { anchorValue, chapterNumber, ignoreCallbackNumber, source } =
     chapterValues;
 
+  // State
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>("");
+
+  // Router
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
@@ -63,21 +85,70 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
     }
   }, [path, anchorValue, setChapterValues, anchorChapter]);
 
-  // Scroll ToC viewport to anchor hash vicinity
+  // On load or search, scroll ToC viewport to chapterNumber
   useEffect(() => {
-    if (chapterNumber && tocRefDivs.length) {
+    if (
+      chapterNumber &&
+      tocRefDivs.length &&
+      (source === "init" || source === "search")
+    ) {
       setScrollToc(chapterNumber);
     }
   }, [chapterNumber, setScrollToc, source, tocRefDivs.length]);
 
-  // When loading, or a chapter title is clicked, ignore the number from useTopRule
+  // When searching, set chapterNumber to the first value in chaptersInUse
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
-      (source === "init" ||
-        source === "prop increase" ||
-        source === "prop decrease")
+      searchData.searchCompleted &&
+      searchResults.searchResult &&
+      searchResults.searchChapters.length
     ) {
+      let firstChapterNumber: number;
+      if (chaptersInUse && chaptersInUse.length) {
+        firstChapterNumber = chaptersInUse[0].chapterNumber;
+      }
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        source: "search",
+        chapterNumber: firstChapterNumber,
+      }));
+    }
+  }, [
+    chaptersInUse,
+    latestRuleChapterNumber,
+    searchData.searchCompleted,
+    searchResults.searchChapters.length,
+    searchResults.searchResult,
+    setChapterValues,
+  ]);
+
+  // Set chapterNumber after search is cleared
+  useEffect(() => {
+    if (
+      latestRuleChapterNumber &&
+      searchData.searchCleared &&
+      localSearchTerm !== searchData.previousSearchTerm
+    ) {
+      setLocalSearchTerm(searchData.previousSearchTerm);
+      setChapterValues((prevValue) => ({
+        ...prevValue,
+        source: "search cleared",
+        chapterNumber: 100,
+      }));
+    }
+  }, [
+    chaptersInUse,
+    latestRuleChapterNumber,
+    localSearchTerm,
+    searchData.previousSearchTerm,
+    searchData.searchCleared,
+    setChapterValues,
+  ]);
+
+  // If there was a source other than a callback chapterNumber, then ignore current callback
+  useEffect(() => {
+    if (latestRuleChapterNumber && source !== "callback") {
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "callback",
@@ -98,6 +169,7 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
         ...prevValue,
         source: "callback",
         chapterNumber: latestRuleChapterNumber,
+        ignoreCallbackNumber: 999,
       }));
     }
   }, [
@@ -111,4 +183,4 @@ const TopRuleWrapper = (props: Props): JSX.Element => {
   return null;
 };
 
-export default TopRuleWrapper;
+export default TitleChapterNumber;

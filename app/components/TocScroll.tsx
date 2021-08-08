@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Chapter } from "../typing/types";
+import { Chapter, TocScrollData } from "../typing/types";
 
 interface Props {
   scrollToc: number;
@@ -17,26 +17,60 @@ interface Props {
 const TocScroll = (props: Props): JSX.Element => {
   const { scrollToc, setScrollToc, tocRefs, chaptersInUse } = props;
 
-  const [localChapters, setLocalChapters] = useState<Chapter[]>(null);
+  const [tocScrollData, setTocScrollData] = useState<TocScrollData>({
+    chaptersInUse: [],
+    tocDivs: [],
+  });
+  const [scrolled, setScrolled] = useState<number>(0);
 
-  // Save to local state to ensure updated tocRefs is evaluated
+  // Save to local state
   useEffect(() => {
-    if (localChapters !== chaptersInUse) {
-      setLocalChapters(chaptersInUse);
+    if (
+      tocScrollData.chaptersInUse !== chaptersInUse ||
+      tocScrollData.tocDivs !== tocRefs.current
+    ) {
+      setTocScrollData({
+        chaptersInUse,
+        tocDivs: tocRefs.current,
+      });
     }
-  }, [chaptersInUse, localChapters]);
+  }, [
+    chaptersInUse,
+    tocRefs,
+    tocScrollData.chaptersInUse,
+    tocScrollData.tocDivs,
+  ]);
 
   // Scroll to scrollToc chapter number
-  if (scrollToc % 100 !== 0) {
-    const re = new RegExp(`(${scrollToc - 1})`);
-    const element = tocRefs.current.find((elem) => re.test(elem.innerText));
-    element.scrollIntoView();
-  }
+  useEffect(() => {
+    if (
+      !tocScrollData.tocDivs.includes(null) &&
+      tocScrollData.chaptersInUse &&
+      tocScrollData.chaptersInUse.length
+    ) {
+      // Create regex to find the element
+      const re = new RegExp(`(${scrollToc})`);
 
-  // Scrolling complete, set scrollToc to evaluate false
-  if (scrollToc) {
-    setScrollToc(0);
-  }
+      // Find the element to scroll to
+      const element = tocScrollData.tocDivs.find((elem) =>
+        re.test(elem.innerText)
+      );
+
+      // Perform the scroll
+      if (element) {
+        element.scrollIntoView();
+        setScrolled(1);
+      }
+    }
+  }, [scrollToc, tocScrollData.chaptersInUse, tocScrollData.tocDivs]);
+
+  // Cleanup after scrolling
+  useEffect(() => {
+    if (scrolled && scrollToc) {
+      setScrollToc(0);
+      setScrolled(0);
+    }
+  }, [scrollToc, scrolled, setScrollToc]);
 
   return null;
 };

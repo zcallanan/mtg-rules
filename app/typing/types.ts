@@ -1,48 +1,48 @@
 import { ReactNodeArray } from "react";
 
 export interface Section {
-  type: string;
-  text: string;
   sectionNumber: number;
+  text: string;
+  type: string;
 }
 
 export interface Chapter {
-  type: string;
-  text: string;
-  sectionNumber: number;
   chapterNumber: number;
+  sectionNumber: number;
+  text: string;
+  type: string;
 }
 
 export interface Rule {
-  type: string;
-  text: string;
-  sectionNumber: number;
   chapterNumber: number;
-  ruleNumber: number;
   example: string[];
   exampleSearch: string[];
+  ruleNumber: number;
+  sectionNumber: number;
+  text: string;
+  type: string;
 }
 
 export interface Subrule {
-  type: string;
-  text: string;
-  sectionNumber: number;
   chapterNumber: number;
-  ruleNumber: number;
-  subruleLetter: string;
   example: string[];
   exampleSearch: string[];
+  ruleNumber: number;
+  sectionNumber: number;
+  subruleLetter: string;
+  text: string;
+  type: string;
 }
 
 export interface RouterValues {
-  year: string;
   version: string;
+  year: string;
 }
 
 export interface ChapterValues {
-  ignoreCallbackNumber: number;
-  chapterNumber: number;
   anchorValue: number;
+  chapterNumber: number;
+  ignoreCallbackNumber: number;
   source: string;
 }
 
@@ -52,38 +52,38 @@ export interface ErrorData {
 }
 
 export interface ParseLinkArgs {
-  routerValues: RouterValues;
-  onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  example?: string;
-  rule?: Rule;
-  subrule?: Subrule;
-  searchResults: SearchResults;
   allChaptersN: string[];
+  example?: string;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  routerValues: RouterValues;
+  rule?: Rule;
+  searchResults: SearchResults;
+  subrule?: Subrule;
 }
 
 export interface ReplaceRuleNumbers {
-  text: string;
-  ruleNumberArray: string[];
-  routerValues: RouterValues;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  routerValues: RouterValues;
   rule?: Rule;
+  ruleNumberArray: string[];
   subrule?: Subrule;
+  text: string;
 }
 
 export interface ParseExample {
-  mainText: string;
   exampleTextArray: string[];
+  mainText: string;
 }
 
 export interface DynamicProps {
-  nodes: RulesParse;
   effectiveDate: string;
+  nodes: RulesParse;
 }
 
 export interface GetStaticPropsResult {
+  notFound?: boolean;
   props: DynamicProps | Record<string, never>;
   revalidate?: number;
-  notFound?: boolean;
 }
 
 export interface GetStaticPropsParams {
@@ -91,8 +91,8 @@ export interface GetStaticPropsParams {
 }
 
 export interface GetStaticPathsResult {
-  paths: GetStaticPropsParams[];
   fallback: boolean;
+  paths: GetStaticPropsParams[];
 }
 
 export interface ValidateChapter {
@@ -101,9 +101,9 @@ export interface ValidateChapter {
 }
 
 export interface RulesParse {
-  sections: Section[];
   chapters: Chapter[];
   rules: Rule[];
+  sections: Section[];
   subrules: Subrule[];
 }
 
@@ -115,28 +115,30 @@ export interface SearchFormValue {
 }
 
 export interface SearchData {
-  searchTerm: string;
+  chapters: Chapter[];
+  previousSearchTerm: string;
+  rules: Rule[];
+  searchCleared: number;
   searchCompleted: number;
+  searchTerm: string;
   searchType: string;
   sections: Section[];
-  chapters: Chapter[];
-  rules: Rule[];
   subrules: Subrule[];
 }
 
 export interface SearchResults {
+  searchChapters: Chapter[];
+  searchResult: number;
+  searchRules: Rule[];
+  searchSections: Section[];
+  searchSubrules: Subrule[];
   searchTerm: string;
   searchType: string;
-  searchSections: Section[];
-  searchChapters: Chapter[];
-  searchRules: Rule[];
-  searchSubrules: Subrule[];
-  searchResult: number;
 }
 
 export interface SearchModifyArgs {
-  searchResults: SearchResults;
   rule?: Rule;
+  searchResults: SearchResults;
   subrule?: Subrule;
   toModify: string | ReactNodeArray;
 }
@@ -148,11 +150,28 @@ export interface ExampleModifyArgs {
 }
 
 export interface RadioCheck {
-  partial: boolean;
   exact: boolean;
+  partial: boolean;
 }
 
 export interface ClickData {
   chapterN: number;
   dataSource: string;
+}
+
+export interface ScrollRules {
+  hash: string;
+  previousSearchTerm: string;
+  promptScrollToRule: number;
+  searchTerm: string;
+}
+
+export interface RuleScrollData {
+  rulesInUse: Rule[];
+  ruleNumbers: HTMLSpanElement[];
+}
+
+export interface TocScrollData {
+  chaptersInUse: Chapter[];
+  tocDivs: HTMLDivElement[];
 }

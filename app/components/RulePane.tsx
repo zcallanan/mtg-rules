@@ -18,6 +18,7 @@ interface Props {
   chapters: Chapter[];
   rules: Rule[];
   subrules: Subrule[];
+  ruleNumberRefs: MutableRefObject<HTMLSpanElement[]>;
   rulesRef: MutableRefObject<HTMLDivElement[]>;
   rightViewportRef: MutableRefObject<HTMLDivElement>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
@@ -25,6 +26,7 @@ interface Props {
 
 const RulePane = (props: Props): JSX.Element => {
   const {
+    ruleNumberRefs,
     searchData,
     searchResults,
     sections,
@@ -58,6 +60,7 @@ const RulePane = (props: Props): JSX.Element => {
           root={rightViewportRef}
           onLinkClick={onLinkClick}
           searchResults={searchResults}
+          ruleNumberRefs={ruleNumberRefs}
         />
       )}
     </div>

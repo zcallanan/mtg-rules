@@ -30,6 +30,7 @@ const ChapterClicked = (props: Props): JSX.Element => {
 
   // Determine if chapterNumber has increased or decreased. Intersection Observer behaves differently for each
   const { chapterNumber } = chapterValues;
+
   if (chapterNumber && chapterN < chapterNumber) {
     source = "prop decrease";
   } else if (chapterNumber && chapterN > chapterNumber) {

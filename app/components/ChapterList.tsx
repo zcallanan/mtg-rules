@@ -13,6 +13,7 @@ interface Props {
   chapters: Chapter[];
   rules?: Rule[];
   subrules?: Subrule[];
+  ruleNumberRefs: MutableRefObject<HTMLSpanElement[]>;
   elRef: MutableRefObject<HTMLDivElement[]>;
   onLinkClick: (chapterNumber: number, dataSource: string) => void;
   searchResults: SearchResults;
@@ -24,6 +25,7 @@ const ChapterList = (props: Props): JSX.Element => {
     chapters,
     rules,
     subrules,
+    ruleNumberRefs,
     elRef,
     onLinkClick,
     searchResults,
@@ -51,6 +53,7 @@ const ChapterList = (props: Props): JSX.Element => {
             chapter={chapter}
             rules={rules}
             subrules={subrules}
+            ruleNumberRefs={ruleNumberRefs}
             elRef={elRef}
             onLinkClick={onLinkClick}
             searchResults={searchResults}
