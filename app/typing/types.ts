@@ -161,6 +161,17 @@ export interface ClickData {
 
 export interface ScrollRules {
   hash: string;
-  searchTerm: string;
+  previousSearchTerm: string;
   promptScrollToRule: number;
+  searchTerm: string;
+}
+
+export interface RuleScrollData {
+  rulesInUse: Rule[];
+  ruleNumbers: HTMLSpanElement[];
+}
+
+export interface TocScrollData {
+  chaptersInUse: Chapter[];
+  tocDivs: HTMLDivElement[];
 }

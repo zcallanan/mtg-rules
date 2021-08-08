@@ -85,13 +85,16 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     validChapter: true,
   });
 
+  // Router
   const router: NextRouter = useRouter();
   const path = router.asPath.split("#");
 
+  // State
   const [rulesInUse, setRulesInUse] = useState<Rule[]>([]);
   const [chaptersInUse, setChaptersInUse] = useState<Chapter[]>([]);
   const [scrollRules, setScrollRules] = useState<ScrollRules>({
     hash: "",
+    previousSearchTerm: "",
     promptScrollToRule: 0,
     searchTerm: "",
   });
@@ -132,52 +135,25 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   const [rules, setRules] = useState<Rule[]>([]);
   const [subrules, setSubrules] = useState<Subrule[]>([]);
 
+  // Root refs
+  const rightViewportRef = useRef<HTMLDivElement>();
+  const leftViewportRef = useRef<HTMLDivElement>();
+
+  // For useTopRule to iterate over and observe
+  const rulesRef = useRef<HTMLDivElement[]>([]);
+
+  // For toc scrolling
+  const tocRefs = useRef<HTMLDivElement[]>([]);
+
+  // For scrolling to a rule after load or search
+  const ruleNumberRefs = useRef<HTMLSpanElement[]>([]);
+
   // Save url hash value as a string
   useEffect(() => {
     if (path[1] && hashString !== path[1]) {
       setHashString(path[1]);
     }
   }, [hashString, path]);
-
-  // Prompt scrolling to a rule if the url hash changes
-  useEffect(() => {
-    const result = searchResults.searchRules.length
-      ? searchResults.searchRules
-      : rules;
-
-    if (
-      !objectArrayComparison(result, rulesInUse) &&
-      hashString !== scrollRules.hash
-    ) {
-      setScrollRules((prevValue) => ({
-        ...prevValue,
-        hash: hashString,
-        promptScrollToRule: 1,
-      }));
-    } else if (
-      !objectArrayComparison(result, rulesInUse) &&
-      searchResults.searchTerm !== scrollRules.searchTerm &&
-      searchResults.searchTerm &&
-      searchResults.searchResult &&
-      searchData.searchCompleted
-    ) {
-      setScrollRules((prevValue) => ({
-        ...prevValue,
-        searchTerm: searchResults.searchTerm,
-        promptScrollToRule: 1,
-      }));
-    }
-  }, [
-    hashString,
-    rules,
-    rulesInUse,
-    scrollRules.hash,
-    scrollRules.searchTerm,
-    searchData.searchCompleted,
-    searchResults.searchResult,
-    searchResults.searchRules,
-    searchResults.searchTerm,
-  ]);
 
   // Save parsed node data to state at init or when a node array changes
   useEffect(() => {
@@ -223,19 +199,6 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterValues.anchorValue]);
 
-  // Root refs
-  const rightViewportRef = useRef<HTMLDivElement>();
-  const leftViewportRef = useRef<HTMLDivElement>();
-
-  // For useTopRule to iterate over and observe
-  const rulesRef = useRef<HTMLDivElement[]>([]);
-
-  // For toc scrolling
-  const tocRefs = useRef<HTMLDivElement[]>([]);
-
-  // For scrolling to a rule after load or search
-  const ruleNumberRefs = useRef<HTMLSpanElement[]>([]);
-
   // Track what rules are rendered
   useEffect(() => {
     // Either the search result else default
@@ -248,7 +211,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   }, [rules, rulesInUse, searchResults.searchRules]);
 
-  // Adjust the size of rulesRef & ruleNumberRefs
+  // Adjust the size of rulesRef & ruleNumberRefs if rulesInUse changes its length
   useEffect(() => {
     if (rulesInUse.length) {
       rulesRef.current = rulesRef.current.slice(0, rulesInUse.length);
@@ -271,13 +234,52 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     }
   }, [chapters, chaptersInUse, searchResults.searchChapters]);
 
+  // Adjust the size of chaptersInUse if chaptersInUse changes its length
   useEffect(() => {
-    // Adjust the size of chaptersInUse
     if (chaptersInUse.length) {
       tocRefs.current = tocRefs.current.slice(0, chaptersInUse.length);
     }
   }, [chaptersInUse]);
 
+  // Prompt scrolling to a rule
+  useEffect(() => {
+    if (hashString !== scrollRules.hash) {
+      // On load, scroll the rule viewport to the url hash value \d{3}.\d
+      setScrollRules((prevValue) => ({
+        ...prevValue,
+        hash: hashString,
+        promptScrollToRule: 1,
+      }));
+    } else if (
+      searchData.previousSearchTerm !== scrollRules.previousSearchTerm
+    ) {
+      // If there is a previousSearchTerm after search cancellation, scroll to the first \d{3}.\d rule in rulesInUse
+      setScrollRules((prevValue) => ({
+        ...prevValue,
+        previousSearchTerm: searchData.previousSearchTerm,
+        promptScrollToRule: 1,
+      }));
+    } else if (
+      searchResults.searchTerm !== scrollRules.searchTerm &&
+      searchResults.searchTerm
+    ) {
+      // If there is a search result search term, scroll to the first \d{3}.\d rule in rulesInUse
+      setScrollRules((prevValue) => ({
+        ...prevValue,
+        searchTerm: searchResults.searchTerm,
+        promptScrollToRule: 1,
+      }));
+    }
+  }, [
+    hashString,
+    scrollRules.hash,
+    scrollRules.previousSearchTerm,
+    scrollRules.searchTerm,
+    searchData.previousSearchTerm,
+    searchResults.searchTerm,
+  ]);
+
+  // Prop for toc chapter title & rule links. ChapterClicked component utilizes clickData
   const onLinkClick = (chapterN: number, dataSource: string): void => {
     if (chapterN !== clickData.chapterN) {
       setClickData({ chapterN, dataSource });

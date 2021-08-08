@@ -44,11 +44,6 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   const { anchorValue, chapterNumber, ignoreCallbackNumber, source } =
     chapterValues;
 
-  let firstChapterNumber: number;
-  if (chaptersInUse && chaptersInUse.length) {
-    firstChapterNumber = chaptersInUse[0].chapterNumber;
-  }
-
   // State
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("");
 
@@ -105,11 +100,14 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
-      firstChapterNumber &&
       searchData.searchCompleted &&
       searchResults.searchResult &&
       searchResults.searchChapters.length
     ) {
+      let firstChapterNumber: number;
+      if (chaptersInUse && chaptersInUse.length) {
+        firstChapterNumber = chaptersInUse[0].chapterNumber;
+      }
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "search",
@@ -118,7 +116,6 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
     }
   }, [
     chaptersInUse,
-    firstChapterNumber,
     latestRuleChapterNumber,
     searchData.searchCompleted,
     searchResults.searchChapters.length,
@@ -130,7 +127,6 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   useEffect(() => {
     if (
       latestRuleChapterNumber &&
-      firstChapterNumber &&
       searchData.searchCleared &&
       localSearchTerm !== searchData.previousSearchTerm
     ) {
@@ -138,12 +134,11 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "search cleared",
-        chapterNumber: firstChapterNumber,
+        chapterNumber: 100,
       }));
     }
   }, [
     chaptersInUse,
-    firstChapterNumber,
     latestRuleChapterNumber,
     localSearchTerm,
     searchData.previousSearchTerm,
