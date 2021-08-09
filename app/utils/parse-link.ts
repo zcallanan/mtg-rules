@@ -21,6 +21,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
     searchSubrules,
   } = searchResults;
 
+  // Determine the text to be evaluated for potential section, chapter, rule, or subrule links
   let linkText: string;
   if (example) {
     linkText = example;
@@ -32,6 +33,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
 
   const searchValues: string[] = [];
 
+  // Obtain all section, chapter, rule, and subrule "numbers" from searchResults
   if (searchTerm) {
     searchValues.push(...nodeNumbers(searchSections));
     searchValues.push(...nodeNumbers(searchChapters));
@@ -46,6 +48,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   const regexSubrule = /(\d{3}\.\d{1,3}[a-z-])/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
+  // Finds linkable "numbers" and calls replaceRuleNumbers to replace text with a ReactNodeArray Link to each value
   const findMatches = (
     regexArray: RegExp[],
     text: string
@@ -68,6 +71,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
       }
     });
 
+    // Flattened array of values to replace
     const ruleNumberArray: string[] = filteredArray.flat();
 
     // If there are searchResults, remove all values not found in searchValues, or get links to nowhere
@@ -75,6 +79,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
       ? ruleNumberArray.filter((s) => searchValues.includes(s))
       : ruleNumberArray;
 
+    // Argument object for replaceRuleNumbers
     const argObject: ReplaceRuleNumbers = rule
       ? {
           text,

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner } from "react-bootstrap";
 import parseNodes from "../../../app/utils/parse-nodes";
+import Home from "../../index";
 import TocSections from "../../../app/components/TocSections";
 import RulePane from "../../../app/components/RulePane";
 import RuleChapterPane from "../../../app/components/RuleChapterPane";
@@ -306,6 +307,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
 
   return (
     <div>
+      <Home />
       {!!scrollToc && (
         <TocScroll
           setScrollToc={setScrollToc}

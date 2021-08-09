@@ -21,16 +21,16 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
       const parser = new Parser();
 
       // Regex
-      const sectionRegex = /(?<=\n)(\d{1})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
+    //   const sectionRegex = /(?<=\n)(\d{1})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
+      const sectionRegex = /\n(\d{1})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
 
-      const chapterRegex =
-        /(?<=\n|\r)(\d{3})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
+      const chapterRegex = /[\n\r](\d{3})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
 
       const ruleRegex =
-        /(?<=\n|\r)(\d{3})\.(\d{1,3})\.\s([\w\s\W]*?)(?=\r\n\r\n|\r\r)/gim;
+        /[\n\r](\d{3})\.(\d{1,3})\.\s([\w\s\W]*?)(?=\r\n\r\n|\r\r)/gim;
 
       const subruleRegex =
-        /(?<=\n|\r)(\d{3})\.(\d{1,3})([a-z]+)\s([\w\s\W]*?)(?=\r\n\r|\r\r)/gim;
+        /[\n\r](\d{3})\.(\d{1,3})([a-z]+)\s([\w\s\W]*?)(?=\r\n\r|\r\r)/gim;
 
       // Add rules
       parser.addRule(sectionRegex, (match, section, txt) => {
