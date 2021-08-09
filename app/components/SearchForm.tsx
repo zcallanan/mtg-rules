@@ -10,7 +10,7 @@ import {
   SetStateAction,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import SearchRadio from "./SearchRadio";
 import {
   SearchData,
@@ -273,7 +273,7 @@ const SearchForm = (props: Props): JSX.Element => {
             ref={cancel}
             onClick={handleCancel}
           >
-            <FontAwesomeIcon icon={faTimesCircle} />
+            <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
         <button

@@ -51,9 +51,7 @@ const TopSectionWrapper = (props: Props): JSX.Element => {
 
   const latestScrolledToSection: number =
     callbackValue ||
-    (anchorValue
-      ? Number(anchorValue.match(/(?<=\b)(\d{1})(?=\d)/)[0])
-      : undefined);
+    (anchorValue ? Number(anchorValue.match(/\b(\d{1})(?=\d)/)[0]) : undefined);
 
   // Save the latest value from useTopSection to TocSections state
   useEffect(() => {

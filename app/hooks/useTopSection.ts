@@ -18,7 +18,7 @@ const useTopSection = (
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
       setSectionNumber(
-        Number(entry.target.innerText.match(/(?<=\b)(\d{1})(?=\d)/g)[0])
+        Number(entry.target.innerText.match(/\b(\d{1})(?=\d)/g)[0])
       );
     }
   }, []);
