@@ -2,8 +2,7 @@ import { MutableRefObject } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import ExampleText from "./ExampleText";
-import parseLink from "../utils/parse-link";
-import modifySearchRules from "../utils/modify-search-rules";
+import replaceText from "../utils/replace-text";
 import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/RuleList.module.scss";
 
@@ -79,25 +78,13 @@ const RuleList = (props: Props): JSX.Element => {
                 </span>
                 <span>{" • "}</span>
                 <span>
-                  {!searchResults.searchTerm
-                    ? parseLink({
-                        routerValues,
-                        onLinkClick,
-                        rule,
-                        searchResults,
-                        allChaptersN,
-                      })
-                    : modifySearchRules({
-                        searchResults,
-                        rule,
-                        toModify: parseLink({
-                          routerValues,
-                          onLinkClick,
-                          rule,
-                          searchResults,
-                          allChaptersN,
-                        }),
-                      })}
+                  {replaceText({
+                    allChaptersN,
+                    onLinkClick,
+                    routerValues,
+                    rule,
+                    searchResults,
+                  })}
                 </span>
               </div>
             </li>

@@ -1,8 +1,10 @@
 import { ReactNodeArray } from "react";
 import reactStringReplace from "react-string-replace";
-import { ExampleModifyArgs } from "../typing/types";
+import { ReplaceExampleTextArgs } from "../typing/types";
 
-const wrapExampleText = (args: ExampleModifyArgs): string | ReactNodeArray => {
+const wrapExampleText = (
+  args: ReplaceExampleTextArgs
+): string | ReactNodeArray => {
   const { exampleText, rule, subrule } = args;
 
   return reactStringReplace(
@@ -23,8 +25,8 @@ const wrapExampleText = (args: ExampleModifyArgs): string | ReactNodeArray => {
   );
 };
 
-const modifyExampleText = (
-  args: ExampleModifyArgs
+const replaceExampleText = (
+  args: ReplaceExampleTextArgs
 ): string | ReactNodeArray => {
   // Deconstruct args
   const { exampleText, rule, subrule } = args;
@@ -35,4 +37,4 @@ const modifyExampleText = (
     : wrapExampleText({ exampleText, subrule });
 };
 
-export default modifyExampleText;
+export default replaceExampleText;

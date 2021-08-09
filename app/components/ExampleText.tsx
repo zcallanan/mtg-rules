@@ -1,8 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useRouter, NextRouter } from "next/router";
-import parseLink from "../utils/parse-link";
-import modifyExampleText from "../utils/modify-example-text";
-import modifySearchRules from "../utils/modify-search-rules";
+import replaceText from "../utils/replace-text";
 import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/ExampleText.module.scss";
 
@@ -87,65 +85,23 @@ const ExampleText = (props: Props): JSX.Element => {
                   </em>
                 </span>
                 <span>
-                  {!searchResults.searchTerm
-                    ? modifyExampleText(
-                        rule
-                          ? {
-                              rule,
-                              exampleText: parseLink({
-                                routerValues,
-                                onLinkClick,
-                                example,
-                                rule,
-                                searchResults,
-                                allChaptersN,
-                              }),
-                            }
-                          : {
-                              subrule,
-                              exampleText: parseLink({
-                                routerValues,
-                                onLinkClick,
-                                example,
-                                subrule,
-                                searchResults,
-                                allChaptersN,
-                              }),
-                            }
-                      )
-                    : modifyExampleText(
-                        rule
-                          ? {
-                              rule,
-                              exampleText: modifySearchRules({
-                                searchResults,
-                                rule,
-                                toModify: parseLink({
-                                  routerValues,
-                                  onLinkClick,
-                                  example,
-                                  rule,
-                                  searchResults,
-                                  allChaptersN,
-                                }),
-                              }),
-                            }
-                          : {
-                              subrule,
-                              exampleText: modifySearchRules({
-                                searchResults,
-                                subrule,
-                                toModify: parseLink({
-                                  routerValues,
-                                  onLinkClick,
-                                  example,
-                                  subrule,
-                                  searchResults,
-                                  allChaptersN,
-                                }),
-                              }),
-                            }
-                      )}
+                  {rule
+                    ? replaceText({
+                        allChaptersN,
+                        example,
+                        onLinkClick,
+                        routerValues,
+                        rule,
+                        searchResults,
+                      })
+                    : replaceText({
+                        allChaptersN,
+                        example,
+                        onLinkClick,
+                        routerValues,
+                        subrule,
+                        searchResults,
+                      })}
                 </span>
               </div>
             </li>

@@ -1,9 +1,9 @@
 import { ReactNodeArray } from "react";
-import replaceRuleNumbers from "./replace-rule-numbers";
+import replaceAnchorLinks from "./replace-anchor-links";
 import nodeNumbers from "./node-numbers";
-import { ParseLinkArgs, ReplaceRuleNumbers } from "../typing/types";
+import { ParseAnchorLinks, ReplaceAnchorLinks } from "../typing/types";
 
-const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
+const parseLink = (args: ParseAnchorLinks): string | ReactNodeArray => {
   const {
     routerValues,
     onLinkClick,
@@ -48,7 +48,7 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
   const regexSubrule = /(\d{3}\.\d{1,3}[a-z-])/gim;
   const regexes = [regexSubrule, regexRule, regexChapter, regexSection];
 
-  // Finds linkable "numbers" and calls replaceRuleNumbers to replace text with a ReactNodeArray Link to each value
+  // Finds linkable "numbers" and calls replaceAnchorLinks to replace text with a ReactNodeArray Link to each value
   const findMatches = (
     regexArray: RegExp[],
     text: string
@@ -79,8 +79,8 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
       ? ruleNumberArray.filter((s) => searchValues.includes(s))
       : ruleNumberArray;
 
-    // Argument object for replaceRuleNumbers
-    const argObject: ReplaceRuleNumbers = rule
+    // Argument object for replaceAnchorLinks
+    const argObject: ReplaceAnchorLinks = rule
       ? {
           text,
           ruleNumberArray: linkValues,
@@ -96,9 +96,9 @@ const parseLink = (args: ParseLinkArgs): string | ReactNodeArray => {
           subrule,
         };
 
-    // If there are values to replace, pass to replaceRuleNumbers
+    // If there are values to replace, pass to replaceAnchorLinks
     const replaceResult: string | ReactNodeArray = linkValues.length
-      ? replaceRuleNumbers(argObject)
+      ? replaceAnchorLinks(argObject)
       : text;
 
     // Return ReactNodeArray with links or original text
