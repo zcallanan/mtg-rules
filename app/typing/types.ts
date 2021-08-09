@@ -136,6 +136,12 @@ export interface ParseAnchorLinks {
   subrule?: Subrule;
 }
 
+export interface ReplaceUrlLinksArgs {
+  rule?: Rule;
+  subrule?: Subrule;
+  toModify: string | ReactNodeArray;
+}
+
 export interface ReplaceTextArgs {
   allChaptersN: string[];
   example?: string;

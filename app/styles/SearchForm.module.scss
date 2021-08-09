@@ -31,7 +31,10 @@
 }
 
 #searchFormButton {
+  position: absolute;
+  right: -7%;
   width: 7%;
+  height: 42px;
   @include button;
   &:focus {
     box-shadow: none;
@@ -48,5 +51,6 @@
 .inputContainer {
   display: flex;
   width: 84%;
+  height: 42px;
   margin-left: 10%;
 }
