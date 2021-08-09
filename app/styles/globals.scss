@@ -41,7 +41,7 @@ a.nav-link {
   }
 }
 
-.ruleLink {
+.ruleLink, .urlRuleLink {
   color: $color1;
   opacity: .8;
   &:hover {
@@ -49,7 +49,7 @@ a.nav-link {
   }
 }
 
-.subruleLink {
+.subruleLink, .urlSubruleLink {
   color: $color0;
   opacity: .8;
   &:hover {

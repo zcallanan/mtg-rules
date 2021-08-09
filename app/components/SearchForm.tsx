@@ -275,14 +275,14 @@ const SearchForm = (props: Props): JSX.Element => {
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
+          <button
+            className="btn btn-primary"
+            id={styles.searchFormButton}
+            type="submit"
+          >
+            <FontAwesomeIcon icon={faSearch} />
+          </button>
         </div>
-        <button
-          className="btn btn-primary"
-          id={styles.searchFormButton}
-          type="submit"
-        >
-          <FontAwesomeIcon icon={faSearch} />
-        </button>
       </div>
       <div className={styles.radiosContainer}>
         <SearchRadio
