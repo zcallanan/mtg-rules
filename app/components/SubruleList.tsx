@@ -1,7 +1,6 @@
 import { useRouter, NextRouter } from "next/router";
 import ExampleText from "./ExampleText";
-import parseLink from "../utils/parse-link";
-import modifySearchRules from "../utils/modify-search-rules";
+import replaceText from "../utils/replace-text";
 import { Subrule, RouterValues, SearchResults } from "../typing/types";
 import styles from "../styles/SubruleList.module.scss";
 
@@ -44,25 +43,13 @@ const SubruleList = (props: Props): JSX.Element => {
                 </span>
                 <span>{" • "}</span>
                 <span>
-                  {!searchResults.searchTerm
-                    ? parseLink({
-                        routerValues,
-                        onLinkClick,
-                        subrule,
-                        searchResults,
-                        allChaptersN,
-                      })
-                    : modifySearchRules({
-                        searchResults,
-                        subrule,
-                        toModify: parseLink({
-                          routerValues,
-                          onLinkClick,
-                          subrule,
-                          searchResults,
-                          allChaptersN,
-                        }),
-                      })}
+                  {replaceText({
+                    allChaptersN,
+                    onLinkClick,
+                    routerValues,
+                    subrule,
+                    searchResults,
+                  })}
                 </span>
               </div>
             </li>

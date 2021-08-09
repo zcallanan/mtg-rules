@@ -51,25 +51,6 @@ export interface ErrorData {
   value: number;
 }
 
-export interface ParseLinkArgs {
-  allChaptersN: string[];
-  example?: string;
-  onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  routerValues: RouterValues;
-  rule?: Rule;
-  searchResults: SearchResults;
-  subrule?: Subrule;
-}
-
-export interface ReplaceRuleNumbers {
-  onLinkClick: (chapterNumber: number, dataSource: string) => void;
-  routerValues: RouterValues;
-  rule?: Rule;
-  ruleNumberArray: string[];
-  subrule?: Subrule;
-  text: string;
-}
-
 export interface ParseExample {
   exampleTextArray: string[];
   mainText: string;
@@ -136,14 +117,43 @@ export interface SearchResults {
   searchType: string;
 }
 
-export interface SearchModifyArgs {
+export interface ReplaceAnchorLinks {
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  routerValues: RouterValues;
+  rule?: Rule;
+  ruleNumberArray: string[];
+  subrule?: Subrule;
+  text: string;
+}
+
+export interface ParseAnchorLinks {
+  allChaptersN: string[];
+  example?: string;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  routerValues: RouterValues;
+  rule?: Rule;
+  searchResults: SearchResults;
+  subrule?: Subrule;
+}
+
+export interface ReplaceTextArgs {
+  allChaptersN: string[];
+  example?: string;
+  onLinkClick: (chapterNumber: number, dataSource: string) => void;
+  routerValues: RouterValues;
+  rule?: Rule;
+  searchResults: SearchResults;
+  subrule?: Subrule;
+}
+
+export interface ReplaceSearchTermArgs {
   rule?: Rule;
   searchResults: SearchResults;
   subrule?: Subrule;
   toModify: string | ReactNodeArray;
 }
 
-export interface ExampleModifyArgs {
+export interface ReplaceExampleTextArgs {
   exampleText: string | ReactNodeArray;
   rule?: Rule;
   subrule?: Subrule;

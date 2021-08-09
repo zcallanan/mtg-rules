@@ -21,7 +21,6 @@ const parseNodes = async (rawText: string, i = 0): Promise<RulesParse> => {
       const parser = new Parser();
 
       // Regex
-    //   const sectionRegex = /(?<=\n)(\d{1})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
       const sectionRegex = /\n(\d{1})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;
 
       const chapterRegex = /[\n\r](\d{3})\.\s([a-z\s\W]*)(?=\r\n\r\n|\r\r)/gim;

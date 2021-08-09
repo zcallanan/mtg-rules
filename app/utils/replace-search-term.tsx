@@ -1,8 +1,10 @@
 import { ReactNodeArray } from "react";
 import reactStringReplace from "react-string-replace";
-import { SearchModifyArgs } from "../typing/types";
+import { ReplaceSearchTermArgs } from "../typing/types";
 
-const wrapSearchTerm = (args: SearchModifyArgs): string | ReactNodeArray => {
+const wrapSearchTerm = (
+  args: ReplaceSearchTermArgs
+): string | ReactNodeArray => {
   const { searchResults, rule, subrule, toModify } = args;
   const { searchTerm, searchType } = searchResults;
 
@@ -31,7 +33,9 @@ const wrapSearchTerm = (args: SearchModifyArgs): string | ReactNodeArray => {
   );
 };
 
-const modifySearchRules = (args: SearchModifyArgs): string | ReactNodeArray => {
+const replaceSearchTerm = (
+  args: ReplaceSearchTermArgs
+): string | ReactNodeArray => {
   // Deconstruct args
   const { searchResults, rule, subrule, toModify } = args;
 
@@ -41,4 +45,4 @@ const modifySearchRules = (args: SearchModifyArgs): string | ReactNodeArray => {
     : wrapSearchTerm({ searchResults, subrule, toModify });
 };
 
-export default modifySearchRules;
+export default replaceSearchTerm;

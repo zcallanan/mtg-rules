@@ -1,9 +1,9 @@
 import { ReactNodeArray } from "react";
 import Link from "next/link";
 import reactStringReplace from "react-string-replace";
-import { ReplaceRuleNumbers } from "../typing/types";
+import { ReplaceAnchorLinks } from "../typing/types";
 
-const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
+const replaceAnchorLinks = (args: ReplaceAnchorLinks): ReactNodeArray => {
   // In list of rules and subrules, wraps section, chapter, rule, and subrule #'s with a link component
   const { text, ruleNumberArray, routerValues, onLinkClick, rule, subrule } =
     args;
@@ -55,4 +55,4 @@ const replaceRuleNumbers = (args: ReplaceRuleNumbers): ReactNodeArray => {
   return updatedText;
 };
 
-export default replaceRuleNumbers;
+export default replaceAnchorLinks;
