@@ -1,4 +1,4 @@
-const formValidation = async (
+const rulesetUrlValidation = async (
   url: string,
   version: string,
   year: string
@@ -19,4 +19,4 @@ const formValidation = async (
   return result;
 };
 
-export default formValidation;
+export default rulesetUrlValidation;
