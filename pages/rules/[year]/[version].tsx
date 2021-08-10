@@ -15,21 +15,21 @@ import Overview from "../../../app/components/Overview";
 import TabContent from "../../../app/components/TabContent";
 import objectArrayComparison from "../../../app/utils/object-array-comparison";
 import {
+  Chapter,
   ChapterValues,
   ClickData,
-  Section,
-  Chapter,
-  Rule,
-  Subrule,
-  GetStaticPropsResult,
-  ValidateChapter,
   DynamicProps,
-  RulesParse,
-  GetStaticPropsParams,
   GetStaticPathsResult,
+  GetStaticPropsParams,
+  GetStaticPropsResult,
+  Rule,
+  RulesParse,
+  ScrollRules,
   SearchData,
   SearchResults,
-  ScrollRules,
+  Section,
+  Subrule,
+  ValidateChapter,
 } from "../../../app/typing/types";
 import styles from "../../../app/styles/[version].module.scss";
 import RuleScroll from "../../../app/components/RuleScroll";
@@ -125,6 +125,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     searchSubrules: [],
     searchResult: 1,
   });
+  const [paused, setPaused] = useState<number>(0);
   const [chapterValues, setChapterValues] = useState<ChapterValues>({
     ignoreCallbackNumber: 0,
     chapterNumber: 0,
@@ -330,8 +331,10 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         <ChapterClicked
           chapterValues={chapterValues}
           clickData={clickData}
+          paused={paused}
           setChapterValues={setChapterValues}
           setClickedData={setClickData}
+          setPaused={setPaused}
           setScrollToc={setScrollToc}
         />
       )}
@@ -347,6 +350,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
         <TitleChapterNumber
           chaptersInUse={chaptersInUse}
           chapterValues={chapterValues}
+          paused={paused}
           rootRef={rightViewportRef}
           rulesRef={rulesRef}
           rulesInUse={rulesInUse}

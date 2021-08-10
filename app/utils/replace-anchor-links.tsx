@@ -11,7 +11,7 @@ const replaceAnchorLinks = (args: ReplaceAnchorLinks): ReactNodeArray => {
   let updatedText: ReactNodeArray;
   ruleNumberArray.forEach((ruleNumber, index) => {
     // Single digit is a section, so multiply by 100, else match chapterNumber
-    const chapterValue: number | string = /\b\d(?!\S)/.test(ruleNumber)
+    const chapterValue: number | string = /^\d(?!\S)/.test(ruleNumber)
       ? Number(ruleNumber) * 100
       : ruleNumber;
 

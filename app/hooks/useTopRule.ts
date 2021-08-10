@@ -11,7 +11,9 @@ const useTopRule = (
 
   const callback = useCallback(([entry]) => {
     if (entry.isIntersecting) {
-      console.log(entry);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(entry);
+      }
       setRuleNumber(Number(entry.target.innerText.match(/(\d{3})/g)[0]));
     }
   }, []);
