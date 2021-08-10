@@ -1,7 +1,6 @@
 import { ChangeEvent, MouseEvent } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import styles from "../styles/SearchRadio.module.scss";
 
 interface Props {
@@ -77,7 +76,7 @@ const SearchRadio = (props: Props): JSX.Element => {
         }
       >
         <div className={styles.radioIcon}>
-          <FontAwesomeIcon icon={faInfoCircle} />
+          <FontAwesomeIcon icon="info-circle" />
         </div>
       </OverlayTrigger>
     </div>
