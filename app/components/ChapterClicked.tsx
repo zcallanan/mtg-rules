@@ -4,8 +4,10 @@ import { ChapterValues, ClickData } from "../typing/types";
 interface Props {
   chapterValues: ChapterValues;
   clickData: ClickData;
+  paused: number;
   setChapterValues: Dispatch<SetStateAction<ChapterValues>>;
   setClickedData: Dispatch<SetStateAction<ClickData>>;
+  setPaused: Dispatch<SetStateAction<number>>;
   setScrollToc: Dispatch<SetStateAction<number>>;
 }
 
@@ -13,8 +15,10 @@ const ChapterClicked = (props: Props): JSX.Element => {
   const {
     chapterValues,
     clickData,
+    paused,
     setChapterValues,
     setClickedData,
+    setPaused,
     setScrollToc,
   } = props;
   const { chapterN, dataSource } = clickData;
@@ -39,7 +43,17 @@ const ChapterClicked = (props: Props): JSX.Element => {
 
   // Update ChapterValues
   useEffect(() => {
-    if (chapterValues.chapterNumber !== chapterN) {
+    if (
+      chapterValues.chapterNumber !== chapterN &&
+      (source === "prop increase" || source === "prop decrease")
+    ) {
+      // Toggle pause, else get a bad callback value after this is set
+      if (!paused) {
+        setPaused(1);
+        setTimeout(() => {
+          setPaused(0);
+        }, 200);
+      }
       setChapterValues((prevValue) => ({
         ...prevValue,
         chapterNumber: chapterN,
@@ -47,7 +61,14 @@ const ChapterClicked = (props: Props): JSX.Element => {
         source,
       }));
     }
-  }, [chapterN, chapterValues.chapterNumber, setChapterValues, source]);
+  }, [
+    chapterN,
+    chapterValues.chapterNumber,
+    paused,
+    setChapterValues,
+    setPaused,
+    source,
+  ]);
 
   // Reset clickedData
   useEffect(() => {
@@ -59,6 +80,7 @@ const ChapterClicked = (props: Props): JSX.Element => {
     }
   }, [clickData.chapterN, setClickedData]);
 
+  // Don't render
   return null;
 };
 

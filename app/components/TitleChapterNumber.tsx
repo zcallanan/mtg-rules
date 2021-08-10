@@ -18,6 +18,7 @@ import {
 interface Props {
   chaptersInUse: Chapter[];
   chapterValues: ChapterValues;
+  paused: number;
   rootRef: MutableRefObject<HTMLDivElement>;
   rulesRef: MutableRefObject<HTMLDivElement[]>;
   rulesInUse: Rule[];
@@ -32,6 +33,7 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   const {
     chaptersInUse,
     chapterValues,
+    paused,
     rootRef,
     rulesRef,
     rulesInUse,
@@ -148,14 +150,15 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
 
   // If there was a source other than a callback chapterNumber, then ignore current callback
   useEffect(() => {
-    if (latestRuleChapterNumber && source !== "callback") {
+    // useTopRule callback returns after this, so there must be a pause to wait for the callback value to ignore
+    if (latestRuleChapterNumber && source !== "callback" && !paused) {
       setChapterValues((prevValue) => ({
         ...prevValue,
         source: "callback",
         ignoreCallbackNumber: latestRuleChapterNumber,
       }));
     }
-  }, [latestRuleChapterNumber, setChapterValues, source]);
+  }, [latestRuleChapterNumber, paused, setChapterValues, source]);
 
   // When scrolling, save the chapterNumber from useTopRule callback
   useEffect(() => {
