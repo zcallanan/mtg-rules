@@ -48,10 +48,31 @@ const RulesetForm = (): JSX.Element => {
       return 3;
     }
 
-    // Offload validation to util fn
+    // Remove host
+    const noHost: string = url.replace(/http(s|):\/\//i, "");
+    const split: string[] = noHost.replace(versionUrl, "").split("/");
+
+    // If it is an invalid ruleset url
+    const re1 = /media\.wizards\.com/i;
+    const path1: string = re1.test(split[0]) ? split[0].match(re1)[0] : "";
+
+    // split[1] is yearUrl
+    const re2 = /downloads/i;
+    const path2: string = re2.test(split[2]) ? split[2].match(re2)[0] : "";
+
+    const re3 = /MagicCompRules%.txt/i;
+    const path3: string = re3.test(split[3]) ? split[3].match(re3)[0] : "";
+
+    if (!path1 || !yearUrl || !path2 || !path3 || !versionUrl) {
+      // Url invalid
+      return 2;
+    }
+
+    // Validate response
     const result = await formValidation(rulesetUrl, versionUrl, yearUrl);
+
     // Change the displayed ruleset
-    if (result === 200) {
+    if (result.status === 200) {
       const newUrl = `/rules/${yearUrl}/${versionUrl}#100`;
       router.push(newUrl);
       return 1;
