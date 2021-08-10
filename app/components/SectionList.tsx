@@ -23,6 +23,7 @@ interface Props {
 }
 
 const SectionList = (props: Props): JSX.Element => {
+    console.log(sections, chapters)
   const {
     sections,
     chapters,
