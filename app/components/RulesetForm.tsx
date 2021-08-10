@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter, NextRouter } from "next/router";
-import formValidation from "../utils/form-validation";
+import rulesetUrlValidation from "../utils/ruleset-url-validation";
 import { RouterValues } from "../typing/types";
 import styles from "../styles/RulesetForm.module.scss";
 
@@ -69,7 +69,7 @@ const RulesetForm = (): JSX.Element => {
     }
 
     // Validate response
-    const result = await formValidation(rulesetUrl, versionUrl, yearUrl);
+    const result = await rulesetUrlValidation(rulesetUrl, versionUrl, yearUrl);
 
     // Change the displayed ruleset
     if (result.status === 200) {
