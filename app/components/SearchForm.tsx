@@ -272,14 +272,18 @@ const SearchForm = (props: Props): JSX.Element => {
             ref={cancel}
             onClick={handleCancel}
           >
-            <FontAwesomeIcon icon="times" />
+            <div className={styles.searchIcon}>
+              <FontAwesomeIcon icon="times" />
+            </div>
           </button>
           <button
             className="btn btn-primary"
             id={styles.searchFormButton}
             type="submit"
           >
-            <FontAwesomeIcon icon="search" />
+            <div className={styles.searchIcon}>
+              <FontAwesomeIcon icon="search" />
+            </div>
           </button>
         </div>
       </div>
