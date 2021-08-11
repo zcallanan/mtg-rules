@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, NextRouter } from "next/router";
 import { Spinner } from "react-bootstrap";
 import parseNodes from "../../../app/utils/parse-nodes";
@@ -282,11 +282,14 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
   ]);
 
   // Prop for toc chapter title & rule links. ChapterClicked component utilizes clickData
-  const onLinkClick = (chapterN: number, dataSource: string): void => {
-    if (chapterN !== clickData.chapterN) {
-      setClickData({ chapterN, dataSource });
-    }
-  };
+  const onLinkClick = useCallback(
+    (chapterN: number, dataSource: string): void => {
+      if (chapterN !== clickData.chapterN) {
+        setClickData({ chapterN, dataSource });
+      }
+    },
+    [clickData.chapterN]
+  );
 
   // Check if there is an error on the page
   const errorResult = (obj: ValidateChapter): boolean =>

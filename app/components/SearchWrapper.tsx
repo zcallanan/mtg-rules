@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState, Dispatch, SetStateAction } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  Dispatch,
+  SetStateAction,
+  memo,
+} from "react";
 import useSearch from "../hooks/useSearch";
 import objectArrayComparison from "../utils/object-array-comparison";
 import { SearchData, SearchResults } from "../typing/types";
@@ -65,4 +72,4 @@ const SearchWrapper = (props: Props): JSX.Element => {
   return null;
 };
 
-export default SearchWrapper;
+export default memo(SearchWrapper);

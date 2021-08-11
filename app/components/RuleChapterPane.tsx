@@ -1,3 +1,4 @@
+import { memo } from "react";
 import ChapterTitle from "./ChapterTitle";
 import NoSearchResults from "./NoSearchResults";
 import {
@@ -40,4 +41,4 @@ const RuleChapterPane = (props: Props): JSX.Element => {
   );
 };
 
-export default RuleChapterPane;
+export default memo(RuleChapterPane);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import Custom404 from "./Custom404";
 import { ErrorData, ValidateChapter } from "../typing/types";
 
@@ -31,4 +31,4 @@ const CustomErrors = (props: Props): JSX.Element => {
   );
 };
 
-export default CustomErrors;
+export default memo(CustomErrors);

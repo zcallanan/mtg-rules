@@ -1,4 +1,4 @@
-import { RefObject, MutableRefObject } from "react";
+import { RefObject, MutableRefObject, memo } from "react";
 import { Spinner } from "react-bootstrap";
 import ChapterList from "./ChapterList";
 import {
@@ -68,4 +68,4 @@ const SectionList = (props: Props): JSX.Element => {
   );
 };
 
-export default SectionList;
+export default memo(SectionList);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styles from "../styles/NoSearchResults.module.scss";
 
 interface Props {
@@ -24,4 +25,4 @@ const NoSearchResults = (props: Props): JSX.Element => {
   );
 };
 
-export default NoSearchResults;
+export default memo(NoSearchResults);

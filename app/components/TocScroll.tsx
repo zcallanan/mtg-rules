@@ -4,6 +4,7 @@ import {
   MutableRefObject,
   useEffect,
   useState,
+  memo,
 } from "react";
 import { Chapter, TocScrollData } from "../typing/types";
 
@@ -75,4 +76,4 @@ const TocScroll = (props: Props): JSX.Element => {
   return null;
 };
 
-export default TocScroll;
+export default memo(TocScroll);

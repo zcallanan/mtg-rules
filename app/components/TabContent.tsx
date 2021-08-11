@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, memo } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import RulesetForm from "./RulesetForm";
 import SearchForm from "./SearchForm";
@@ -73,4 +73,4 @@ const TabContent = (props: Props): JSX.Element => {
   );
 };
 
-export default TabContent;
+export default memo(TabContent);

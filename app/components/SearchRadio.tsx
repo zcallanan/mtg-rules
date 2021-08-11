@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent } from "react";
+import { useCallback, ChangeEvent, MouseEvent, memo } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/SearchRadio.module.scss";
@@ -16,18 +16,21 @@ const SearchRadio = (props: Props): JSX.Element => {
     props;
 
   // If you click the label, pass the label string to SearchForm
-  const labelClicked = (e: MouseEvent<HTMLLabelElement>) => {
-    // Cast target for TypeScript
-    const target = e.target as HTMLLabelElement;
+  const labelClicked = useCallback(
+    (e: MouseEvent<HTMLLabelElement>) => {
+      // Cast target for TypeScript
+      const target = e.target as HTMLLabelElement;
 
-    if (target.htmlFor === "partial") {
-      updateFromLabel(target.htmlFor);
-    } else if (target.htmlFor === "exact") {
-      updateFromLabel(target.htmlFor);
-    }
-  };
+      if (target.htmlFor === "partial") {
+        updateFromLabel(target.htmlFor);
+      } else if (target.htmlFor === "exact") {
+        updateFromLabel(target.htmlFor);
+      }
+    },
+    [updateFromLabel]
+  );
 
-  const handleEntering = (d: HTMLDivElement): void => {
+  const handleEntering = useCallback((d: HTMLDivElement): void => {
     // Cast div.arrow
     const child1 = d.children[0] as HTMLDivElement;
     // Cast div.tooltip-inner
@@ -36,7 +39,7 @@ const SearchRadio = (props: Props): JSX.Element => {
     child1.style.borderTopColor = "#03045e";
     child2.style.opacity = "1";
     child2.style.backgroundColor = "#03045e";
-  };
+  }, []);
 
   return (
     <div
@@ -83,4 +86,4 @@ const SearchRadio = (props: Props): JSX.Element => {
   );
 };
 
-export default SearchRadio;
+export default memo(SearchRadio);

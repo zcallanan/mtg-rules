@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
   SetStateAction,
+  memo,
 } from "react";
 import { useRouter } from "next/router";
 import useTopSection from "../hooks/useTopSection";
@@ -66,4 +67,4 @@ const TopSectionWrapper = (props: Props): JSX.Element => {
   return null;
 };
 
-export default TopSectionWrapper;
+export default memo(TopSectionWrapper);

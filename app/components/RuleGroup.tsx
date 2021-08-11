@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import { Chapter, Rule, SearchResults, Subrule } from "../typing/types";
 import RuleList from "./RuleList";
 
@@ -50,4 +50,4 @@ const RuleGroup = (props: Props): JSX.Element => {
   );
 };
 
-export default RuleGroup;
+export default memo(RuleGroup);

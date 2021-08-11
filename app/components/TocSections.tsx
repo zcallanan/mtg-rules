@@ -1,4 +1,4 @@
-import { useRef, MutableRefObject, useEffect, useState } from "react";
+import { useRef, MutableRefObject, useEffect, useState, memo } from "react";
 import { Spinner } from "react-bootstrap";
 import TocChapterList from "./TocChapterList";
 import TopSectionWrapper from "./TopSectionWrapper";
@@ -144,4 +144,4 @@ const TocSections = (props: Props): JSX.Element => {
   );
 };
 
-export default TocSections;
+export default memo(TocSections);

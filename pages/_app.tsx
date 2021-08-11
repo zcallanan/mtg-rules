@@ -1,3 +1,4 @@
+import "../app/debug/wdyr";
 import { AppProps } from "next/app";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
