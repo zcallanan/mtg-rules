@@ -3,6 +3,7 @@ import {
   useRef,
   useMemo,
   useEffect,
+  useCallback,
   FormEvent,
   ChangeEvent,
   MouseEvent,
@@ -145,7 +146,7 @@ const SearchForm = (props: Props): JSX.Element => {
     subrules,
   ]);
 
-  const validateSearchInput = () => {
+  const validateSearchInput = useCallback(() => {
     // Reset to default or validation is wrong after going invalid > valid input
     input.current.setCustomValidity("");
 
@@ -165,16 +166,19 @@ const SearchForm = (props: Props): JSX.Element => {
         validated: 1,
       }));
     }
-  };
+  }, [searchValue.searchTerm, searchedTerm]);
 
   // The form was submitted
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    validateSearchInput();
-  };
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+      e.preventDefault();
+      validateSearchInput();
+    },
+    [validateSearchInput]
+  );
 
   // The X was clicked
-  const handleCancel = (e: MouseEvent<HTMLButtonElement>): void => {
+  const handleCancel = useCallback((e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
 
     // Clear the input
@@ -187,65 +191,74 @@ const SearchForm = (props: Props): JSX.Element => {
       submitted: 0,
       validated: 1,
     }));
-  };
+  }, []);
 
   // The form input value changes
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    // onChange, save input searchTerm to state
-    if (searchValue.searchTerm !== e.target.value) {
-      setSearchValue((prevValue) => ({
-        ...prevValue,
-        searchTerm: e.target.value,
-        submitted: 0,
-        validated: 0,
-      }));
-    }
-  };
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      // onChange, save input searchTerm to state
+      if (searchValue.searchTerm !== e.target.value) {
+        setSearchValue((prevValue) => ({
+          ...prevValue,
+          searchTerm: e.target.value,
+          submitted: 0,
+          validated: 0,
+        }));
+      }
+    },
+    [searchValue.searchTerm]
+  );
 
-  const radioChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    // Save search type from radio button toggle
-    if (searchValue.searchType !== e.target.value) {
-      setSearchValue((prevValue) => ({
-        ...prevValue,
-        searchType: e.target.value,
-      }));
-    }
-    // Toggle radio button checked
-    if (e.target.value === "exact" && !radioCheck.exact) {
-      setRadioCheck({
-        partial: false,
-        exact: true,
-      });
-    } else if (e.target.value === "partial" && !radioCheck.partial) {
-      setRadioCheck({
-        partial: true,
-        exact: false,
-      });
-    }
-  };
+  const radioChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      // Save search type from radio button toggle
+      if (searchValue.searchType !== e.target.value) {
+        setSearchValue((prevValue) => ({
+          ...prevValue,
+          searchType: e.target.value,
+        }));
+      }
+      // Toggle radio button checked
+      if (e.target.value === "exact" && !radioCheck.exact) {
+        setRadioCheck({
+          partial: false,
+          exact: true,
+        });
+      } else if (e.target.value === "partial" && !radioCheck.partial) {
+        setRadioCheck({
+          partial: true,
+          exact: false,
+        });
+      }
+    },
+    [radioCheck.exact, radioCheck.partial, searchValue.searchType]
+  );
 
   // Prop for SearchRadio label to toggle radio selection
-  const updateFromLabel = (s: string): void => {
-    // Save search type from clicking on label
-    if (searchValue.searchType !== s) {
-      setSearchValue((prevValue) => ({
-        ...prevValue,
-        searchType: s,
-      }));
-    }
-    // Toggle radio button checked
-    if (s === "partial" && !radioCheck.partial) {
-      setRadioCheck({
-        partial: true,
-        exact: false,
-      });
-    } else if (s === "exact" && !radioCheck.exact) {
-      setRadioCheck({
-        partial: false,
-        exact: true,
-      });
-    }
-  };
+  const updateFromLabel = useCallback(
+    (s: string): void => {
+      // Save search type from clicking on label
+      if (searchValue.searchType !== s) {
+        setSearchValue((prevValue) => ({
+          ...prevValue,
+          searchType: s,
+        }));
+      }
+      // Toggle radio button checked
+      if (s === "partial" && !radioCheck.partial) {
+        setRadioCheck({
+          partial: true,
+          exact: false,
+        });
+      } else if (s === "exact" && !radioCheck.exact) {
+        setRadioCheck({
+          partial: false,
+          exact: true,
+        });
+      }
+    },
+    [radioCheck.exact, radioCheck.partial, searchValue.searchType]
+  );
 
   // Select partial search radio button on first page load
   useEffect(() => {
