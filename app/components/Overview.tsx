@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useRouter } from "next/router";
 import { SearchResults, SearchData, RulesParse } from "../typing/types";
 import styles from "../styles/Overview.module.scss";
@@ -40,4 +41,4 @@ const Overview = (props: Props): JSX.Element => {
   );
 };
 
-export default Overview;
+export default memo(Overview);

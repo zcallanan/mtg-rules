@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import styles from "../styles/RulePane.module.scss";
 import {
   SearchData,
@@ -67,4 +67,6 @@ const RulePane = (props: Props): JSX.Element => {
   );
 };
 
-export default RulePane;
+RulePane.whyDidYouRender = true;
+
+export default memo(RulePane);

@@ -4,6 +4,7 @@ import {
   MutableRefObject,
   useEffect,
   useState,
+  memo,
 } from "react";
 import {
   Rule,
@@ -117,4 +118,4 @@ const RuleScroll = (props: Props): JSX.Element => {
   return null;
 };
 
-export default RuleScroll;
+export default memo(RuleScroll);

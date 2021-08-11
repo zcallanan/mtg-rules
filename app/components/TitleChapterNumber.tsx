@@ -4,6 +4,7 @@ import {
   MutableRefObject,
   Dispatch,
   SetStateAction,
+  memo,
 } from "react";
 import { useRouter, NextRouter } from "next/router";
 import useTopRule from "../hooks/useTopRule";
@@ -186,4 +187,4 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   return null;
 };
 
-export default TitleChapterNumber;
+export default memo(TitleChapterNumber);

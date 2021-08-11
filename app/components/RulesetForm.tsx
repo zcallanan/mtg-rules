@@ -1,4 +1,11 @@
-import { useRef, useState, useEffect, FormEvent, ChangeEvent } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  FormEvent,
+  ChangeEvent,
+  memo,
+} from "react";
 import { useRouter, NextRouter } from "next/router";
 import rulesetUrlValidation from "../utils/ruleset-url-validation";
 import { RouterValues } from "../typing/types";
@@ -148,4 +155,4 @@ const RulesetForm = (): JSX.Element => {
   );
 };
 
-export default RulesetForm;
+export default memo(RulesetForm);

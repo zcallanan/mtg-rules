@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import Link from "next/link";
 import { Spinner } from "react-bootstrap";
 import { useRouter, NextRouter } from "next/router";
@@ -111,4 +111,4 @@ const ChapterTitle = (props: Props): JSX.Element => {
   );
 };
 
-export default ChapterTitle;
+export default memo(ChapterTitle);

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, memo } from "react";
 import { ChapterValues, ClickData } from "../typing/types";
 
 interface Props {
@@ -84,4 +84,4 @@ const ChapterClicked = (props: Props): JSX.Element => {
   return null;
 };
 
-export default ChapterClicked;
+export default memo(ChapterClicked);

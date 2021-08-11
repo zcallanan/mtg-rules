@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Rule, SearchResults, Subrule } from "../typing/types";
 import SubruleList from "./SubruleList";
 
@@ -35,4 +36,4 @@ const SubruleGroup = (props: Props): JSX.Element => {
   );
 };
 
-export default SubruleGroup;
+export default memo(SubruleGroup);

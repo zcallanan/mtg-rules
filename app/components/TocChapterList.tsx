@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import ChapterTitle from "./ChapterTitle";
 import { Chapter } from "../typing/types";
 
@@ -37,4 +37,4 @@ const TocChapterList = (props: Props): JSX.Element => {
   );
 };
 
-export default TocChapterList;
+export default memo(TocChapterList);

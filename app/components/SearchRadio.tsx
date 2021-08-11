@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent } from "react";
+import { ChangeEvent, MouseEvent, memo } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/SearchRadio.module.scss";
@@ -83,4 +83,4 @@ const SearchRadio = (props: Props): JSX.Element => {
   );
 };
 
-export default SearchRadio;
+export default memo(SearchRadio);

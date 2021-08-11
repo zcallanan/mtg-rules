@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useRouter, NextRouter } from "next/router";
 import ExampleText from "./ExampleText";
 import replaceText from "../utils/replace-text";
@@ -66,4 +67,4 @@ const SubruleList = (props: Props): JSX.Element => {
   );
 };
 
-export default SubruleList;
+export default memo(SubruleList);

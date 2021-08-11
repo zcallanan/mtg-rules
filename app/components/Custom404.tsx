@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styles from "../styles/Custom404.module.scss";
 import { ErrorData } from "../typing/types";
 
@@ -21,4 +22,4 @@ const Custom404 = (props: ErrorData): JSX.Element => {
   );
 };
 
-export default Custom404;
+export default memo(Custom404);

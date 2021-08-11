@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import { useRouter, NextRouter } from "next/router";
 import SubruleGroup from "./SubruleGroup";
 import ExampleText from "./ExampleText";
@@ -108,4 +108,4 @@ const RuleList = (props: Props): JSX.Element => {
   );
 };
 
-export default RuleList;
+export default memo(RuleList);

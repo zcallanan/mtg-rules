@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, memo } from "react";
 import RuleGroup from "./RuleGroup";
 import {
   Section,
@@ -65,4 +65,4 @@ const ChapterList = (props: Props): JSX.Element => {
   );
 };
 
-export default ChapterList;
+export default memo(ChapterList);

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 import { useRouter, NextRouter } from "next/router";
 import replaceText from "../utils/replace-text";
 import { Rule, Subrule, RouterValues, SearchResults } from "../typing/types";
@@ -111,4 +111,4 @@ const ExampleText = (props: Props): JSX.Element => {
   );
 };
 
-export default ExampleText;
+export default memo(ExampleText);

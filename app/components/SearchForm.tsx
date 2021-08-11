@@ -8,6 +8,7 @@ import {
   MouseEvent,
   Dispatch,
   SetStateAction,
+  memo,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchRadio from "./SearchRadio";
@@ -307,4 +308,4 @@ const SearchForm = (props: Props): JSX.Element => {
   );
 };
 
-export default SearchForm;
+export default memo(SearchForm);
