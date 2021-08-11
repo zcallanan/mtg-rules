@@ -10,7 +10,6 @@ import {
   SetStateAction,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import SearchRadio from "./SearchRadio";
 import {
   SearchData,
@@ -273,14 +272,18 @@ const SearchForm = (props: Props): JSX.Element => {
             ref={cancel}
             onClick={handleCancel}
           >
-            <FontAwesomeIcon icon={faTimes} />
+            <div className={styles.searchIcon}>
+              <FontAwesomeIcon icon="times" />
+            </div>
           </button>
           <button
             className="btn btn-primary"
             id={styles.searchFormButton}
             type="submit"
           >
-            <FontAwesomeIcon icon={faSearch} />
+            <div className={styles.searchIcon}>
+              <FontAwesomeIcon icon="search" />
+            </div>
           </button>
         </div>
       </div>
