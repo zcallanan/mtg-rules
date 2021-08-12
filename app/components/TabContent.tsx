@@ -24,13 +24,13 @@ interface Props {
 
 const TabContent = (props: Props): JSX.Element => {
   const {
-    searchResults,
-    sections,
     chapters,
     rules,
-    subrules,
+    searchResults,
+    sections,
     setSearchData,
     setSearchResults,
+    subrules,
   } = props;
 
   // State
@@ -49,18 +49,18 @@ const TabContent = (props: Props): JSX.Element => {
     <div className={styles.tabsContainer}>
       <Tabs
         defaultActiveKey="search"
-        variant="pills"
         onSelect={handleTabSelect}
+        variant="pills"
       >
         <Tab eventKey="search" title="Search Rule Set">
           <div>
             <SearchForm
-              setSearchData={setSearchData}
-              setSearchResults={setSearchResults}
-              searchedTerm={searchResults.searchTerm}
-              sections={sections}
               chapters={chapters}
               rules={rules}
+              searchResults={searchResults}
+              sections={sections}
+              setSearchData={setSearchData}
+              setSearchResults={setSearchResults}
               subrules={subrules}
             />
           </div>
