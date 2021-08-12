@@ -106,14 +106,15 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
     dataSource: "",
   });
   const [searchData, setSearchData] = useState<SearchData>({
-    searchTerm: "",
-    searchType: "partial",
-    searchCleared: 0,
-    searchCompleted: 0,
-    sections: [],
     chapters: [],
     previousSearchTerm: "",
+    previousSearchType: "",
     rules: [],
+    searchCleared: 0,
+    searchCompleted: 0,
+    searchTerm: "",
+    searchType: "partial",
+    sections: [],
     subrules: [],
   });
   const [searchResults, setSearchResults] = useState<SearchResults>({

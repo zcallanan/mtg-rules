@@ -1,50 +1,54 @@
 import {
-  useState,
-  useRef,
-  useMemo,
-  useEffect,
-  useCallback,
-  FormEvent,
   ChangeEvent,
-  MouseEvent,
   Dispatch,
-  SetStateAction,
+  FormEvent,
   memo,
+  MouseEvent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchRadio from "./SearchRadio";
 import {
-  SearchData,
-  SearchResults,
-  SearchFormValue,
-  Section,
   Chapter,
-  Rule,
-  Subrule,
   RadioCheck,
+  Rule,
+  SearchData,
+  SearchFormValue,
+  SearchResults,
+  Section,
+  Subrule,
 } from "../typing/types";
 import styles from "../styles/SearchForm.module.scss";
 
 interface Props {
-  setSearchData: Dispatch<SetStateAction<SearchData>>;
-  setSearchResults: Dispatch<SetStateAction<SearchResults>>;
-  searchedTerm: string;
-  sections: Section[];
   chapters: Chapter[];
   rules: Rule[];
+  searchResults: SearchResults;
+  sections: Section[];
+  setSearchData: Dispatch<SetStateAction<SearchData>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResults>>;
   subrules: Subrule[];
 }
 
 const SearchForm = (props: Props): JSX.Element => {
+  // Destructure props
   const {
-    setSearchData,
-    setSearchResults,
-    searchedTerm,
-    sections,
     chapters,
     rules,
+    searchResults,
+    sections,
+    setSearchData,
+    setSearchResults,
     subrules,
   } = props;
+
+  const searchedTerm = searchResults.searchTerm;
+  const searchedType = searchResults.searchType;
 
   // Input ref
   const input = useRef<HTMLInputElement>();
@@ -85,9 +89,9 @@ const SearchForm = (props: Props): JSX.Element => {
   // Pass memoized searchValue to dynamic page
   useEffect(() => {
     /* 
-      If a search term is validated, pass it to parent and mark submitted
+      - If a search term is validated, pass it to parent and mark submitted
       OR
-      The form was reset, tell the dynamic page to clear search state
+      - The form was reset, tell the dynamic page to clear search state
     */
     if (memoSearchValue.validated && !memoSearchValue.submitted) {
       if (!memoSearchValue.searchTerm && searchedTerm) {
@@ -95,36 +99,45 @@ const SearchForm = (props: Props): JSX.Element => {
         // Clear dynamic page search data
         setSearchData((prevValue) => ({
           ...prevValue,
-          searchTerm: "",
-          searchCleared: 1,
-          searchCompleted: 0,
-          sections: [],
           chapters: [],
           previousSearchTerm: searchedTerm,
           rules: [],
+          searchCleared: 1,
+          searchCompleted: 0,
+          searchTerm: "",
+          sections: [],
           subrules: [],
         }));
+
         // The user may have searched previously. Clear dynamic page search results
         setSearchResults({
+          searchChapters: [],
+          searchResult: 1,
+          searchRules: [],
+          searchSections: [],
+          searchSubrules: [],
           searchTerm: "",
           searchType: "",
-          searchSections: [],
-          searchChapters: [],
-          searchRules: [],
-          searchSubrules: [],
-          searchResult: 1,
         });
-      } else if (searchedTerm !== memoSearchValue.searchTerm) {
-        // Save search data
+      } else if (
+        searchedType !== memoSearchValue.searchType ||
+        searchedTerm !== memoSearchValue.searchTerm
+      ) {
+        /*
+          - If different search types but same term, do the search
+          - If the same search types but different terms, do the search
+          - If the same types and same term, don't do the search 
+        */
+
         setSearchData((prevValue) => ({
           ...prevValue,
-          searchTerm: memoSearchValue.searchTerm,
-          searchCleared: 0,
-          searchCompleted: 0,
-          searchType: memoSearchValue.searchType,
-          sections,
           chapters,
           rules,
+          searchCleared: 0,
+          searchCompleted: 0,
+          searchTerm: memoSearchValue.searchTerm,
+          searchType: memoSearchValue.searchType,
+          sections,
           subrules,
         }));
       }
@@ -136,13 +149,14 @@ const SearchForm = (props: Props): JSX.Element => {
       }));
     }
   }, [
+    chapters,
     memoSearchValue,
+    rules,
     searchedTerm,
+    searchedType,
+    sections,
     setSearchData,
     setSearchResults,
-    sections,
-    chapters,
-    rules,
     subrules,
   ]);
 
@@ -216,18 +230,20 @@ const SearchForm = (props: Props): JSX.Element => {
         setSearchValue((prevValue) => ({
           ...prevValue,
           searchType: e.target.value,
+          submitted: 0,
+          validated: 0,
         }));
       }
       // Toggle radio button checked
       if (e.target.value === "exact" && !radioCheck.exact) {
         setRadioCheck({
-          partial: false,
           exact: true,
+          partial: false,
         });
       } else if (e.target.value === "partial" && !radioCheck.partial) {
         setRadioCheck({
-          partial: true,
           exact: false,
+          partial: true,
         });
       }
     },
@@ -247,13 +263,13 @@ const SearchForm = (props: Props): JSX.Element => {
       // Toggle radio button checked
       if (s === "partial" && !radioCheck.partial) {
         setRadioCheck({
-          partial: true,
           exact: false,
+          partial: true,
         });
       } else if (s === "exact" && !radioCheck.exact) {
         setRadioCheck({
-          partial: false,
           exact: true,
+          partial: false,
         });
       }
     },
