@@ -43,8 +43,8 @@ const RuleScroll = (props: Props): JSX.Element => {
   // Save to local state to ensure scrolling occurs after all elements are rendered
   useEffect(() => {
     if (
-      localRuleData.rulesInUse !== rulesInUse ||
-      localRuleData.ruleNumbers !== ruleNumberRefs.current
+      localRuleData.rulesInUse.length !== rulesInUse.length ||
+      localRuleData.ruleNumbers.length !== ruleNumberRefs.current.length
     ) {
       setLocalRuleData({
         rulesInUse,

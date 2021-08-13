@@ -14,6 +14,7 @@ import {
   Rule,
   SearchData,
   SearchResults,
+  TocScrollData,
 } from "../typing/types";
 
 interface Props {
@@ -27,7 +28,7 @@ interface Props {
   searchResults: SearchResults;
   setChapterValues: Dispatch<SetStateAction<ChapterValues>>;
   setScrollToc: Dispatch<SetStateAction<number>>;
-  tocRefDivs: HTMLDivElement[];
+  tocDivs: HTMLDivElement[];
 }
 
 const TitleChapterNumber = (props: Props): JSX.Element => {
@@ -42,13 +43,35 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
     searchResults,
     setChapterValues,
     setScrollToc,
-    tocRefDivs,
+    tocDivs,
   } = props;
   const { anchorValue, chapterNumber, ignoreCallbackNumber, source } =
     chapterValues;
 
   // State
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("");
+  const [localChapterNumberData, setLocalChapterNumberData] =
+    useState<TocScrollData>({ chaptersInUse: [], tocDivs: [] });
+
+  // Save to local state
+  useEffect(() => {
+    if (
+      localChapterNumberData.chaptersInUse.length !== chaptersInUse.length ||
+      (tocDivs &&
+        tocDivs.length &&
+        localChapterNumberData.tocDivs.length !== tocDivs.length)
+    ) {
+      setLocalChapterNumberData({
+        chaptersInUse,
+        tocDivs,
+      });
+    }
+  }, [
+    chaptersInUse,
+    localChapterNumberData.chaptersInUse,
+    localChapterNumberData.tocDivs,
+    tocDivs,
+  ]);
 
   // Router
   const router: NextRouter = useRouter();
@@ -92,12 +115,23 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
   useEffect(() => {
     if (
       chapterNumber &&
-      tocRefDivs.length &&
-      (source === "init" || source === "search")
+      (source === "init" || source === "search") &&
+      localChapterNumberData.tocDivs &&
+      localChapterNumberData.tocDivs.length &&
+      !localChapterNumberData.tocDivs.includes(null) &&
+      localChapterNumberData.chaptersInUse &&
+      localChapterNumberData.chaptersInUse.length
     ) {
       setScrollToc(chapterNumber);
     }
-  }, [chapterNumber, setScrollToc, source, tocRefDivs.length]);
+  }, [
+    chapterNumber,
+    localChapterNumberData.chaptersInUse,
+    localChapterNumberData.tocDivs,
+    setScrollToc,
+    source,
+    tocDivs,
+  ]);
 
   // When searching, set chapterNumber to the first value in chaptersInUse
   useEffect(() => {
@@ -108,8 +142,12 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
       searchResults.searchChapters.length
     ) {
       let firstChapterNumber: number;
-      if (chaptersInUse && chaptersInUse.length) {
-        firstChapterNumber = chaptersInUse[0].chapterNumber;
+      if (
+        localChapterNumberData.chaptersInUse &&
+        localChapterNumberData.chaptersInUse.length
+      ) {
+        firstChapterNumber =
+          localChapterNumberData.chaptersInUse[0].chapterNumber;
       }
       setChapterValues((prevValue) => ({
         ...prevValue,
@@ -118,8 +156,8 @@ const TitleChapterNumber = (props: Props): JSX.Element => {
       }));
     }
   }, [
-    chaptersInUse,
     latestRuleChapterNumber,
+    localChapterNumberData.chaptersInUse,
     searchData.searchCompleted,
     searchResults.searchChapters.length,
     searchResults.searchResult,
