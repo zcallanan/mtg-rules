@@ -27,8 +27,8 @@ const TocScroll = (props: Props): JSX.Element => {
   // Save to local state
   useEffect(() => {
     if (
-      tocScrollData.chaptersInUse !== chaptersInUse ||
-      tocScrollData.tocDivs !== tocRefs.current
+      tocScrollData.chaptersInUse.length !== chaptersInUse.length ||
+      tocScrollData.tocDivs.length !== tocRefs.current.length
     ) {
       setTocScrollData({
         chaptersInUse,
