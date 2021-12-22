@@ -358,7 +358,7 @@ const RuleSetPage = (props: DynamicProps): JSX.Element => {
           rootRef={rightViewportRef}
           rulesRef={rulesRef}
           rulesInUse={rulesInUse}
-          tocRefDivs={tocRefs.current}
+          tocDivs={tocRefs.current}
           searchData={searchData}
           searchResults={searchResults}
           setChapterValues={setChapterValues}
