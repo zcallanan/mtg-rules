@@ -8,4 +8,5 @@ A NextJS application that displays filterable mtg rule sets.
     * http://localhost:5000/ 
 
 **Note on MTG**
+
 MTG is fully owned by Wizards of the Coast and this site just reads the text rule set hosted by WotC.
