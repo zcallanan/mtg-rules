@@ -5,6 +5,7 @@ EXPOSE 3000
 
 WORKDIR /usr/src/app
 
+# Copy project
 COPY . .
 
 # Install packages
